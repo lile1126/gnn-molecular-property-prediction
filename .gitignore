@@ -24,6 +24,10 @@ reports/_*.py
 reports/_*.txt
 reports/*_out.txt
 reports/*_err.txt
+# 内部数据收集与页面调试脚本（非交付物）
+reports/_collect_report_data.json
+reports/_page_script.js
+reports/_page_script2.js
 
 # ===== 系统文件 =====
 .DS_Store
