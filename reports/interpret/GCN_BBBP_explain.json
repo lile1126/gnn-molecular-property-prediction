@@ -1,0 +1,94 @@
+[
+  {
+    "conv": "GCN",
+    "dataset": "BBBP",
+    "index": 1923,
+    "smiles": "[C@@H]4(C1=CC=CC2=C1OCC2)C3=CC(=C(Cl)C=C3CCN(C4)C)O.CC(=O)O",
+    "pred": 0.836,
+    "top5_atoms": [
+      17,
+      9,
+      18,
+      14,
+      21
+    ],
+    "top5_edges": [
+      17,
+      16,
+      37,
+      24,
+      26
+    ],
+    "image": "reports\\interpret\\GCN_BBBP_idx1923.png",
+    "drawn": true
+  },
+  {
+    "conv": "GCN",
+    "dataset": "BBBP",
+    "index": 36,
+    "smiles": "CN(C)c1cc(C2=NC(N)=NN2)ccn1",
+    "pred": 0.825,
+    "top5_atoms": [
+      0,
+      2,
+      12,
+      14,
+      9
+    ],
+    "top5_edges": [
+      19,
+      24,
+      14,
+      3,
+      11
+    ],
+    "image": "reports\\interpret\\GCN_BBBP_idx36.png",
+    "drawn": true
+  },
+  {
+    "conv": "GCN",
+    "dataset": "BBBP",
+    "index": 1182,
+    "smiles": "[C@@H]1([C@@H]([C@H]2C=C[C@@H]1C2)C(N(CC)CC)=O)C(N(CC)CC)=O",
+    "pred": 0.776,
+    "top5_atoms": [
+      17,
+      10,
+      6,
+      19,
+      12
+    ],
+    "top5_edges": [
+      14,
+      6,
+      24,
+      27,
+      8
+    ],
+    "image": "reports\\interpret\\GCN_BBBP_idx1182.png",
+    "drawn": true
+  },
+  {
+    "conv": "GCN",
+    "dataset": "BBBP",
+    "index": 1881,
+    "smiles": "C2=C(C1(C(N(C)C(N1)=O)=O)CC)C=CC=C2",
+    "pred": 0.8444,
+    "top5_atoms": [
+      11,
+      10,
+      13,
+      12,
+      14
+    ],
+    "top5_edges": [
+      7,
+      8,
+      2,
+      12,
+      6
+    ],
+    "image": "reports\\interpret\\GCN_BBBP_idx1881.png",
+    "drawn": true
+  }
+]

@@ -1,0 +1,67 @@
+{
+  "results": {
+    "ESOL": {
+      "GCN": {
+        "RMSE": 0.7952,
+        "MAE": 0.5818,
+        "R2": 0.8493
+      },
+      "GAT": {
+        "RMSE": 0.7484,
+        "MAE": 0.5895,
+        "R2": 0.8666
+      },
+      "GraphSAGE": {
+        "RMSE": 0.787,
+        "MAE": 0.5734,
+        "R2": 0.8524
+      }
+    },
+    "FreeSolv": {
+      "GCN": {
+        "RMSE": 2.0053,
+        "MAE": 1.6068,
+        "R2": 0.7419
+      },
+      "GAT": {
+        "RMSE": 2.2051,
+        "MAE": 1.2602,
+        "R2": 0.6879
+      },
+      "GraphSAGE": {
+        "RMSE": 1.3842,
+        "MAE": 1.0605,
+        "R2": 0.877
+      }
+    },
+    "BBBP": {
+      "GCN": {
+        "Accuracy": 0.8195,
+        "AUC": 0.8085,
+        "F1": 0.8833,
+        "AUC_old_argmax": 0.7167
+      },
+      "GAT": {
+        "Accuracy": 0.8341,
+        "AUC": 0.8303,
+        "F1": 0.8889,
+        "AUC_old_argmax": 0.7624
+      },
+      "GraphSAGE": {
+        "Accuracy": 0.8537,
+        "AUC": 0.8759,
+        "F1": 0.902,
+        "AUC_old_argmax": 0.7862
+      }
+    }
+  },
+  "config": {
+    "hidden": 64,
+    "layers": 3,
+    "heads": 4,
+    "epochs": 300,
+    "batch_size": 32,
+    "seed": 42,
+    "device": "cuda"
+  }
+}

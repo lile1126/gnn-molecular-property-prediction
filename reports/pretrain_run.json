@@ -1,0 +1,19 @@
+{
+  "config": {
+    "pattern": "full",
+    "epochs": 40,
+    "hidden": 64,
+    "layers": 3,
+    "heads": 4,
+    "proj_dim": 32,
+    "device": "cuda",
+    "pool_size": 15289
+  },
+  "results": {
+    "GCN": {
+      "path": "D:\\桌面\\工程实践\\GNN分子性质预测\\models\\pretrained\\GCN_pretrain_full.pt",
+      "final_loss": 4.0851,
+      "pattern": "full"
+    }
+  }
+}

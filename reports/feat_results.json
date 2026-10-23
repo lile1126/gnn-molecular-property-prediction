@@ -1,0 +1,142 @@
+{
+  "baseline_ref": "reports/comparison_results.json（默认 9 维特征，AUC 概率口径）",
+  "metric_note": "分类 AUC 用 softmax 概率口径（与权威基线一致）",
+  "BBBP": {
+    "GAT_featc": {
+      "Accuracy": 0.8537,
+      "AUC": 0.9184,
+      "F1": 0.8951
+    },
+    "GCN_feata": {
+      "Accuracy": 0.8537,
+      "AUC": 0.8833,
+      "F1": 0.902
+    },
+    "GCN_featb": {
+      "Accuracy": 0.8732,
+      "AUC": 0.9034,
+      "F1": 0.915
+    },
+    "GCN_featc": {
+      "Accuracy": 0.8439,
+      "AUC": 0.9075,
+      "F1": 0.8897
+    },
+    "GraphSAGE_featc": {
+      "Accuracy": 0.8488,
+      "AUC": 0.9097,
+      "F1": 0.892
+    },
+    "GAT_featb": {
+      "Accuracy": 0.839,
+      "AUC": 0.8985,
+      "F1": 0.8966
+    },
+    "GraphSAGE_featb": {
+      "Accuracy": 0.8585,
+      "AUC": 0.9177,
+      "F1": 0.9061
+    }
+  },
+  "Clintox": {
+    "GAT_featc": {
+      "Accuracy": 0.9122,
+      "AUC": 0.8308,
+      "F1": 0.4348
+    },
+    "GCN_feata": {
+      "Accuracy": 0.9392,
+      "AUC": 0.8755,
+      "F1": 0.5263
+    },
+    "GCN_featb": {
+      "Accuracy": 0.9257,
+      "AUC": 0.8926,
+      "F1": 0.3529
+    },
+    "GCN_featc": {
+      "Accuracy": 0.8986,
+      "AUC": 0.8526,
+      "F1": 0.4828
+    },
+    "GraphSAGE_featc": {
+      "Accuracy": 0.9122,
+      "AUC": 0.8571,
+      "F1": 0.4348
+    },
+    "GAT_feata": {
+      "Accuracy": 0.9257,
+      "AUC": 0.8982,
+      "F1": 0.4211
+    },
+    "GraphSAGE_feata": {
+      "Accuracy": 0.9189,
+      "AUC": 0.8777,
+      "F1": 0.25
+    },
+    "GAT_featb": {
+      "Accuracy": 0.9122,
+      "AUC": 0.8769,
+      "F1": 0.48
+    },
+    "GraphSAGE_featb": {
+      "Accuracy": 0.9189,
+      "AUC": 0.8833,
+      "F1": 0.3333
+    }
+  },
+  "ESOL": {
+    "GAT_featc": {
+      "RMSE": 0.7003,
+      "MAE": 0.5479,
+      "R2": 0.8832
+    },
+    "GCN_feata": {
+      "RMSE": 0.6976,
+      "MAE": 0.5423,
+      "R2": 0.8841
+    },
+    "GCN_featb": {
+      "RMSE": 0.7879,
+      "MAE": 0.5874,
+      "R2": 0.8521
+    },
+    "GCN_featc": {
+      "RMSE": 0.6803,
+      "MAE": 0.5405,
+      "R2": 0.8898
+    },
+    "GraphSAGE_featc": {
+      "RMSE": 0.7861,
+      "MAE": 0.5891,
+      "R2": 0.8528
+    }
+  },
+  "FreeSolv": {
+    "GAT_featc": {
+      "RMSE": 1.4777,
+      "MAE": 0.6815,
+      "R2": 0.8598
+    },
+    "GCN_feata": {
+      "RMSE": 1.1353,
+      "MAE": 0.8142,
+      "R2": 0.9173
+    },
+    "GCN_featb": {
+      "RMSE": 1.2715,
+      "MAE": 0.9138,
+      "R2": 0.8962
+    },
+    "GCN_featc": {
+      "RMSE": 1.0085,
+      "MAE": 0.5897,
+      "R2": 0.9347
+    },
+    "GraphSAGE_featc": {
+      "RMSE": 1.1013,
+      "MAE": 0.6317,
+      "R2": 0.9221
+    }
+  }
+}

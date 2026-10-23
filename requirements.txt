@@ -1,0 +1,13 @@
+# GNN 分子性质预测项目依赖（Python 3.13 / Windows）
+# 安装方式：
+#   pip install -r requirements.txt
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu   # CPU 版 torch（可选，GPU 版可直接用默认源）
+torch>=2.6
+torch-geometric>=2.6
+rdkit>=2024.9
+numpy>=1.26
+pandas>=2.0
+scikit-learn>=1.4
+matplotlib>=3.8
+flask>=3.0
+networkx>=3.0

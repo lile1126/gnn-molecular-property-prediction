@@ -1,0 +1,104 @@
+[
+  {
+    "conv": "GAT",
+    "dataset": "BBBP",
+    "index": 1923,
+    "smiles": "[C@@H]4(C1=CC=CC2=C1OCC2)C3=CC(=C(Cl)C=C3CCN(C4)C)O.CC(=O)O",
+    "pred": 0.7447,
+    "layer": 0,
+    "heads": 4,
+    "top8_edges": [
+      {
+        "edge": [
+          14,
+          13
+        ],
+        "alpha": 0.725
+      },
+      {
+        "edge": [
+          22,
+          12
+        ],
+        "alpha": 0.7148
+      }
+    ],
+    "image": "reports\\attention\\GAT_BBBP_idx1923_attn_layer0.png",
+    "per_head_images": [
+      "reports\\attention\\perhead\\GAT_BBBP_idx1923_head1.png",
+      "reports\\attention\\perhead\\GAT_BBBP_idx1923_head2.png",
+      "reports\\attention\\perhead\\GAT_BBBP_idx1923_head3.png",
+      "reports\\attention\\perhead\\GAT_BBBP_idx1923_head4.png",
+      "reports\\attention\\perhead\\GAT_BBBP_idx1923_allheads.png"
+    ],
+    "drawn": true
+  },
+  {
+    "conv": "GAT",
+    "dataset": "BBBP",
+    "index": 36,
+    "smiles": "CN(C)c1cc(C2=NC(N)=NN2)ccn1",
+    "pred": 0.8242,
+    "layer": 0,
+    "heads": 4,
+    "top8_edges": [
+      {
+        "edge": [
+          9,
+          8
+        ],
+        "alpha": 0.6417
+      },
+      {
+        "edge": [
+          11,
+          10
+        ],
+        "alpha": 0.563
+      }
+    ],
+    "image": "reports\\attention\\GAT_BBBP_idx36_attn_layer0.png",
+    "per_head_images": [
+      "reports\\attention\\perhead\\GAT_BBBP_idx36_head1.png",
+      "reports\\attention\\perhead\\GAT_BBBP_idx36_head2.png",
+      "reports\\attention\\perhead\\GAT_BBBP_idx36_head3.png",
+      "reports\\attention\\perhead\\GAT_BBBP_idx36_head4.png",
+      "reports\\attention\\perhead\\GAT_BBBP_idx36_allheads.png"
+    ],
+    "drawn": true
+  },
+  {
+    "conv": "GAT",
+    "dataset": "BBBP",
+    "index": 1182,
+    "smiles": "[C@@H]1([C@@H]([C@H]2C=C[C@@H]1C2)C(N(CC)CC)=O)C(N(CC)CC)=O",
+    "pred": 0.734,
+    "layer": 0,
+    "heads": 4,
+    "top8_edges": [
+      {
+        "edge": [
+          10,
+          9
+        ],
+        "alpha": 0.6478
+      },
+      {
+        "edge": [
+          17,
+          16
+        ],
+        "alpha": 0.6478
+      }
+    ],
+    "image": "reports\\attention\\GAT_BBBP_idx1182_attn_layer0.png",
+    "per_head_images": [
+      "reports\\attention\\perhead\\GAT_BBBP_idx1182_head1.png",
+      "reports\\attention\\perhead\\GAT_BBBP_idx1182_head2.png",
+      "reports\\attention\\perhead\\GAT_BBBP_idx1182_head3.png",
+      "reports\\attention\\perhead\\GAT_BBBP_idx1182_head4.png",
+      "reports\\attention\\perhead\\GAT_BBBP_idx1182_allheads.png"
+    ],
+    "drawn": true
+  }
+]

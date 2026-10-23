@@ -1,0 +1,94 @@
+[
+  {
+    "conv": "GCN",
+    "dataset": "FreeSolv",
+    "index": 259,
+    "smiles": "C(C(F)(F)F)Cl",
+    "pred": 0.5474,
+    "top5_atoms": [
+      2,
+      3,
+      4,
+      5,
+      1
+    ],
+    "top5_edges": [
+      3,
+      8,
+      2,
+      1,
+      4
+    ],
+    "image": "reports\\interpret\\GCN_FreeSolv_idx259.png",
+    "drawn": true
+  },
+  {
+    "conv": "GCN",
+    "dataset": "FreeSolv",
+    "index": 339,
+    "smiles": "CCCC=C",
+    "pred": 0.5122,
+    "top5_atoms": [
+      1,
+      2,
+      0,
+      4,
+      3
+    ],
+    "top5_edges": [
+      4,
+      1,
+      2,
+      5,
+      7
+    ],
+    "image": "reports\\interpret\\GCN_FreeSolv_idx339.png",
+    "drawn": true
+  },
+  {
+    "conv": "GCN",
+    "dataset": "FreeSolv",
+    "index": 342,
+    "smiles": "CCCCCCCCC(=O)C",
+    "pred": -2.5334,
+    "top5_atoms": [
+      0,
+      9,
+      10,
+      6,
+      7
+    ],
+    "top5_edges": [
+      13,
+      6,
+      11,
+      3,
+      9
+    ],
+    "image": "reports\\interpret\\GCN_FreeSolv_idx342.png",
+    "drawn": true
+  },
+  {
+    "conv": "GCN",
+    "dataset": "FreeSolv",
+    "index": 144,
+    "smiles": "CCCOC(=O)CC",
+    "pred": -4.0959,
+    "top5_atoms": [
+      7,
+      0,
+      2,
+      1,
+      3
+    ],
+    "top5_edges": [
+      3,
+      1,
+      12,
+      4,
+      2
+    ],
+    "image": "reports\\interpret\\GCN_FreeSolv_idx144.png",
+    "drawn": true
+  }
+]

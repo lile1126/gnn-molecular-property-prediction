@@ -1,0 +1,1918 @@
+{
+ "comparison": {
+  "results": {
+   "ESOL": {
+    "GCN": {
+     "RMSE": 0.7952,
+     "MAE": 0.5818,
+     "R2": 0.8493
+    },
+    "GAT": {
+     "RMSE": 0.7484,
+     "MAE": 0.5895,
+     "R2": 0.8666
+    },
+    "GraphSAGE": {
+     "RMSE": 0.787,
+     "MAE": 0.5734,
+     "R2": 0.8524
+    }
+   },
+   "FreeSolv": {
+    "GCN": {
+     "RMSE": 2.0053,
+     "MAE": 1.6068,
+     "R2": 0.7419
+    },
+    "GAT": {
+     "RMSE": 2.2051,
+     "MAE": 1.2602,
+     "R2": 0.6879
+    },
+    "GraphSAGE": {
+     "RMSE": 1.3842,
+     "MAE": 1.0605,
+     "R2": 0.877
+    }
+   },
+   "BBBP": {
+    "GCN": {
+     "Accuracy": 0.8195,
+     "AUC": 0.8085,
+     "F1": 0.8833,
+     "AUC_old_argmax": 0.7167
+    },
+    "GAT": {
+     "Accuracy": 0.8341,
+     "AUC": 0.8303,
+     "F1": 0.8889,
+     "AUC_old_argmax": 0.7624
+    },
+    "GraphSAGE": {
+     "Accuracy": 0.8537,
+     "AUC": 0.8759,
+     "F1": 0.902,
+     "AUC_old_argmax": 0.7862
+    }
+   }
+  },
+  "config": {
+   "hidden": 64,
+   "layers": 3,
+   "heads": 4,
+   "epochs": 300,
+   "batch_size": 32,
+   "seed": 42,
+   "device": "cuda"
+  }
+ },
+ "feat_results.json": {
+  "baseline_ref": "reports/comparison_results.json（默认 9 维特征，AUC 概率口径）",
+  "metric_note": "分类 AUC 用 softmax 概率口径（与权威基线一致）",
+  "BBBP": {
+   "GAT_featc": {
+    "Accuracy": 0.8537,
+    "AUC": 0.9184,
+    "F1": 0.8951
+   },
+   "GCN_feata": {
+    "Accuracy": 0.8537,
+    "AUC": 0.8833,
+    "F1": 0.902
+   },
+   "GCN_featb": {
+    "Accuracy": 0.8732,
+    "AUC": 0.9034,
+    "F1": 0.915
+   },
+   "GCN_featc": {
+    "Accuracy": 0.8439,
+    "AUC": 0.9075,
+    "F1": 0.8897
+   },
+   "GraphSAGE_featc": {
+    "Accuracy": 0.8488,
+    "AUC": 0.9097,
+    "F1": 0.892
+   },
+   "GAT_featb": {
+    "Accuracy": 0.839,
+    "AUC": 0.8985,
+    "F1": 0.8966
+   },
+   "GraphSAGE_featb": {
+    "Accuracy": 0.8585,
+    "AUC": 0.9177,
+    "F1": 0.9061
+   }
+  },
+  "Clintox": {
+   "GAT_featc": {
+    "Accuracy": 0.9122,
+    "AUC": 0.8308,
+    "F1": 0.4348
+   },
+   "GCN_feata": {
+    "Accuracy": 0.9392,
+    "AUC": 0.8755,
+    "F1": 0.5263
+   },
+   "GCN_featb": {
+    "Accuracy": 0.9257,
+    "AUC": 0.8926,
+    "F1": 0.3529
+   },
+   "GCN_featc": {
+    "Accuracy": 0.8986,
+    "AUC": 0.8526,
+    "F1": 0.4828
+   },
+   "GraphSAGE_featc": {
+    "Accuracy": 0.9122,
+    "AUC": 0.8571,
+    "F1": 0.4348
+   },
+   "GAT_feata": {
+    "Accuracy": 0.9257,
+    "AUC": 0.8982,
+    "F1": 0.4211
+   },
+   "GraphSAGE_feata": {
+    "Accuracy": 0.9189,
+    "AUC": 0.8777,
+    "F1": 0.25
+   },
+   "GAT_featb": {
+    "Accuracy": 0.9122,
+    "AUC": 0.8769,
+    "F1": 0.48
+   },
+   "GraphSAGE_featb": {
+    "Accuracy": 0.9189,
+    "AUC": 0.8833,
+    "F1": 0.3333
+   }
+  },
+  "ESOL": {
+   "GAT_featc": {
+    "RMSE": 0.7003,
+    "MAE": 0.5479,
+    "R2": 0.8832
+   },
+   "GCN_feata": {
+    "RMSE": 0.6976,
+    "MAE": 0.5423,
+    "R2": 0.8841
+   },
+   "GCN_featb": {
+    "RMSE": 0.7879,
+    "MAE": 0.5874,
+    "R2": 0.8521
+   },
+   "GCN_featc": {
+    "RMSE": 0.6803,
+    "MAE": 0.5405,
+    "R2": 0.8898
+   },
+   "GraphSAGE_featc": {
+    "RMSE": 0.7861,
+    "MAE": 0.5891,
+    "R2": 0.8528
+   }
+  },
+  "FreeSolv": {
+   "GAT_featc": {
+    "RMSE": 1.4777,
+    "MAE": 0.6815,
+    "R2": 0.8598
+   },
+   "GCN_feata": {
+    "RMSE": 1.1353,
+    "MAE": 0.8142,
+    "R2": 0.9173
+   },
+   "GCN_featb": {
+    "RMSE": 1.2715,
+    "MAE": 0.9138,
+    "R2": 0.8962
+   },
+   "GCN_featc": {
+    "RMSE": 1.0085,
+    "MAE": 0.5897,
+    "R2": 0.9347
+   },
+   "GraphSAGE_featc": {
+    "RMSE": 1.1013,
+    "MAE": 0.6317,
+    "R2": 0.9221
+   }
+  }
+ },
+ "feat_ensemble_results.json": {
+  "GCN|ESOL|a": {
+   "members": [
+    {
+     "RMSE": 0.6976,
+     "MAE": 0.5423,
+     "R2": 0.8841
+    },
+    {
+     "RMSE": 0.7191,
+     "MAE": 0.5367,
+     "R2": 0.8768
+    },
+    {
+     "RMSE": 0.7332,
+     "MAE": 0.5465,
+     "R2": 0.8719
+    },
+    {
+     "RMSE": 0.662,
+     "MAE": 0.5094,
+     "R2": 0.8956
+    }
+   ],
+   "ensemble": {
+    "RMSE": 0.6828,
+    "MAE": 0.5158,
+    "R2": 0.8889
+   },
+   "n_members": 4,
+   "member_files": [
+    "GCN_ESOL_feata.pt",
+    "GCN_ESOL_feata_s7.pt",
+    "GCN_ESOL_feata_s13.pt",
+    "GCN_ESOL_feata_s21.pt"
+   ]
+  },
+  "GAT|ESOL|a": {
+   "members": [
+    {
+     "RMSE": 0.7937,
+     "MAE": 0.6037,
+     "R2": 0.8499
+    },
+    {
+     "RMSE": 0.8171,
+     "MAE": 0.5936,
+     "R2": 0.8409
+    },
+    {
+     "RMSE": 0.8591,
+     "MAE": 0.6464,
+     "R2": 0.8241
+    },
+    {
+     "RMSE": 0.8149,
+     "MAE": 0.6057,
+     "R2": 0.8418
+    }
+   ],
+   "ensemble": {
+    "RMSE": 0.7916,
+    "MAE": 0.5883,
+    "R2": 0.8507
+   },
+   "n_members": 4,
+   "member_files": [
+    "GAT_ESOL_feata.pt",
+    "GAT_ESOL_feata_s7.pt",
+    "GAT_ESOL_feata_s13.pt",
+    "GAT_ESOL_feata_s21.pt"
+   ]
+  },
+  "GraphSAGE|ESOL|a": {
+   "members": [
+    {
+     "RMSE": 0.7234,
+     "MAE": 0.5414,
+     "R2": 0.8753
+    },
+    {
+     "RMSE": 0.6522,
+     "MAE": 0.4815,
+     "R2": 0.8987
+    },
+    {
+     "RMSE": 0.7014,
+     "MAE": 0.5292,
+     "R2": 0.8828
+    },
+    {
+     "RMSE": 0.6521,
+     "MAE": 0.507,
+     "R2": 0.8987
+    }
+   ],
+   "ensemble": {
+    "RMSE": 0.6592,
+    "MAE": 0.4988,
+    "R2": 0.8965
+   },
+   "n_members": 4,
+   "member_files": [
+    "GraphSAGE_ESOL_feata.pt",
+    "GraphSAGE_ESOL_feata_s7.pt",
+    "GraphSAGE_ESOL_feata_s13.pt",
+    "GraphSAGE_ESOL_feata_s21.pt"
+   ]
+  },
+  "GCN|ESOL|b": {
+   "members": [
+    {
+     "RMSE": 0.7879,
+     "MAE": 0.5874,
+     "R2": 0.8521
+    },
+    {
+     "RMSE": 0.7136,
+     "MAE": 0.537,
+     "R2": 0.8787
+    },
+    {
+     "RMSE": 0.6908,
+     "MAE": 0.5203,
+     "R2": 0.8863
+    },
+    {
+     "RMSE": 0.7044,
+     "MAE": 0.5305,
+     "R2": 0.8818
+    }
+   ],
+   "ensemble": {
+    "RMSE": 0.7026,
+    "MAE": 0.5228,
+    "R2": 0.8824
+   },
+   "n_members": 4,
+   "member_files": [
+    "GCN_ESOL_featb.pt",
+    "GCN_ESOL_featb_s7.pt",
+    "GCN_ESOL_featb_s13.pt",
+    "GCN_ESOL_featb_s21.pt"
+   ]
+  },
+  "GAT|ESOL|b": {
+   "members": [
+    {
+     "RMSE": 0.7461,
+     "MAE": 0.5403,
+     "R2": 0.8674
+    },
+    {
+     "RMSE": 0.7842,
+     "MAE": 0.5869,
+     "R2": 0.8535
+    },
+    {
+     "RMSE": 0.7695,
+     "MAE": 0.5821,
+     "R2": 0.8589
+    },
+    {
+     "RMSE": 0.8165,
+     "MAE": 0.6123,
+     "R2": 0.8412
+    }
+   ],
+   "ensemble": {
+    "RMSE": 0.7532,
+    "MAE": 0.5571,
+    "R2": 0.8649
+   },
+   "n_members": 4,
+   "member_files": [
+    "GAT_ESOL_featb.pt",
+    "GAT_ESOL_featb_s7.pt",
+    "GAT_ESOL_featb_s13.pt",
+    "GAT_ESOL_featb_s21.pt"
+   ]
+  },
+  "GraphSAGE|ESOL|b": {
+   "members": [
+    {
+     "RMSE": 0.6404,
+     "MAE": 0.5095,
+     "R2": 0.9023
+    },
+    {
+     "RMSE": 0.6233,
+     "MAE": 0.4948,
+     "R2": 0.9074
+    },
+    {
+     "RMSE": 0.6675,
+     "MAE": 0.5191,
+     "R2": 0.8938
+    },
+    {
+     "RMSE": 0.6002,
+     "MAE": 0.4766,
+     "R2": 0.9142
+    }
+   ],
+   "ensemble": {
+    "RMSE": 0.6118,
+    "MAE": 0.4816,
+    "R2": 0.9108
+   },
+   "n_members": 4,
+   "member_files": [
+    "GraphSAGE_ESOL_featb.pt",
+    "GraphSAGE_ESOL_featb_s7.pt",
+    "GraphSAGE_ESOL_featb_s13.pt",
+    "GraphSAGE_ESOL_featb_s21.pt"
+   ]
+  },
+  "GCN|ESOL|c": {
+   "members": [
+    {
+     "RMSE": 0.6803,
+     "MAE": 0.5405,
+     "R2": 0.8898
+    },
+    {
+     "RMSE": 0.7152,
+     "MAE": 0.5613,
+     "R2": 0.8782
+    },
+    {
+     "RMSE": 0.7546,
+     "MAE": 0.5545,
+     "R2": 0.8644
+    },
+    {
+     "RMSE": 0.7286,
+     "MAE": 0.561,
+     "R2": 0.8735
+    }
+   ],
+   "ensemble": {
+    "RMSE": 0.6879,
+    "MAE": 0.5252,
+    "R2": 0.8873
+   },
+   "n_members": 4,
+   "member_files": [
+    "GCN_ESOL_featc.pt",
+    "GCN_ESOL_featc_s7.pt",
+    "GCN_ESOL_featc_s13.pt",
+    "GCN_ESOL_featc_s21.pt"
+   ]
+  },
+  "GAT|ESOL|c": {
+   "members": [
+    {
+     "RMSE": 0.7003,
+     "MAE": 0.5479,
+     "R2": 0.8832
+    },
+    {
+     "RMSE": 0.754,
+     "MAE": 0.5682,
+     "R2": 0.8645
+    },
+    {
+     "RMSE": 0.7265,
+     "MAE": 0.554,
+     "R2": 0.8742
+    },
+    {
+     "RMSE": 0.7586,
+     "MAE": 0.5646,
+     "R2": 0.8629
+    }
+   ],
+   "ensemble": {
+    "RMSE": 0.6982,
+    "MAE": 0.5222,
+    "R2": 0.8839
+   },
+   "n_members": 4,
+   "member_files": [
+    "GAT_ESOL_featc.pt",
+    "GAT_ESOL_featc_s7.pt",
+    "GAT_ESOL_featc_s13.pt",
+    "GAT_ESOL_featc_s21.pt"
+   ]
+  },
+  "GraphSAGE|ESOL|c": {
+   "members": [
+    {
+     "RMSE": 0.7861,
+     "MAE": 0.5891,
+     "R2": 0.8528
+    },
+    {
+     "RMSE": 0.7594,
+     "MAE": 0.5711,
+     "R2": 0.8626
+    },
+    {
+     "RMSE": 0.7408,
+     "MAE": 0.5419,
+     "R2": 0.8693
+    },
+    {
+     "RMSE": 0.7504,
+     "MAE": 0.5503,
+     "R2": 0.8658
+    }
+   ],
+   "ensemble": {
+    "RMSE": 0.7368,
+    "MAE": 0.5417,
+    "R2": 0.8707
+   },
+   "n_members": 4,
+   "member_files": [
+    "GraphSAGE_ESOL_featc.pt",
+    "GraphSAGE_ESOL_featc_s7.pt",
+    "GraphSAGE_ESOL_featc_s13.pt",
+    "GraphSAGE_ESOL_featc_s21.pt"
+   ]
+  },
+  "GCN|FreeSolv|a": {
+   "members": [
+    {
+     "RMSE": 1.1353,
+     "MAE": 0.8142,
+     "R2": 0.9173
+    },
+    {
+     "RMSE": 1.6143,
+     "MAE": 1.0066,
+     "R2": 0.8327
+    },
+    {
+     "RMSE": 1.4926,
+     "MAE": 0.9725,
+     "R2": 0.857
+    },
+    {
+     "RMSE": 1.1085,
+     "MAE": 0.7747,
+     "R2": 0.9211
+    }
+   ],
+   "ensemble": {
+    "RMSE": 1.2274,
+    "MAE": 0.863,
+    "R2": 0.9033
+   },
+   "n_members": 4,
+   "member_files": [
+    "GCN_FreeSolv_feata.pt",
+    "GCN_FreeSolv_feata_s7.pt",
+    "GCN_FreeSolv_feata_s13.pt",
+    "GCN_FreeSolv_feata_s21.pt"
+   ]
+  },
+  "GAT|FreeSolv|a": {
+   "members": [
+    {
+     "RMSE": 1.6004,
+     "MAE": 1.1848,
+     "R2": 0.8356
+    },
+    {
+     "RMSE": 1.1568,
+     "MAE": 0.8462,
+     "R2": 0.9141
+    },
+    {
+     "RMSE": 1.1054,
+     "MAE": 0.7761,
+     "R2": 0.9216
+    },
+    {
+     "RMSE": 1.3124,
+     "MAE": 0.8619,
+     "R2": 0.8894
+    }
+   ],
+   "ensemble": {
+    "RMSE": 1.2292,
+    "MAE": 0.8576,
+    "R2": 0.903
+   },
+   "n_members": 4,
+   "member_files": [
+    "GAT_FreeSolv_feata.pt",
+    "GAT_FreeSolv_feata_s7.pt",
+    "GAT_FreeSolv_feata_s13.pt",
+    "GAT_FreeSolv_feata_s21.pt"
+   ]
+  },
+  "GraphSAGE|FreeSolv|a": {
+   "members": [
+    {
+     "RMSE": 1.6134,
+     "MAE": 1.0284,
+     "R2": 0.8329
+    },
+    {
+     "RMSE": 1.3851,
+     "MAE": 0.9943,
+     "R2": 0.8769
+    },
+    {
+     "RMSE": 1.187,
+     "MAE": 0.8881,
+     "R2": 0.9096
+    },
+    {
+     "RMSE": 1.4465,
+     "MAE": 0.9548,
+     "R2": 0.8657
+    }
+   ],
+   "ensemble": {
+    "RMSE": 1.376,
+    "MAE": 0.9522,
+    "R2": 0.8785
+   },
+   "n_members": 4,
+   "member_files": [
+    "GraphSAGE_FreeSolv_feata.pt",
+    "GraphSAGE_FreeSolv_feata_s7.pt",
+    "GraphSAGE_FreeSolv_feata_s13.pt",
+    "GraphSAGE_FreeSolv_feata_s21.pt"
+   ]
+  },
+  "GCN|FreeSolv|b": {
+   "members": [
+    {
+     "RMSE": 1.2715,
+     "MAE": 0.9138,
+     "R2": 0.8962
+    },
+    {
+     "RMSE": 1.3751,
+     "MAE": 0.9473,
+     "R2": 0.8786
+    },
+    {
+     "RMSE": 1.2039,
+     "MAE": 0.8949,
+     "R2": 0.907
+    },
+    {
+     "RMSE": 1.194,
+     "MAE": 0.8128,
+     "R2": 0.9085
+    }
+   ],
+   "ensemble": {
+    "RMSE": 1.2166,
+    "MAE": 0.8786,
+    "R2": 0.905
+   },
+   "n_members": 4,
+   "member_files": [
+    "GCN_FreeSolv_featb.pt",
+    "GCN_FreeSolv_featb_s7.pt",
+    "GCN_FreeSolv_featb_s13.pt",
+    "GCN_FreeSolv_featb_s21.pt"
+   ]
+  },
+  "GAT|FreeSolv|b": {
+   "members": [
+    {
+     "RMSE": 1.0821,
+     "MAE": 0.7284,
+     "R2": 0.9248
+    },
+    {
+     "RMSE": 1.1784,
+     "MAE": 0.8266,
+     "R2": 0.9109
+    },
+    {
+     "RMSE": 1.1821,
+     "MAE": 0.9019,
+     "R2": 0.9103
+    },
+    {
+     "RMSE": 1.1605,
+     "MAE": 0.7427,
+     "R2": 0.9136
+    }
+   ],
+   "ensemble": {
+    "RMSE": 1.1178,
+    "MAE": 0.7672,
+    "R2": 0.9198
+   },
+   "n_members": 4,
+   "member_files": [
+    "GAT_FreeSolv_featb.pt",
+    "GAT_FreeSolv_featb_s7.pt",
+    "GAT_FreeSolv_featb_s13.pt",
+    "GAT_FreeSolv_featb_s21.pt"
+   ]
+  },
+  "GraphSAGE|FreeSolv|b": {
+   "members": [
+    {
+     "RMSE": 1.4372,
+     "MAE": 0.9208,
+     "R2": 0.8674
+    },
+    {
+     "RMSE": 1.4275,
+     "MAE": 0.949,
+     "R2": 0.8692
+    },
+    {
+     "RMSE": 1.5216,
+     "MAE": 1.0828,
+     "R2": 0.8514
+    },
+    {
+     "RMSE": 1.2173,
+     "MAE": 0.8906,
+     "R2": 0.9049
+    }
+   ],
+   "ensemble": {
+    "RMSE": 1.3698,
+    "MAE": 0.9371,
+    "R2": 0.8796
+   },
+   "n_members": 4,
+   "member_files": [
+    "GraphSAGE_FreeSolv_featb.pt",
+    "GraphSAGE_FreeSolv_featb_s7.pt",
+    "GraphSAGE_FreeSolv_featb_s13.pt",
+    "GraphSAGE_FreeSolv_featb_s21.pt"
+   ]
+  },
+  "GCN|FreeSolv|c": {
+   "members": [
+    {
+     "RMSE": 1.0085,
+     "MAE": 0.5897,
+     "R2": 0.9347
+    },
+    {
+     "RMSE": 1.0682,
+     "MAE": 0.6227,
+     "R2": 0.9268
+    },
+    {
+     "RMSE": 1.1461,
+     "MAE": 0.5766,
+     "R2": 0.9157
+    },
+    {
+     "RMSE": 1.0448,
+     "MAE": 0.6661,
+     "R2": 0.9299
+    }
+   ],
+   "ensemble": {
+    "RMSE": 1.0403,
+    "MAE": 0.5907,
+    "R2": 0.9305
+   },
+   "n_members": 4,
+   "member_files": [
+    "GCN_FreeSolv_featc.pt",
+    "GCN_FreeSolv_featc_s7.pt",
+    "GCN_FreeSolv_featc_s13.pt",
+    "GCN_FreeSolv_featc_s21.pt"
+   ]
+  },
+  "GAT|FreeSolv|c": {
+   "members": [
+    {
+     "RMSE": 1.4777,
+     "MAE": 0.6815,
+     "R2": 0.8598
+    },
+    {
+     "RMSE": 1.0559,
+     "MAE": 0.6573,
+     "R2": 0.9284
+    },
+    {
+     "RMSE": 1.055,
+     "MAE": 0.6307,
+     "R2": 0.9286
+    },
+    {
+     "RMSE": 1.0358,
+     "MAE": 0.6269,
+     "R2": 0.9311
+    }
+   ],
+   "ensemble": {
+    "RMSE": 1.1225,
+    "MAE": 0.6119,
+    "R2": 0.9191
+   },
+   "n_members": 4,
+   "member_files": [
+    "GAT_FreeSolv_featc.pt",
+    "GAT_FreeSolv_featc_s7.pt",
+    "GAT_FreeSolv_featc_s13.pt",
+    "GAT_FreeSolv_featc_s21.pt"
+   ]
+  },
+  "GraphSAGE|FreeSolv|c": {
+   "members": [
+    {
+     "RMSE": 1.1013,
+     "MAE": 0.6317,
+     "R2": 0.9221
+    },
+    {
+     "RMSE": 1.0847,
+     "MAE": 0.5474,
+     "R2": 0.9245
+    },
+    {
+     "RMSE": 1.1434,
+     "MAE": 0.6654,
+     "R2": 0.9161
+    },
+    {
+     "RMSE": 1.1555,
+     "MAE": 0.6374,
+     "R2": 0.9143
+    }
+   ],
+   "ensemble": {
+    "RMSE": 1.0959,
+    "MAE": 0.5934,
+    "R2": 0.9229
+   },
+   "n_members": 4,
+   "member_files": [
+    "GraphSAGE_FreeSolv_featc.pt",
+    "GraphSAGE_FreeSolv_featc_s7.pt",
+    "GraphSAGE_FreeSolv_featc_s13.pt",
+    "GraphSAGE_FreeSolv_featc_s21.pt"
+   ]
+  },
+  "GCN|BBBP|a": {
+   "members": [
+    {
+     "Accuracy": 0.8537,
+     "AUC": 0.7862,
+     "F1": 0.902
+    },
+    {
+     "Accuracy": 0.8537,
+     "AUC": 0.9115,
+     "F1": 0.9045
+    },
+    {
+     "Accuracy": 0.8585,
+     "AUC": 0.9077,
+     "F1": 0.9073
+    },
+    {
+     "Accuracy": 0.8488,
+     "AUC": 0.9068,
+     "F1": 0.901
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.8585,
+    "AUC": 0.9054,
+    "F1": 0.9068
+   },
+   "n_members": 4,
+   "member_files": [
+    "GCN_BBBP_feata.pt",
+    "GCN_BBBP_feata_s7.pt",
+    "GCN_BBBP_feata_s13.pt",
+    "GCN_BBBP_feata_s21.pt"
+   ]
+  },
+  "GAT|BBBP|a": {
+   "members": [
+    {
+     "Accuracy": 0.839,
+     "AUC": 0.9238,
+     "F1": 0.8959
+    },
+    {
+     "Accuracy": 0.8488,
+     "AUC": 0.9006,
+     "F1": 0.9022
+    },
+    {
+     "Accuracy": 0.8439,
+     "AUC": 0.8941,
+     "F1": 0.9
+    },
+    {
+     "Accuracy": 0.8439,
+     "AUC": 0.9284,
+     "F1": 0.8987
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.8439,
+    "AUC": 0.9204,
+    "F1": 0.8994
+   },
+   "n_members": 4,
+   "member_files": [
+    "GAT_BBBP_feata.pt",
+    "GAT_BBBP_feata_s7.pt",
+    "GAT_BBBP_feata_s13.pt",
+    "GAT_BBBP_feata_s21.pt"
+   ]
+  },
+  "GraphSAGE|BBBP|a": {
+   "members": [
+    {
+     "Accuracy": 0.8683,
+     "AUC": 0.9281,
+     "F1": 0.9115
+    },
+    {
+     "Accuracy": 0.8488,
+     "AUC": 0.9266,
+     "F1": 0.8956
+    },
+    {
+     "Accuracy": 0.8683,
+     "AUC": 0.9242,
+     "F1": 0.9132
+    },
+    {
+     "Accuracy": 0.8683,
+     "AUC": 0.915,
+     "F1": 0.9126
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.878,
+    "AUC": 0.9271,
+    "F1": 0.9191
+   },
+   "n_members": 4,
+   "member_files": [
+    "GraphSAGE_BBBP_feata.pt",
+    "GraphSAGE_BBBP_feata_s7.pt",
+    "GraphSAGE_BBBP_feata_s13.pt",
+    "GraphSAGE_BBBP_feata_s21.pt"
+   ]
+  },
+  "GCN|BBBP|b": {
+   "members": [
+    {
+     "Accuracy": 0.8732,
+     "AUC": 0.81,
+     "F1": 0.915
+    },
+    {
+     "Accuracy": 0.8585,
+     "AUC": 0.8982,
+     "F1": 0.9068
+    },
+    {
+     "Accuracy": 0.8585,
+     "AUC": 0.9262,
+     "F1": 0.9073
+    },
+    {
+     "Accuracy": 0.8732,
+     "AUC": 0.9173,
+     "F1": 0.9156
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.878,
+    "AUC": 0.9132,
+    "F1": 0.9196
+   },
+   "n_members": 4,
+   "member_files": [
+    "GCN_BBBP_featb.pt",
+    "GCN_BBBP_featb_s7.pt",
+    "GCN_BBBP_featb_s13.pt",
+    "GCN_BBBP_featb_s21.pt"
+   ]
+  },
+  "GAT|BBBP|b": {
+   "members": [
+    {
+     "Accuracy": 0.839,
+     "AUC": 0.8985,
+     "F1": 0.8966
+    },
+    {
+     "Accuracy": 0.8585,
+     "AUC": 0.9178,
+     "F1": 0.9068
+    },
+    {
+     "Accuracy": 0.839,
+     "AUC": 0.925,
+     "F1": 0.8946
+    },
+    {
+     "Accuracy": 0.8439,
+     "AUC": 0.9147,
+     "F1": 0.8994
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.8439,
+    "AUC": 0.9215,
+    "F1": 0.8994
+   },
+   "n_members": 4,
+   "member_files": [
+    "GAT_BBBP_featb.pt",
+    "GAT_BBBP_featb_s7.pt",
+    "GAT_BBBP_featb_s13.pt",
+    "GAT_BBBP_featb_s21.pt"
+   ]
+  },
+  "GraphSAGE|BBBP|b": {
+   "members": [
+    {
+     "Accuracy": 0.8585,
+     "AUC": 0.9177,
+     "F1": 0.9061
+    },
+    {
+     "Accuracy": 0.8683,
+     "AUC": 0.9292,
+     "F1": 0.9121
+    },
+    {
+     "Accuracy": 0.878,
+     "AUC": 0.912,
+     "F1": 0.9196
+    },
+    {
+     "Accuracy": 0.878,
+     "AUC": 0.9189,
+     "F1": 0.9196
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.8683,
+    "AUC": 0.9305,
+    "F1": 0.9132
+   },
+   "n_members": 4,
+   "member_files": [
+    "GraphSAGE_BBBP_featb.pt",
+    "GraphSAGE_BBBP_featb_s7.pt",
+    "GraphSAGE_BBBP_featb_s13.pt",
+    "GraphSAGE_BBBP_featb_s21.pt"
+   ]
+  },
+  "GCN|BBBP|c": {
+   "members": [
+    {
+     "Accuracy": 0.8439,
+     "AUC": 0.8147,
+     "F1": 0.8897
+    },
+    {
+     "Accuracy": 0.8439,
+     "AUC": 0.9143,
+     "F1": 0.8881
+    },
+    {
+     "Accuracy": 0.8585,
+     "AUC": 0.9187,
+     "F1": 0.901
+    },
+    {
+     "Accuracy": 0.8585,
+     "AUC": 0.9154,
+     "F1": 0.9003
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.8732,
+    "AUC": 0.9177,
+    "F1": 0.911
+   },
+   "n_members": 4,
+   "member_files": [
+    "GCN_BBBP_featc.pt",
+    "GCN_BBBP_featc_s7.pt",
+    "GCN_BBBP_featc_s13.pt",
+    "GCN_BBBP_featc_s21.pt"
+   ]
+  },
+  "GAT|BBBP|c": {
+   "members": [
+    {
+     "Accuracy": 0.8537,
+     "AUC": 0.8367,
+     "F1": 0.8951
+    },
+    {
+     "Accuracy": 0.8537,
+     "AUC": 0.919,
+     "F1": 0.8958
+    },
+    {
+     "Accuracy": 0.8585,
+     "AUC": 0.9082,
+     "F1": 0.903
+    },
+    {
+     "Accuracy": 0.8683,
+     "AUC": 0.915,
+     "F1": 0.9078
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.878,
+    "AUC": 0.919,
+    "F1": 0.9147
+   },
+   "n_members": 4,
+   "member_files": [
+    "GAT_BBBP_featc.pt",
+    "GAT_BBBP_featc_s7.pt",
+    "GAT_BBBP_featc_s13.pt",
+    "GAT_BBBP_featc_s21.pt"
+   ]
+  },
+  "GraphSAGE|BBBP|c": {
+   "members": [
+    {
+     "Accuracy": 0.8488,
+     "AUC": 0.8282,
+     "F1": 0.892
+    },
+    {
+     "Accuracy": 0.8683,
+     "AUC": 0.9148,
+     "F1": 0.9072
+    },
+    {
+     "Accuracy": 0.8439,
+     "AUC": 0.9098,
+     "F1": 0.8881
+    },
+    {
+     "Accuracy": 0.8829,
+     "AUC": 0.9153,
+     "F1": 0.9184
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.8537,
+    "AUC": 0.9163,
+    "F1": 0.8966
+   },
+   "n_members": 4,
+   "member_files": [
+    "GraphSAGE_BBBP_featc.pt",
+    "GraphSAGE_BBBP_featc_s7.pt",
+    "GraphSAGE_BBBP_featc_s13.pt",
+    "GraphSAGE_BBBP_featc_s21.pt"
+   ]
+  },
+  "GCN|Clintox|a": {
+   "members": [
+    {
+     "Accuracy": 0.9392,
+     "AUC": 0.6786,
+     "F1": 0.5263
+    },
+    {
+     "Accuracy": 0.8716,
+     "AUC": 0.9001,
+     "F1": 0.3871
+    },
+    {
+     "Accuracy": 0.8716,
+     "AUC": 0.907,
+     "F1": 0.4571
+    },
+    {
+     "Accuracy": 0.8986,
+     "AUC": 0.9118,
+     "F1": 0.4828
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.9189,
+    "AUC": 0.9041,
+    "F1": 0.5385
+   },
+   "n_members": 4,
+   "member_files": [
+    "GCN_Clintox_feata.pt",
+    "GCN_Clintox_feata_s7.pt",
+    "GCN_Clintox_feata_s13.pt",
+    "GCN_Clintox_feata_s21.pt"
+   ]
+  },
+  "GAT|Clintox|a": {
+   "members": [
+    {
+     "Accuracy": 0.9257,
+     "AUC": 0.8982,
+     "F1": 0.4211
+    },
+    {
+     "Accuracy": 0.8378,
+     "AUC": 0.8958,
+     "F1": 0.4286
+    },
+    {
+     "Accuracy": 0.8716,
+     "AUC": 0.9088,
+     "F1": 0.4865
+    },
+    {
+     "Accuracy": 0.9054,
+     "AUC": 0.9203,
+     "F1": 0.5625
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.9122,
+    "AUC": 0.9091,
+    "F1": 0.5806
+   },
+   "n_members": 4,
+   "member_files": [
+    "GAT_Clintox_feata.pt",
+    "GAT_Clintox_feata_s7.pt",
+    "GAT_Clintox_feata_s13.pt",
+    "GAT_Clintox_feata_s21.pt"
+   ]
+  },
+  "GraphSAGE|Clintox|a": {
+   "members": [
+    {
+     "Accuracy": 0.9189,
+     "AUC": 0.8777,
+     "F1": 0.25
+    },
+    {
+     "Accuracy": 0.8851,
+     "AUC": 0.8977,
+     "F1": 0.4848
+    },
+    {
+     "Accuracy": 0.9122,
+     "AUC": 0.9096,
+     "F1": 0.48
+    },
+    {
+     "Accuracy": 0.8986,
+     "AUC": 0.903,
+     "F1": 0.5161
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.9122,
+    "AUC": 0.9054,
+    "F1": 0.48
+   },
+   "n_members": 4,
+   "member_files": [
+    "GraphSAGE_Clintox_feata.pt",
+    "GraphSAGE_Clintox_feata_s7.pt",
+    "GraphSAGE_Clintox_feata_s13.pt",
+    "GraphSAGE_Clintox_feata_s21.pt"
+   ]
+  },
+  "GCN|Clintox|b": {
+   "members": [
+    {
+     "Accuracy": 0.9257,
+     "AUC": 0.6071,
+     "F1": 0.3529
+    },
+    {
+     "Accuracy": 0.8784,
+     "AUC": 0.9025,
+     "F1": 0.4375
+    },
+    {
+     "Accuracy": 0.8649,
+     "AUC": 0.8995,
+     "F1": 0.4737
+    },
+    {
+     "Accuracy": 0.8581,
+     "AUC": 0.9011,
+     "F1": 0.4878
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.8986,
+    "AUC": 0.9027,
+    "F1": 0.4828
+   },
+   "n_members": 4,
+   "member_files": [
+    "GCN_Clintox_featb.pt",
+    "GCN_Clintox_featb_s7.pt",
+    "GCN_Clintox_featb_s13.pt",
+    "GCN_Clintox_featb_s21.pt"
+   ]
+  },
+  "GAT|Clintox|b": {
+   "members": [
+    {
+     "Accuracy": 0.9122,
+     "AUC": 0.8769,
+     "F1": 0.48
+    },
+    {
+     "Accuracy": 0.8919,
+     "AUC": 0.8993,
+     "F1": 0.4667
+    },
+    {
+     "Accuracy": 0.9054,
+     "AUC": 0.9091,
+     "F1": 0.5625
+    },
+    {
+     "Accuracy": 0.8649,
+     "AUC": 0.9035,
+     "F1": 0.4444
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.9054,
+    "AUC": 0.9064,
+    "F1": 0.4615
+   },
+   "n_members": 4,
+   "member_files": [
+    "GAT_Clintox_featb.pt",
+    "GAT_Clintox_featb_s7.pt",
+    "GAT_Clintox_featb_s13.pt",
+    "GAT_Clintox_featb_s21.pt"
+   ]
+  },
+  "GraphSAGE|Clintox|b": {
+   "members": [
+    {
+     "Accuracy": 0.9189,
+     "AUC": 0.8833,
+     "F1": 0.3333
+    },
+    {
+     "Accuracy": 0.6824,
+     "AUC": 0.8254,
+     "F1": 0.338
+    },
+    {
+     "Accuracy": 0.7162,
+     "AUC": 0.8276,
+     "F1": 0.3438
+    },
+    {
+     "Accuracy": 0.6554,
+     "AUC": 0.859,
+     "F1": 0.3544
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.7568,
+    "AUC": 0.8625,
+    "F1": 0.3793
+   },
+   "n_members": 4,
+   "member_files": [
+    "GraphSAGE_Clintox_featb.pt",
+    "GraphSAGE_Clintox_featb_s7.pt",
+    "GraphSAGE_Clintox_featb_s13.pt",
+    "GraphSAGE_Clintox_featb_s21.pt"
+   ]
+  },
+  "GCN|Clintox|c": {
+   "members": [
+    {
+     "Accuracy": 0.8986,
+     "AUC": 0.7201,
+     "F1": 0.4828
+    },
+    {
+     "Accuracy": 0.8176,
+     "AUC": 0.8745,
+     "F1": 0.4255
+    },
+    {
+     "Accuracy": 0.8784,
+     "AUC": 0.8814,
+     "F1": 0.4706
+    },
+    {
+     "Accuracy": 0.8986,
+     "AUC": 0.8563,
+     "F1": 0.4828
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.8851,
+    "AUC": 0.8793,
+    "F1": 0.4516
+   },
+   "n_members": 4,
+   "member_files": [
+    "GCN_Clintox_featc.pt",
+    "GCN_Clintox_featc_s7.pt",
+    "GCN_Clintox_featc_s13.pt",
+    "GCN_Clintox_featc_s21.pt"
+   ]
+  },
+  "GAT|Clintox|c": {
+   "members": [
+    {
+     "Accuracy": 0.9122,
+     "AUC": 0.6636,
+     "F1": 0.4348
+    },
+    {
+     "Accuracy": 0.7703,
+     "AUC": 0.8585,
+     "F1": 0.3704
+    },
+    {
+     "Accuracy": 0.8108,
+     "AUC": 0.8521,
+     "F1": 0.3636
+    },
+    {
+     "Accuracy": 0.8716,
+     "AUC": 0.8585,
+     "F1": 0.3871
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.8851,
+    "AUC": 0.8697,
+    "F1": 0.4848
+   },
+   "n_members": 4,
+   "member_files": [
+    "GAT_Clintox_featc.pt",
+    "GAT_Clintox_featc_s7.pt",
+    "GAT_Clintox_featc_s13.pt",
+    "GAT_Clintox_featc_s21.pt"
+   ]
+  },
+  "GraphSAGE|Clintox|c": {
+   "members": [
+    {
+     "Accuracy": 0.9122,
+     "AUC": 0.6636,
+     "F1": 0.4348
+    },
+    {
+     "Accuracy": 0.7568,
+     "AUC": 0.8638,
+     "F1": 0.3793
+    },
+    {
+     "Accuracy": 0.7365,
+     "AUC": 0.8771,
+     "F1": 0.381
+    },
+    {
+     "Accuracy": 0.8243,
+     "AUC": 0.8675,
+     "F1": 0.4583
+    }
+   ],
+   "ensemble": {
+    "Accuracy": 0.8311,
+    "AUC": 0.8867,
+    "F1": 0.3902
+   },
+   "n_members": 4,
+   "member_files": [
+    "GraphSAGE_Clintox_featc.pt",
+    "GraphSAGE_Clintox_featc_s7.pt",
+    "GraphSAGE_Clintox_featc_s13.pt",
+    "GraphSAGE_Clintox_featc_s21.pt"
+   ]
+  }
+ },
+ "clintox_baseline.json": {
+  "Clintox": {
+   "GCN": {
+    "Accuracy": 0.6554,
+    "AUC": 0.7114,
+    "F1": 0.2609
+   },
+   "GAT": {
+    "Accuracy": 0.5203,
+    "AUC": 0.7241,
+    "F1": 0.2526
+   },
+   "GraphSAGE": {
+    "Accuracy": 0.6689,
+    "AUC": 0.6405,
+    "F1": 0.2222
+   }
+  },
+  "task": "classification (CT_TOX col1, pos 7.6%, n=1480, split 8:1:1 seed42)",
+  "config": "hidden=64 layers=3 heads=4 seed=42, class_weight=[1,12]"
+ },
+ "clintox_ensemble.json": {
+  "task": "Clintox CT_TOX (classification, pos 7.6%)",
+  "config": "hidden=64 layers=3 heads=4 成员=seed42基线+s7+s13+s21（类别加权[1,12]）",
+  "GCN": {
+   "n_members": 4,
+   "members_AUC": [
+    0.7114,
+    0.617,
+    0.6111,
+    0.714
+   ],
+   "ensemble_AUC": 0.7087,
+   "ensemble_ECE": 0.5325
+  },
+  "GAT": {
+   "n_members": 4,
+   "members_AUC": [
+    0.7241,
+    0.6202,
+    0.6285,
+    0.6551
+   ],
+   "ensemble_AUC": 0.693,
+   "ensemble_ECE": 0.5464
+  },
+  "GraphSAGE": {
+   "n_members": 4,
+   "members_AUC": [
+    0.6405,
+    0.6612,
+    0.6916,
+    0.6341
+   ],
+   "ensemble_AUC": 0.674,
+   "ensemble_ECE": 0.5892
+  }
+ },
+ "pretrain_finetune_results.json": {
+  "config": {
+   "pattern": "full",
+   "pretrain_epochs": 150,
+   "finetune_epochs": 300
+  },
+  "results": {
+   "ESOL": {
+    "GCN": {
+     "pretrained": {
+      "RMSE": 0.817,
+      "MAE": 0.5941,
+      "R2": 0.841
+     },
+     "baseline": {
+      "RMSE": 0.7952,
+      "MAE": 0.5818,
+      "R2": 0.8493
+     },
+     "delta": {
+      "RMSE": 0.0218,
+      "MAE": 0.0123,
+      "R2": -0.0083
+     }
+    },
+    "GAT": {
+     "pretrained": {
+      "RMSE": 0.839,
+      "MAE": 0.6363,
+      "R2": 0.8323
+     },
+     "baseline": {
+      "RMSE": 0.7484,
+      "MAE": 0.5895,
+      "R2": 0.8666
+     },
+     "delta": {
+      "RMSE": 0.0906,
+      "MAE": 0.0468,
+      "R2": -0.0343
+     }
+    },
+    "GraphSAGE": {
+     "pretrained": {
+      "RMSE": 0.7603,
+      "MAE": 0.5884,
+      "R2": 0.8623
+     },
+     "baseline": {
+      "RMSE": 0.787,
+      "MAE": 0.5734,
+      "R2": 0.8524
+     },
+     "delta": {
+      "RMSE": -0.0267,
+      "MAE": 0.015,
+      "R2": 0.0099
+     }
+    }
+   },
+   "FreeSolv": {
+    "GCN": {
+     "pretrained": {
+      "RMSE": 1.771,
+      "MAE": 1.2762,
+      "R2": 0.7987
+     },
+     "baseline": {
+      "RMSE": 2.0053,
+      "MAE": 1.6068,
+      "R2": 0.7419
+     },
+     "delta": {
+      "RMSE": -0.2343,
+      "MAE": -0.3306,
+      "R2": 0.0568
+     }
+    },
+    "GAT": {
+     "pretrained": {
+      "RMSE": 1.657,
+      "MAE": 1.1075,
+      "R2": 0.8238
+     },
+     "baseline": {
+      "RMSE": 2.2051,
+      "MAE": 1.2602,
+      "R2": 0.6879
+     },
+     "delta": {
+      "RMSE": -0.5481,
+      "MAE": -0.1527,
+      "R2": 0.1359
+     }
+    },
+    "GraphSAGE": {
+     "pretrained": {
+      "RMSE": 1.4496,
+      "MAE": 1.0178,
+      "R2": 0.8651
+     },
+     "baseline": {
+      "RMSE": 1.3842,
+      "MAE": 1.0605,
+      "R2": 0.877
+     },
+     "delta": {
+      "RMSE": 0.0654,
+      "MAE": -0.0427,
+      "R2": -0.0119
+     }
+    }
+   },
+   "BBBP": {
+    "GCN": {
+     "pretrained": {
+      "Accuracy": 0.8049,
+      "AUC": 0.8953,
+      "F1": 0.8765
+     },
+     "baseline": {
+      "Accuracy": 0.8195,
+      "AUC": 0.8085,
+      "F1": 0.8833,
+      "AUC_old_argmax": 0.7167
+     },
+     "delta": {
+      "Accuracy": -0.0146,
+      "AUC": 0.0868,
+      "F1": -0.0068
+     }
+    },
+    "GAT": {
+     "pretrained": {
+      "Accuracy": 0.8439,
+      "AUC": 0.8976,
+      "F1": 0.9
+     },
+     "baseline": {
+      "Accuracy": 0.8341,
+      "AUC": 0.8303,
+      "F1": 0.8889,
+      "AUC_old_argmax": 0.7624
+     },
+     "delta": {
+      "Accuracy": 0.0098,
+      "AUC": 0.0673,
+      "F1": 0.0111
+     }
+    },
+    "GraphSAGE": {
+     "pretrained": {
+      "Accuracy": 0.8244,
+      "AUC": 0.8954,
+      "F1": 0.8875
+     },
+     "baseline": {
+      "Accuracy": 0.8537,
+      "AUC": 0.8759,
+      "F1": 0.902,
+      "AUC_old_argmax": 0.7862
+     },
+     "delta": {
+      "Accuracy": -0.0293,
+      "AUC": 0.0195,
+      "F1": -0.0145
+     }
+    }
+   }
+  }
+ },
+ "ablation_results.json": {
+  "task": "GCN×ESOL",
+  "pretrain_epochs": 40,
+  "finetune_epochs": 300,
+  "results": {
+   "mask": {
+    "pretrained": {
+     "RMSE": 0.8152,
+     "MAE": 0.5962,
+     "R2": 0.8417
+    },
+    "baseline": {
+     "RMSE": 0.7952,
+     "MAE": 0.5818,
+     "R2": 0.8493
+    },
+    "delta": {
+     "RMSE": 0.02,
+     "MAE": 0.0144,
+     "R2": -0.0076
+    }
+   },
+   "perturb": {
+    "pretrained": {
+     "RMSE": 0.8763,
+     "MAE": 0.653,
+     "R2": 0.817
+    },
+    "baseline": {
+     "RMSE": 0.7952,
+     "MAE": 0.5818,
+     "R2": 0.8493
+    },
+    "delta": {
+     "RMSE": 0.0811,
+     "MAE": 0.0712,
+     "R2": -0.0323
+    }
+   },
+   "drop": {
+    "pretrained": {
+     "RMSE": 0.8384,
+     "MAE": 0.6231,
+     "R2": 0.8325
+    },
+    "baseline": {
+     "RMSE": 0.7952,
+     "MAE": 0.5818,
+     "R2": 0.8493
+    },
+    "delta": {
+     "RMSE": 0.0432,
+     "MAE": 0.0413,
+     "R2": -0.0168
+    }
+   },
+   "full": {
+    "pretrained": {
+     "RMSE": 0.7931,
+     "MAE": 0.5804,
+     "R2": 0.8502
+    },
+    "baseline": {
+     "RMSE": 0.7952,
+     "MAE": 0.5818,
+     "R2": 0.8493
+    },
+    "delta": {
+     "RMSE": -0.0021,
+     "MAE": -0.0014,
+     "R2": 0.0009
+    }
+   }
+  }
+ },
+ "uncertainty_report": {
+  "mc_dropout": {
+   "ESOL": {
+    "GCN": {
+     "pi_coverage_90": 0.7632,
+     "avg_interval_width": 1.8437,
+     "uncertainty_err_corr": 0.0302
+    },
+    "GAT": {
+     "pi_coverage_90": 0.7719,
+     "avg_interval_width": 2.037,
+     "uncertainty_err_corr": -0.0401
+    },
+    "GraphSAGE": {
+     "pi_coverage_90": 0.7807,
+     "avg_interval_width": 1.8344,
+     "uncertainty_err_corr": 0.0842
+    }
+   },
+   "FreeSolv": {
+    "GCN": {
+     "pi_coverage_90": 0.4923,
+     "avg_interval_width": 3.0077,
+     "uncertainty_err_corr": 0.3277
+    },
+    "GAT": {
+     "pi_coverage_90": 0.7231,
+     "avg_interval_width": 4.5319,
+     "uncertainty_err_corr": 0.3142
+    },
+    "GraphSAGE": {
+     "pi_coverage_90": 0.6615,
+     "avg_interval_width": 3.0048,
+     "uncertainty_err_corr": 0.3484
+    }
+   },
+   "BBBP": {
+    "GCN": {
+     "ECE": 0.0415,
+     "uncertainty_err_corr": 0.2244,
+     "AUC": 0.808
+    },
+    "GAT": {
+     "ECE": 0.0821,
+     "uncertainty_err_corr": 0.2196,
+     "AUC": 0.828
+    },
+    "GraphSAGE": {
+     "ECE": 0.0565,
+     "uncertainty_err_corr": 0.3089,
+     "AUC": 0.8646
+    }
+   }
+  },
+  "config": {
+   "method": "MC-Dropout",
+   "n_samples": 30,
+   "device": "cuda"
+  },
+  "ensemble": {
+   "FreeSolv": {
+    "GAT": {
+     "n_members": 3,
+     "pi_coverage_90": 0.4154,
+     "avg_interval_width": 1.545,
+     "uncertainty_err_corr": 0.1392,
+     "RMSE": 2.1739,
+     "R2": 0.6967,
+     "member_RMSE": [
+      2.9534,
+      1.9851,
+      1.8477
+     ]
+    }
+   },
+   "BBBP": {
+    "GraphSAGE": {
+     "n_members": 3,
+     "ECE": 0.0769,
+     "uncertainty_err_corr": 0.3701,
+     "AUC": 0.8992,
+     "member_AUC": [
+      0.8796,
+      0.8899,
+      0.8953
+     ]
+    }
+   }
+  },
+  "config_ensemble": {
+   "n_members": null,
+   "device": "cuda"
+  }
+ },
+ "_all_files": [
+  "ablation_results.json",
+  "clintox_baseline.json",
+  "clintox_ensemble.json",
+  "comparison_results.json",
+  "feat_ensemble_results.json",
+  "feat_results.json",
+  "pretrain_finetune_results.json",
+  "pretrain_run.json",
+  "uncertainty_report.json"
+ ]
+}

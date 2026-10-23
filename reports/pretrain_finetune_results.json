@@ -1,0 +1,171 @@
+{
+  "config": {
+    "pattern": "full",
+    "pretrain_epochs": 150,
+    "finetune_epochs": 300
+  },
+  "results": {
+    "ESOL": {
+      "GCN": {
+        "pretrained": {
+          "RMSE": 0.817,
+          "MAE": 0.5941,
+          "R2": 0.841
+        },
+        "baseline": {
+          "RMSE": 0.7952,
+          "MAE": 0.5818,
+          "R2": 0.8493
+        },
+        "delta": {
+          "RMSE": 0.0218,
+          "MAE": 0.0123,
+          "R2": -0.0083
+        }
+      },
+      "GAT": {
+        "pretrained": {
+          "RMSE": 0.839,
+          "MAE": 0.6363,
+          "R2": 0.8323
+        },
+        "baseline": {
+          "RMSE": 0.7484,
+          "MAE": 0.5895,
+          "R2": 0.8666
+        },
+        "delta": {
+          "RMSE": 0.0906,
+          "MAE": 0.0468,
+          "R2": -0.0343
+        }
+      },
+      "GraphSAGE": {
+        "pretrained": {
+          "RMSE": 0.7603,
+          "MAE": 0.5884,
+          "R2": 0.8623
+        },
+        "baseline": {
+          "RMSE": 0.787,
+          "MAE": 0.5734,
+          "R2": 0.8524
+        },
+        "delta": {
+          "RMSE": -0.0267,
+          "MAE": 0.015,
+          "R2": 0.0099
+        }
+      }
+    },
+    "FreeSolv": {
+      "GCN": {
+        "pretrained": {
+          "RMSE": 1.771,
+          "MAE": 1.2762,
+          "R2": 0.7987
+        },
+        "baseline": {
+          "RMSE": 2.0053,
+          "MAE": 1.6068,
+          "R2": 0.7419
+        },
+        "delta": {
+          "RMSE": -0.2343,
+          "MAE": -0.3306,
+          "R2": 0.0568
+        }
+      },
+      "GAT": {
+        "pretrained": {
+          "RMSE": 1.657,
+          "MAE": 1.1075,
+          "R2": 0.8238
+        },
+        "baseline": {
+          "RMSE": 2.2051,
+          "MAE": 1.2602,
+          "R2": 0.6879
+        },
+        "delta": {
+          "RMSE": -0.5481,
+          "MAE": -0.1527,
+          "R2": 0.1359
+        }
+      },
+      "GraphSAGE": {
+        "pretrained": {
+          "RMSE": 1.4496,
+          "MAE": 1.0178,
+          "R2": 0.8651
+        },
+        "baseline": {
+          "RMSE": 1.3842,
+          "MAE": 1.0605,
+          "R2": 0.877
+        },
+        "delta": {
+          "RMSE": 0.0654,
+          "MAE": -0.0427,
+          "R2": -0.0119
+        }
+      }
+    },
+    "BBBP": {
+      "GCN": {
+        "pretrained": {
+          "Accuracy": 0.8049,
+          "AUC": 0.8953,
+          "F1": 0.8765
+        },
+        "baseline": {
+          "Accuracy": 0.8195,
+          "AUC": 0.8085,
+          "F1": 0.8833,
+          "AUC_old_argmax": 0.7167
+        },
+        "delta": {
+          "Accuracy": -0.0146,
+          "AUC": 0.0868,
+          "F1": -0.0068
+        }
+      },
+      "GAT": {
+        "pretrained": {
+          "Accuracy": 0.8439,
+          "AUC": 0.8976,
+          "F1": 0.9
+        },
+        "baseline": {
+          "Accuracy": 0.8341,
+          "AUC": 0.8303,
+          "F1": 0.8889,
+          "AUC_old_argmax": 0.7624
+        },
+        "delta": {
+          "Accuracy": 0.0098,
+          "AUC": 0.0673,
+          "F1": 0.0111
+        }
+      },
+      "GraphSAGE": {
+        "pretrained": {
+          "Accuracy": 0.8244,
+          "AUC": 0.8954,
+          "F1": 0.8875
+        },
+        "baseline": {
+          "Accuracy": 0.8537,
+          "AUC": 0.8759,
+          "F1": 0.902,
+          "AUC_old_argmax": 0.7862
+        },
+        "delta": {
+          "Accuracy": -0.0293,
+          "AUC": 0.0195,
+          "F1": -0.0145
+        }
+      }
+    }
+  }
+}

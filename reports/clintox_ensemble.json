@@ -1,0 +1,37 @@
+{
+  "task": "Clintox CT_TOX (classification, pos 7.6%)",
+  "config": "hidden=64 layers=3 heads=4 成员=seed42基线+s7+s13+s21（类别加权[1,12]）",
+  "GCN": {
+    "n_members": 4,
+    "members_AUC": [
+      0.7114,
+      0.617,
+      0.6111,
+      0.714
+    ],
+    "ensemble_AUC": 0.7087,
+    "ensemble_ECE": 0.5325
+  },
+  "GAT": {
+    "n_members": 4,
+    "members_AUC": [
+      0.7241,
+      0.6202,
+      0.6285,
+      0.6551
+    ],
+    "ensemble_AUC": 0.693,
+    "ensemble_ECE": 0.5464
+  },
+  "GraphSAGE": {
+    "n_members": 4,
+    "members_AUC": [
+      0.6405,
+      0.6612,
+      0.6916,
+      0.6341
+    ],
+    "ensemble_AUC": 0.674,
+    "ensemble_ECE": 0.5892
+  }
+}

@@ -1,0 +1,91 @@
+[
+  {
+    "conv": "GCN",
+    "dataset": "ESOL",
+    "index": 661,
+    "smiles": "Clc1ccc(c(Cl)c1)c2c(Cl)c(Cl)c(Cl)c(Cl)c2Cl",
+    "pred": -7.9747,
+    "top5_atoms": [
+      9,
+      1,
+      17,
+      12,
+      11
+    ],
+    "top5_edges": [
+      30,
+      13,
+      34,
+      28,
+      7
+    ],
+    "image": "reports\\interpret\\GCN_ESOL_idx661.png",
+    "drawn": true
+  },
+  {
+    "conv": "GCN",
+    "dataset": "ESOL",
+    "index": 121,
+    "smiles": "CC(C)C(C)C(C)C",
+    "pred": -4.9993,
+    "top5_atoms": [
+      1,
+      5,
+      3,
+      4,
+      6
+    ],
+    "top5_edges": [
+      13,
+      0,
+      12,
+      8,
+      4
+    ],
+    "image": "reports\\interpret\\GCN_ESOL_idx121.png",
+    "drawn": true
+  },
+  {
+    "conv": "GCN",
+    "dataset": "ESOL",
+    "index": 817,
+    "smiles": "CCCCCCCCCCCC(=O)OC",
+    "pred": -4.6661,
+    "top5_atoms": [
+      11,
+      7,
+      8,
+      1,
+      9
+    ],
+    "top5_edges": [
+      26,
+      0,
+      25,
+      18,
+      20
+    ],
+    "image": "reports\\interpret\\GCN_ESOL_idx817.png",
+    "drawn": true
+  },
+  {
+    "conv": "GCN",
+    "dataset": "ESOL",
+    "index": 638,
+    "smiles": "CCBr",
+    "pred": -1.2499,
+    "top5_atoms": [
+      2,
+      1,
+      0
+    ],
+    "top5_edges": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "image": "reports\\interpret\\GCN_ESOL_idx638.png",
+    "drawn": true
+  }
+]

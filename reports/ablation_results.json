@@ -1,0 +1,75 @@
+{
+  "task": "GCN×ESOL",
+  "pretrain_epochs": 40,
+  "finetune_epochs": 300,
+  "results": {
+    "mask": {
+      "pretrained": {
+        "RMSE": 0.8152,
+        "MAE": 0.5962,
+        "R2": 0.8417
+      },
+      "baseline": {
+        "RMSE": 0.7952,
+        "MAE": 0.5818,
+        "R2": 0.8493
+      },
+      "delta": {
+        "RMSE": 0.02,
+        "MAE": 0.0144,
+        "R2": -0.0076
+      }
+    },
+    "perturb": {
+      "pretrained": {
+        "RMSE": 0.8763,
+        "MAE": 0.653,
+        "R2": 0.817
+      },
+      "baseline": {
+        "RMSE": 0.7952,
+        "MAE": 0.5818,
+        "R2": 0.8493
+      },
+      "delta": {
+        "RMSE": 0.0811,
+        "MAE": 0.0712,
+        "R2": -0.0323
+      }
+    },
+    "drop": {
+      "pretrained": {
+        "RMSE": 0.8384,
+        "MAE": 0.6231,
+        "R2": 0.8325
+      },
+      "baseline": {
+        "RMSE": 0.7952,
+        "MAE": 0.5818,
+        "R2": 0.8493
+      },
+      "delta": {
+        "RMSE": 0.0432,
+        "MAE": 0.0413,
+        "R2": -0.0168
+      }
+    },
+    "full": {
+      "pretrained": {
+        "RMSE": 0.7931,
+        "MAE": 0.5804,
+        "R2": 0.8502
+      },
+      "baseline": {
+        "RMSE": 0.7952,
+        "MAE": 0.5818,
+        "R2": 0.8493
+      },
+      "delta": {
+        "RMSE": -0.0021,
+        "MAE": -0.0014,
+        "R2": 0.0009
+      }
+    }
+  }
+}

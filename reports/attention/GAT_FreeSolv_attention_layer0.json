@@ -1,0 +1,153 @@
+[
+  {
+    "conv": "GAT",
+    "dataset": "FreeSolv",
+    "index": 259,
+    "smiles": "C(C(F)(F)F)Cl",
+    "pred": 0.3432,
+    "layer": 0,
+    "heads": 4,
+    "top8_edges": [
+      {
+        "edge": [
+          0,
+          5
+        ],
+        "alpha": 0.5022
+      },
+      {
+        "edge": [
+          5,
+          0
+        ],
+        "alpha": 0.4976
+      },
+      {
+        "edge": [
+          1,
+          4
+        ],
+        "alpha": 0.4913
+      },
+      {
+        "edge": [
+          1,
+          2
+        ],
+        "alpha": 0.4913
+      }
+    ],
+    "image": "reports\\attention\\GAT_FreeSolv_idx259_attn_layer0.png",
+    "per_head_images": [
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx259_head1.png",
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx259_head2.png",
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx259_head3.png",
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx259_head4.png",
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx259_allheads.png"
+    ],
+    "drawn": true
+  },
+  {
+    "conv": "GAT",
+    "dataset": "FreeSolv",
+    "index": 339,
+    "smiles": "CCCC=C",
+    "pred": 1.5536,
+    "layer": 0,
+    "heads": 4,
+    "top8_edges": [
+      {
+        "edge": [
+          0,
+          1
+        ],
+        "alpha": 0.5138
+      },
+      {
+        "edge": [
+          2,
+          3
+        ],
+        "alpha": 0.4145
+      },
+      {
+        "edge": [
+          4,
+          3
+        ],
+        "alpha": 0.3981
+      },
+      {
+        "edge": [
+          1,
+          2
+        ],
+        "alpha": 0.3654
+      },
+      {
+        "edge": [
+          1,
+          0
+        ],
+        "alpha": 0.3532
+      }
+    ],
+    "image": "reports\\attention\\GAT_FreeSolv_idx339_attn_layer0.png",
+    "per_head_images": [
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx339_head1.png",
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx339_head2.png",
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx339_head3.png",
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx339_head4.png",
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx339_allheads.png"
+    ],
+    "drawn": true
+  },
+  {
+    "conv": "GAT",
+    "dataset": "FreeSolv",
+    "index": 342,
+    "smiles": "CCCCCCCCC(=O)C",
+    "pred": -2.6905,
+    "layer": 0,
+    "heads": 4,
+    "top8_edges": [
+      {
+        "edge": [
+          0,
+          1
+        ],
+        "alpha": 0.5138
+      },
+      {
+        "edge": [
+          8,
+          9
+        ],
+        "alpha": 0.4967
+      },
+      {
+        "edge": [
+          10,
+          8
+        ],
+        "alpha": 0.4795
+      },
+      {
+        "edge": [
+          6,
+          7
+        ],
+        "alpha": 0.4082
+      }
+    ],
+    "image": "reports\\attention\\GAT_FreeSolv_idx342_attn_layer0.png",
+    "per_head_images": [
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx342_head1.png",
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx342_head2.png",
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx342_head3.png",
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx342_head4.png",
+      "reports\\attention\\perhead\\GAT_FreeSolv_idx342_allheads.png"
+    ],
+    "drawn": true
+  }
+]

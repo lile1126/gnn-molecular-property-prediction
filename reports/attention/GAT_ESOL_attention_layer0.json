@@ -1,0 +1,118 @@
+[
+  {
+    "conv": "GAT",
+    "dataset": "ESOL",
+    "index": 661,
+    "smiles": "Clc1ccc(c(Cl)c1)c2c(Cl)c(Cl)c(Cl)c(Cl)c2Cl",
+    "pred": -8.4264,
+    "layer": 0,
+    "heads": 4,
+    "top8_edges": [
+      {
+        "edge": [
+          14,
+          13
+        ],
+        "alpha": 0.432
+      }
+    ],
+    "image": "reports\\attention\\GAT_ESOL_idx661_attn_layer0.png",
+    "per_head_images": [
+      "reports\\attention\\perhead\\GAT_ESOL_idx661_head1.png",
+      "reports\\attention\\perhead\\GAT_ESOL_idx661_head2.png",
+      "reports\\attention\\perhead\\GAT_ESOL_idx661_head3.png",
+      "reports\\attention\\perhead\\GAT_ESOL_idx661_head4.png",
+      "reports\\attention\\perhead\\GAT_ESOL_idx661_allheads.png"
+    ],
+    "drawn": true
+  },
+  {
+    "conv": "GAT",
+    "dataset": "ESOL",
+    "index": 121,
+    "smiles": "CC(C)C(C)C(C)C",
+    "pred": -4.0027,
+    "layer": 0,
+    "heads": 4,
+    "top8_edges": [
+      {
+        "edge": [
+          4,
+          3
+        ],
+        "alpha": 0.471
+      },
+      {
+        "edge": [
+          1,
+          0
+        ],
+        "alpha": 0.3539
+      },
+      {
+        "edge": [
+          1,
+          2
+        ],
+        "alpha": 0.3539
+      }
+    ],
+    "image": "reports\\attention\\GAT_ESOL_idx121_attn_layer0.png",
+    "per_head_images": [
+      "reports\\attention\\perhead\\GAT_ESOL_idx121_head1.png",
+      "reports\\attention\\perhead\\GAT_ESOL_idx121_head2.png",
+      "reports\\attention\\perhead\\GAT_ESOL_idx121_head3.png",
+      "reports\\attention\\perhead\\GAT_ESOL_idx121_head4.png",
+      "reports\\attention\\perhead\\GAT_ESOL_idx121_allheads.png"
+    ],
+    "drawn": true
+  },
+  {
+    "conv": "GAT",
+    "dataset": "ESOL",
+    "index": 817,
+    "smiles": "CCCCCCCCCCCC(=O)OC",
+    "pred": -5.4113,
+    "layer": 0,
+    "heads": 4,
+    "top8_edges": [
+      {
+        "edge": [
+          12,
+          11
+        ],
+        "alpha": 0.5391
+      },
+      {
+        "edge": [
+          0,
+          1
+        ],
+        "alpha": 0.5088
+      },
+      {
+        "edge": [
+          14,
+          13
+        ],
+        "alpha": 0.4759
+      },
+      {
+        "edge": [
+          13,
+          14
+        ],
+        "alpha": 0.4612
+      }
+    ],
+    "image": "reports\\attention\\GAT_ESOL_idx817_attn_layer0.png",
+    "per_head_images": [
+      "reports\\attention\\perhead\\GAT_ESOL_idx817_head1.png",
+      "reports\\attention\\perhead\\GAT_ESOL_idx817_head2.png",
+      "reports\\attention\\perhead\\GAT_ESOL_idx817_head3.png",
+      "reports\\attention\\perhead\\GAT_ESOL_idx817_head4.png",
+      "reports\\attention\\perhead\\GAT_ESOL_idx817_allheads.png"
+    ],
+    "drawn": true
+  }
+]

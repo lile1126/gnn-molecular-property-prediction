@@ -1,0 +1,30 @@
+# ===== 大文件与数据 =====
+# 本地模型权重与 HuggingFace 缓存（Qwen2.5-3B 约 5.9GB）
+models/
+# MoleculeNet 数据集与预处理缓存（约 190MB，按 README 自动下载重建）
+data/
+
+# ===== Python 缓存 =====
+__pycache__/
+*.pyc
+*.pyo
+
+# ===== 运行日志 =====
+*.log
+# 训练/探测过程输出文本（实验结论以 JSON/PNG 为准）
+reports/*.txt
+
+# ===== 中间工作目录（PPT/文档制作与验收产物）=====
+reports/_ppt_work/
+reports/_jieti_work/
+reports/_kaiti_update_work/
+
+# ===== 调试脚本与临时输出 =====
+reports/_*.py
+reports/_*.txt
+reports/*_out.txt
+reports/*_err.txt
+
+# ===== 系统文件 =====
+.DS_Store
+Thumbs.db

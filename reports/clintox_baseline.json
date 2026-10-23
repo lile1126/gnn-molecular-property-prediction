@@ -1,0 +1,21 @@
+{
+  "Clintox": {
+    "GCN": {
+      "Accuracy": 0.6554,
+      "AUC": 0.7114,
+      "F1": 0.2609
+    },
+    "GAT": {
+      "Accuracy": 0.5203,
+      "AUC": 0.7241,
+      "F1": 0.2526
+    },
+    "GraphSAGE": {
+      "Accuracy": 0.6689,
+      "AUC": 0.6405,
+      "F1": 0.2222
+    }
+  },
+  "task": "classification (CT_TOX col1, pos 7.6%, n=1480, split 8:1:1 seed42)",
+  "config": "hidden=64 layers=3 heads=4 seed=42, class_weight=[1,12]"
+}

@@ -1,0 +1,94 @@
+{
+  "mc_dropout": {
+    "ESOL": {
+      "GCN": {
+        "pi_coverage_90": 0.7632,
+        "avg_interval_width": 1.8437,
+        "uncertainty_err_corr": 0.0302
+      },
+      "GAT": {
+        "pi_coverage_90": 0.7719,
+        "avg_interval_width": 2.037,
+        "uncertainty_err_corr": -0.0401
+      },
+      "GraphSAGE": {
+        "pi_coverage_90": 0.7807,
+        "avg_interval_width": 1.8344,
+        "uncertainty_err_corr": 0.0842
+      }
+    },
+    "FreeSolv": {
+      "GCN": {
+        "pi_coverage_90": 0.4923,
+        "avg_interval_width": 3.0077,
+        "uncertainty_err_corr": 0.3277
+      },
+      "GAT": {
+        "pi_coverage_90": 0.7231,
+        "avg_interval_width": 4.5319,
+        "uncertainty_err_corr": 0.3142
+      },
+      "GraphSAGE": {
+        "pi_coverage_90": 0.6615,
+        "avg_interval_width": 3.0048,
+        "uncertainty_err_corr": 0.3484
+      }
+    },
+    "BBBP": {
+      "GCN": {
+        "ECE": 0.0415,
+        "uncertainty_err_corr": 0.2244,
+        "AUC": 0.808
+      },
+      "GAT": {
+        "ECE": 0.0821,
+        "uncertainty_err_corr": 0.2196,
+        "AUC": 0.828
+      },
+      "GraphSAGE": {
+        "ECE": 0.0565,
+        "uncertainty_err_corr": 0.3089,
+        "AUC": 0.8646
+      }
+    }
+  },
+  "config": {
+    "method": "MC-Dropout",
+    "n_samples": 30,
+    "device": "cuda"
+  },
+  "ensemble": {
+    "FreeSolv": {
+      "GAT": {
+        "n_members": 3,
+        "pi_coverage_90": 0.4154,
+        "avg_interval_width": 1.545,
+        "uncertainty_err_corr": 0.1392,
+        "RMSE": 2.1739,
+        "R2": 0.6967,
+        "member_RMSE": [
+          2.9534,
+          1.9851,
+          1.8477
+        ]
+      }
+    },
+    "BBBP": {
+      "GraphSAGE": {
+        "n_members": 3,
+        "ECE": 0.0769,
+        "uncertainty_err_corr": 0.3701,
+        "AUC": 0.8992,
+        "member_AUC": [
+          0.8796,
+          0.8899,
+          0.8953
+        ]
+      }
+    }
+  },
+  "config_ensemble": {
+    "n_members": null,
+    "device": "cuda"
+  }
+}
