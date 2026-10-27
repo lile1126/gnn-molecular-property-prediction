@@ -3,15 +3,19 @@
 LLM 化学解释增强（方向 3）
 ==========================
 流程：SMILES + GNNExplainer 原子/键重要性掩码 → RDKit 提取关键结构特征 →
-本地 Qwen2.5-3B-Instruct 生成化学语言解释 → 官能团一致性校验。
+LLM 生成化学语言解释 → 官能团一致性校验。
+
+支持两种 LLM 通道（--provider / Web 端可选）：
+  - local    ：本地 Qwen2.5-3B-Instruct（4bit 量化，GTX 1660 Ti 6GB 可跑）
+  - deepseek ：DeepSeek API（deepseek-chat，需 DEEPSEEK_API_KEY 或 deepseek_config.json）
 
 关键点：
-  - 完全本地部署（Qwen2.5-3B-Instruct，4bit 量化运行在 GTX 1660 Ti 6GB 上）
   - 掩码→结构：top-k 重要原子 + 高重要性键 → RDKit 官能团/子结构匹配
   - 提示词注入结构事实，LLM 只做"基于证据的化学解释"，防止幻觉
 
 用法:
     python src/llm_explain.py --smiles "CCCO" --dataset ESOL --conv GCN
+    python src/llm_explain.py --smiles "CCCO" --dataset ESOL --conv GCN --provider deepseek
 """
 import argparse
 import json
@@ -36,6 +40,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_DIR = os.path.join(ROOT, "models", "Qwen2.5-3B-Instruct", "models",
                          "Qwen--Qwen2.5-3B-Instruct", "snapshots", "master")
 REPORT_DIR = os.path.join(ROOT, "reports")
+
+# DeepSeek API（OpenAI 兼容接口，标准库 urllib 调用，无额外依赖）
+DEEPSEEK_BASE_URL = "https://api.deepseek.com"
+DEEPSEEK_MODEL = "deepseek-chat"
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -139,11 +147,13 @@ def check_consistency(text, structure):
     return {"mentioned_detected": mentioned, "mentioned_undetected": fake}
 
 
-def generate_explanation(smiles, dataset="ESOL", conv="GCN", top_k=8, model=None, data=None):
+def generate_explanation(smiles, dataset="ESOL", conv="GCN", top_k=8, model=None, data=None,
+                         provider="local"):
     """完整流程：掩码 → 结构 → LLM 解释 → 一致性校验
 
     model/data 可外部传入（复用 Web 已加载的模型与特征数据，避免显存重复占用）；
     未传时自动加载基线模型。
+    provider: "local"（本地 Qwen2.5-3B）或 "deepseek"（DeepSeek API）
     """
     name = dataset
     task_type = TASK_TYPE[name]
@@ -158,7 +168,10 @@ def generate_explanation(smiles, dataset="ESOL", conv="GCN", top_k=8, model=None
     sys_prompt, user_prompt = build_prompt(structure, dataset, conv, pred, task_type,
                                            {"ESOL": "水溶解度 logS", "FreeSolv": "水合自由能",
                                             "BBBP": "血脑屏障渗透", "Clintox": "药物毒性（CT_TOX）"}[name])
-    llm_text = _call_llm(sys_prompt, user_prompt)
+    if provider == "deepseek":
+        llm_text = _call_llm_deepseek(sys_prompt, user_prompt)
+    else:
+        llm_text = _call_llm(sys_prompt, user_prompt)
     consistency = check_consistency(llm_text, structure)
     return {
         "smiles": smiles,
@@ -166,6 +179,7 @@ def generate_explanation(smiles, dataset="ESOL", conv="GCN", top_k=8, model=None
         "structure": structure,
         "explanation": llm_text,
         "consistency": consistency,
+        "provider": provider,
     }
 
 
@@ -195,13 +209,77 @@ def _call_llm(sys_prompt, user_prompt, max_new_tokens=160):
     return tok.decode(out[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True).strip()
 
 
+def _load_deepseek_key():
+    """读取 DeepSeek API Key：优先环境变量 DEEPSEEK_API_KEY，其次项目根 deepseek_config.json"""
+    key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
+    if key:
+        return key
+    cfg_path = os.path.join(ROOT, "deepseek_config.json")
+    if os.path.isfile(cfg_path):
+        try:
+            with open(cfg_path, "r", encoding="utf-8") as f:
+                return str(json.load(f).get("api_key", "")).strip()
+        except Exception:
+            pass
+    return ""
+
+
+def _call_llm_deepseek(sys_prompt, user_prompt, max_new_tokens=160, timeout=120):
+    """调用 DeepSeek API（OpenAI 兼容 /chat/completions，标准库实现，无额外依赖）"""
+    import urllib.error
+    import urllib.request
+    api_key = _load_deepseek_key()
+    if not api_key:
+        raise RuntimeError(
+            "未配置 DeepSeek API Key：请设置环境变量 DEEPSEEK_API_KEY，"
+            "或在项目根目录创建 deepseek_config.json（{\"api_key\": \"sk-...\"}）"
+        )
+    payload = {
+        "model": DEEPSEEK_MODEL,
+        "messages": [
+            {"role": "system", "content": sys_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        "max_tokens": max_new_tokens,
+        "temperature": 0.6,
+        "top_p": 0.9,
+        "stream": False,
+    }
+    req = urllib.request.Request(
+        f"{DEEPSEEK_BASE_URL}/chat/completions",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            body = json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        detail = ""
+        try:
+            detail = e.read().decode("utf-8", errors="replace")[:300]
+        except Exception:
+            pass
+        raise RuntimeError(f"DeepSeek API 请求失败（HTTP {e.code}）：{detail or e.reason}") from e
+    except Exception as e:
+        raise RuntimeError(f"DeepSeek API 请求异常：{e}") from e
+    try:
+        return body["choices"][0]["message"]["content"].strip()
+    except (KeyError, IndexError, TypeError):
+        raise RuntimeError(
+            f"DeepSeek API 返回格式异常：{json.dumps(body, ensure_ascii=False)[:300]}"
+        ) from None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--smiles", default="CCCO")
-    ap.add_argument("--dataset", default="ESOL", choices=["ESOL", "FreeSolv", "BBBP"])
+    ap.add_argument("--dataset", default="ESOL", choices=["ESOL", "FreeSolv", "BBBP", "Clintox"])
     ap.add_argument("--conv", default="GCN", choices=["GCN", "GAT", "GraphSAGE"])
+    ap.add_argument("--provider", default="local", choices=["local", "deepseek"],
+                    help="LLM 通道：local=本地 Qwen2.5-3B，deepseek=DeepSeek API")
     args = ap.parse_args()
-    result = generate_explanation(args.smiles, args.dataset, args.conv)
+    result = generate_explanation(args.smiles, args.dataset, args.conv, provider=args.provider)
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 

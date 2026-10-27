@@ -175,7 +175,8 @@ def draw_molecule(smiles, node_mask, edge_mask, edge_index, out_path, title=""):
     cbar = plt.colorbar(sm, ax=ax, shrink=0.62, pad=0.03)
     cbar.set_label("重要性（红=关键）", fontsize=11)
     fig.tight_layout()
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    if isinstance(out_path, (str, os.PathLike)):
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
     fig.savefig(out_path, dpi=130, bbox_inches="tight")
     plt.close(fig)
     return True

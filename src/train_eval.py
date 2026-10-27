@@ -27,6 +27,7 @@ from sklearn.metrics import accuracy_score, f1_score, mean_absolute_error, mean_
 from torch_geometric.loader import DataLoader
 
 from data_prep import SPLIT_ROOT, TASK_TYPE, load
+from task_config import TARGET_COL, compute_class_weight
 from models import build_model
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -76,7 +77,8 @@ def run_epoch(model, loader, optimizer=None, task_type="regression", class_weigh
         out = model.forward_data(data)
         y = data.y[:, y_col].float()
         if task_type == "classification":
-            loss = torch.nn.functional.cross_entropy(out, y.long(), weight=class_weight)
+            weight = class_weight.to(out.device) if class_weight is not None else None
+            loss = torch.nn.functional.cross_entropy(out, y.long(), weight=weight)
         else:
             loss = torch.nn.functional.mse_loss(out.squeeze(-1), y)
         if train:
@@ -153,11 +155,16 @@ def run_one(conv_type, name, epochs=DEFAULT_EPOCHS, verbose=True):
     dataset, split = load(name, verbose=verbose)
     train_loader, val_loader, test_loader = collate_loaders(dataset, split)
     out_dim = 2 if TASK_TYPE[name] == "classification" else 1
+    target_col = TARGET_COL[name]
+    class_weight = compute_class_weight(name, dataset, split["train"])
     model = build_model(conv_type, dataset.num_features, HIDDEN_DIM, out_dim, NUM_LAYERS, heads=HEADS).to(DEVICE)
     if verbose:
         print(f"=== {conv_type} × {name} ===")
-    model, history = train_model(model, train_loader, val_loader, TASK_TYPE[name], epochs=epochs, verbose=verbose)
-    test_metrics = evaluate(model, test_loader, TASK_TYPE[name])
+    model, history = train_model(
+        model, train_loader, val_loader, TASK_TYPE[name], epochs=epochs,
+        verbose=verbose, class_weight=class_weight, y_col=target_col,
+    )
+    test_metrics = evaluate(model, test_loader, TASK_TYPE[name], y_col=target_col)
     if verbose:
         print(f"  {conv_type} × {name} 测试集: {test_metrics}")
     # 保存最佳模型
@@ -165,7 +172,8 @@ def run_one(conv_type, name, epochs=DEFAULT_EPOCHS, verbose=True):
     path = os.path.join(MODEL_DIR, f"{conv_type}_{name}.pt")
     torch.save({"state_dict": model.state_dict(), "metrics": test_metrics,
                 "task_type": TASK_TYPE[name], "in_dim": dataset.num_features,
-                "hidden": HIDDEN_DIM, "out_dim": out_dim, "layers": NUM_LAYERS, "heads": HEADS}, path)
+                "hidden": HIDDEN_DIM, "out_dim": out_dim, "layers": NUM_LAYERS, "heads": HEADS,
+                "target_col": target_col, "class_weight": class_weight.tolist() if class_weight is not None else None}, path)
     return conv_type, name, test_metrics, history
 
 

@@ -14,6 +14,7 @@ import torch
 
 from data_prep import load
 from models import build_model
+from task_config import compute_class_weight
 from train_eval import (BATCH_SIZE, DEVICE, HIDDEN_DIM, HEADS, LR, NUM_LAYERS,
                         WEIGHT_DECAY, evaluate, set_seed, train_model)
 from torch_geometric.loader import DataLoader
@@ -31,7 +32,7 @@ def main():
     loaders = [DataLoader(dataset[[int(i) for i in idx]], batch_size=BATCH_SIZE, shuffle=(k == 0))
                for k, idx in enumerate([idx_train, idx_val, idx_test])]
     results = {}
-    pos_w = torch.tensor([1.0, 12.0]).to(DEVICE)  # 正类 7.6% -> 类别权重补偿不平衡
+    pos_w = compute_class_weight("Clintox", dataset, idx_train, target_col=Y_COL)
     for conv in ["GCN", "GAT", "GraphSAGE"]:
         model = build_model(conv, dataset.num_features, HIDDEN_DIM, out_dim, NUM_LAYERS,
                             heads=HEADS).to(DEVICE)

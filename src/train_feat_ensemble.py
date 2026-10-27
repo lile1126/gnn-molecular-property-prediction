@@ -33,6 +33,7 @@ from torch_geometric.loader import DataLoader
 from data_prep import SPLIT_ROOT, TASK_TYPE, load as load_raw
 from featurize import load_featurized
 from models import build_model
+from task_config import compute_class_weight
 from train_eval import (BATCH_SIZE, DEVICE, HIDDEN_DIM, HEADS, LR, NUM_LAYERS,
                         PATIENCE, WEIGHT_DECAY, compute_metrics, evaluate,
                         run_epoch, set_seed, train_model)
@@ -80,8 +81,9 @@ def train_one_member(conv, name, level, seed, epochs=EPOCHS):
     out_dim = 2 if task_type == "classification" else 1
     model = build_model(conv, meta["atom_dim"], HIDDEN_DIM, out_dim, NUM_LAYERS,
                         heads=HEADS, edge_dim=meta["bond_dim"], fp_dim=meta["fp_dim"]).to(DEVICE)
-    is_clintox = name == "Clintox"
-    class_weight = torch.tensor([1.0, 12.0]).to(DEVICE) if is_clintox else None
+    class_weight = compute_class_weight(
+        name, data_list, split["train"], target_col=0,
+    )
     train_loader = collate(data_list, split["train"], shuffle=True)
     val_loader = collate(data_list, split["val"], shuffle=False)
     test_loader = collate(data_list, split["test"], shuffle=False)

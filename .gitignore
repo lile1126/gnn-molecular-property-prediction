@@ -32,3 +32,6 @@ reports/_page_script2.js
 # ===== 系统文件 =====
 .DS_Store
 Thumbs.db
+
+# ===== 密钥与本地配置（切勿提交）=====
+deepseek_config.json

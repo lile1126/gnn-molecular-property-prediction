@@ -35,6 +35,7 @@ from torch_geometric.loader import DataLoader
 from data_prep import SPLIT_ROOT, TASK_TYPE, load as load_raw
 from featurize import load_featurized
 from models import build_model
+from task_config import compute_class_weight
 from train_eval import (BATCH_SIZE, DEVICE, HIDDEN_DIM, HEADS, LR, NUM_LAYERS,
                         PATIENCE, SEED, WEIGHT_DECAY, compute_metrics, evaluate,
                         run_epoch, set_seed, train_model)
@@ -71,9 +72,14 @@ def run_feat_one(conv_type, name, level, epochs=300, verbose=True):
     train_loader = collate(data_list, split["train"])
     val_loader = collate(data_list, split["val"])
     test_loader = collate(data_list, split["test"])
-    model, history = train_model(model, train_loader, val_loader, task_type,
-                                 epochs=epochs, verbose=verbose)
-    test_metrics = evaluate(model, test_loader, task_type)
+    class_weight = compute_class_weight(
+        name, data_list, split["train"], target_col=0,
+    )
+    model, history = train_model(
+        model, train_loader, val_loader, task_type,
+        epochs=epochs, verbose=verbose, class_weight=class_weight, y_col=0,
+    )
+    test_metrics = evaluate(model, test_loader, task_type, y_col=0)
     if verbose:
         print(f"  {conv_type} × {name} × feat_{level} 测试集: {test_metrics}")
     os.makedirs(FEAT_MODEL_DIR, exist_ok=True)

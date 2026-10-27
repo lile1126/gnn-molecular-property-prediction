@@ -9,7 +9,7 @@
 - **4 数据集 × 3 种 GNN 架构**共 12 个基线模型 + 36 组特征工程实验 + 4 成员深度集成全组合（48 组合全部可训练可推理）
 - **GraphCL 自监督预训练**：15,289 无标签分子池，小样本任务（FreeSolv）增益最显著（RMSE 2.205 → 1.657）
 - **不确定性量化**：MC-Dropout 置信区间 + 深度集成，输出可信预测范围
-- **可解释链**：GNNExplainer 关键原子/键掩码 → GAT 逐头注意力可视化 → 本地 Qwen LLM 化学解释（一致性校验拦截幻觉）
+- **可解释链**：GNNExplainer 关键原子/键掩码 → GAT 逐头注意力可视化 → LLM 化学解释（本地 Qwen2.5-3B 或 DeepSeek API，一致性校验拦截幻觉）
 - **端到端 Web 演示**：输入 SMILES 分子式 → 实时预测 + 不确定性 + 分子结构重要性着色 + LLM 解释
 - **CPU 可训**：分子图规模小（几十节点），单模型参数量 < 100k，普通笔记本 CPU 完成全部训练
 
@@ -40,10 +40,16 @@ GNN分子性质预测/
 │   ├── uncertainty.py         # MC-Dropout 不确定性量化
 │   ├── interpret.py           # GNNExplainer 可解释性
 │   ├── attention_viz.py       # 注意力可视化
-│   ├── llm_explain.py         # 本地 Qwen LLM 化学解释
-│   ├── app.py                 # Flask Web 演示服务
+│   ├── llm_explain.py         # LLM 化学解释（本地 Qwen / DeepSeek API）
+│   ├── app.py                 # Flask Web 服务与 API
+│   ├── task_config.py         # 数据集目标列与类别权重统一配置
+│   ├── templates/index.html   # Web 页面模板
+│   ├── static/css/app.css     # 响应式界面样式
+│   ├── static/js/app.js       # 交互、校验、结果渲染与历史记录
 │   └── compat_patch.py        # PyG/torch 版本兼容补丁
+├── tests/                     # unittest 回归测试
 ├── requirements.txt
+├── requirements-llm.txt       # 可选：本地 Qwen 解释依赖
 └── README.md
 ```
 
@@ -96,7 +102,34 @@ python src/interpret.py --conv GCN --names ESOL FreeSolv BBBP --num 4
 python src/app.py
 ```
 
-浏览器访问 **http://127.0.0.1:5000**，输入 SMILES 分子式（如 `CCCO`、`c1ccccc1`、`CC(=O)Oc1ccccc1C(=O)O`），选择预测任务与模型架构，点击"预测并解释"即可看到预测值与分子重要性着色图。
+浏览器访问 **http://127.0.0.1:5000**。界面采用左侧参数、右侧结果的科研工作台布局，支持：
+
+- SMILES 即时校验与常用分子示例；
+- 单模型、MC-Dropout、深度集成、GAT 注意力四种分析方式；
+- 预测值、近似区间、结构解释图、逐头注意力与 LLM 化学解释；
+- 最近分析历史、本地保存和一键回放；
+- 桌面与移动端响应式布局。
+
+如需本地 Qwen 化学解释，额外安装可选依赖：
+
+```bash
+pip install -r requirements-llm.txt
+```
+
+如需改用 DeepSeek API 生成解释（无需额外依赖），配置 API Key 后即可：
+
+```bash
+# 方式一：环境变量
+set DEEPSEEK_API_KEY=sk-xxx        # Windows；macOS/Linux 用 export
+# 方式二：项目根目录创建 deepseek_config.json
+# {"api_key": "sk-xxx"}
+```
+
+Web 界面 LLM 按钮旁可选择生成方式（本地 Qwen / DeepSeek API）；命令行方式：
+
+```bash
+python src/llm_explain.py --smiles "CCCO" --dataset ESOL --provider deepseek
+```
 
 ## 实验结果汇总
 
@@ -123,7 +156,8 @@ python src/app.py
 - **数据**：MoleculeNet 官方源下载，RDKit 解析 SMILES 构建分子图（9 维原子特征 + 3 维键特征），BBBP 中有 11 条无法解析的 SMILES 被 PyG 自动跳过
 - **训练**：固定随机种子划分 train/val/test（8:1:1），early stopping 防过拟合，测试集指标在独立划分上计算
 - **可解释性**：GNNExplainer 对 12 个测试集分子（3 数据集 × 4 个）生成解释，全部成功
-- **Web**：Flask 服务加载 9 个模型，API 返回 200，预测与解释流程端到端验证通过
+- **Web**：Flask 服务加载 12 个基线模型，页面、静态资源、SMILES 校验、单模型、MC-Dropout、深度集成和注意力接口均通过实际请求验证
+- **回归测试**：运行 `python -m unittest discover -s tests -v`，覆盖 Web 页面/静态资源、输入校验、MC 状态恢复、GraphSAGE 边特征前向和划分文件保护
 
 ## 常见问题
 

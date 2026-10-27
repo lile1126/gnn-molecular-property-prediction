@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="基于 GNN 的分子性质预测、不确定性与可解释性分析工作台">
+  <title>MolGNN · 分子性质预测工作台</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="MolGNN 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="img">
+            <circle cx="8" cy="10" r="3"></circle>
+            <circle cx="23" cy="7" r="2.6"></circle>
+            <circle cx="24" cy="23" r="3"></circle>
+            <circle cx="9" cy="23" r="2.6"></circle>
+            <path d="M10.5 10.8l10-2.8M9.7 13l11.6 8M11.5 21.6l10.2.9M7.5 13v7.4M20.9 9.2l2.8 11.4"></path>
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <strong>MolGNN</strong>
+          <small>分子性质预测工作台</small>
+        </span>
+      </a>
+      <div class="system-meta">
+        <span class="system-state" id="systemState">
+          <i class="status-dot" aria-hidden="true"></i>
+          <span id="systemStateText">正在检查模型</span>
+        </span>
+        <span class="local-badge">LOCAL INFERENCE</span>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="config-panel" aria-labelledby="configTitle">
+        <div class="section-heading">
+          <span class="eyebrow">01 · INPUT</span>
+          <h1 id="configTitle">从分子结构开始</h1>
+          <p>输入 SMILES，选择预测任务与推理方式。</p>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label-row">
+            <label for="smiles">SMILES 分子式</label>
+            <span class="field-status" id="smilesStatus" aria-live="polite"></span>
+          </div>
+          <div class="smiles-control" id="smilesWrap">
+            <input id="smiles" type="text" value="CCCO" maxlength="512" spellcheck="false"
+                   autocomplete="off" placeholder="例如：CCCO 或 c1ccccc1" aria-describedby="smilesHelp">
+            <span class="validation-mark" id="validationMark" aria-hidden="true"></span>
+          </div>
+          <div class="field-help">
+            <span id="smilesHelp">支持标准 SMILES，输入后自动校验。</span>
+            <span id="charCount">4 / 512</span>
+          </div>
+          <div class="example-list" aria-label="示例分子">
+            <button type="button" class="example-chip" data-smiles="CCCO">正丙醇</button>
+            <button type="button" class="example-chip" data-smiles="c1ccccc1">苯</button>
+            <button type="button" class="example-chip" data-smiles="CC(=O)Oc1ccccc1C(=O)O">阿司匹林</button>
+            <button type="button" class="example-chip" data-smiles="CN1C=NC2=C1C(=O)N(C(=O)N2C)C">咖啡因</button>
+            <button type="button" class="example-chip" data-smiles="CC(C)CC1=CC=C(C=C1)C(C)C(=O)O">布洛芬</button>
+          </div>
+        </div>
+
+        <div class="config-grid">
+          <div class="field-group">
+            <label for="dataset">预测任务</label>
+            <select id="dataset"></select>
+          </div>
+          <div class="field-group">
+            <label for="conv">模型架构</label>
+            <select id="conv"></select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label-row">
+            <label for="feat">特征等级</label>
+            <span class="micro-note" id="featNote"></span>
+          </div>
+          <select id="feat"></select>
+        </div>
+
+        <fieldset class="method-fieldset">
+          <legend>推理方式</legend>
+          <div class="method-grid">
+            <label class="method-option is-active">
+              <input type="radio" name="method" value="single" checked>
+              <span class="method-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M4 17l5-10 6 10 5-7"></path><circle cx="4" cy="17" r="1.7"></circle><circle cx="9" cy="7" r="1.7"></circle><circle cx="15" cy="17" r="1.7"></circle><circle cx="20" cy="10" r="1.7"></circle></svg>
+              </span>
+              <span><strong>单模型</strong><small>快速预测</small></span>
+            </label>
+            <label class="method-option">
+              <input type="radio" name="method" value="mc">
+              <span class="method-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M5 18V9M12 18V5M19 18v-6"></path><path d="M3 21h18"></path></svg>
+              </span>
+              <span><strong>MC-Dropout</strong><small>预测区间</small></span>
+            </label>
+            <label class="method-option">
+              <input type="radio" name="method" value="ensemble">
+              <span class="method-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"></rect><rect x="13" y="4" width="7" height="7" rx="1"></rect><rect x="4" y="13" width="7" height="7" rx="1"></rect><rect x="13" y="13" width="7" height="7" rx="1"></rect></svg>
+              </span>
+              <span><strong>深度集成</strong><small>成员平均</small></span>
+            </label>
+            <label class="method-option">
+              <input type="radio" name="method" value="attention">
+              <span class="method-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M3 12s3-6 9-6 9 6 9 6-3 6-9 6-9-6-9-6z"></path></svg>
+              </span>
+              <span><strong>注意力</strong><small>GAT 逐头</small></span>
+            </label>
+          </div>
+        </fieldset>
+
+        <p class="method-hint" id="methodHint">单模型直接推理，速度快，适合快速筛选。</p>
+
+        <label class="toggle-row" id="explainRow">
+          <span>
+            <strong>生成结构解释图</strong>
+            <small>GNNExplainer 会额外耗时</small>
+          </span>
+          <input type="checkbox" id="withExplain" checked>
+          <span class="toggle-ui" aria-hidden="true"></span>
+        </label>
+
+        <div class="availability" id="availability" role="status" aria-live="polite">
+          <span class="availability-icon" aria-hidden="true"></span>
+          <span id="availabilityText">正在检查当前模型组合...</span>
+        </div>
+
+        <div class="primary-actions">
+          <button type="button" class="button button-primary" id="runBtn">
+            <span class="button-spinner" aria-hidden="true"></span>
+            <span class="button-label">运行分析</span>
+            <span class="shortcut">Enter</span>
+          </button>
+          <select id="llmProvider" class="provider-select" aria-label="LLM 生成方式" title="选择 LLM 化学解释的生成方式">
+            <option value="local">本地 Qwen 2.5 · 3B</option>
+            <option value="deepseek">DeepSeek API</option>
+          </select>
+          <button type="button" class="button button-secondary" id="llmBtn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3z"></path><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16z"></path></svg>
+            <span>LLM 化学解释</span>
+          </button>
+        </div>
+        <p class="error-message" id="errorMessage" role="alert" hidden></p>
+      </section>
+
+      <section class="result-panel" aria-label="分析结果">
+        <div class="result-empty" id="resultEmpty">
+          <div class="empty-visual" aria-hidden="true">
+            <span class="orb orb-one"></span>
+            <span class="orb orb-two"></span>
+            <span class="orb orb-three"></span>
+            <svg viewBox="0 0 120 120">
+              <path d="M28 35l31-15 32 15v44L60 96 28 79z"></path>
+              <path d="M28 35l32 18 31-18M60 53v43"></path>
+              <circle cx="28" cy="35" r="5"></circle><circle cx="59" cy="20" r="5"></circle>
+              <circle cx="91" cy="35" r="5"></circle><circle cx="60" cy="96" r="5"></circle>
+            </svg>
+          </div>
+          <span class="eyebrow">02 · RESULT</span>
+          <h2 id="resultTitle">等待一次分析</h2>
+          <p>预测结果、可信区间、结构重要性与模型解释会集中显示在这里。</p>
+          <div class="empty-points">
+            <span>结构感知</span><i></i><span>不确定性量化</span><i></i><span>可解释性</span>
+          </div>
+        </div>
+
+        <div class="result-loading" id="resultLoading" hidden>
+          <div class="loading-ring" aria-hidden="true"><span></span><span></span><span></span></div>
+          <span class="eyebrow">CALCULATING</span>
+          <h2 id="loadingTitle">正在分析分子</h2>
+          <p id="loadingText">模型推理与解释计算可能需要几秒到数分钟。</p>
+          <div class="loading-steps" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+
+        <article class="result-content" id="resultContent" hidden>
+          <header class="result-heading">
+            <div>
+              <span class="eyebrow">02 · RESULT</span>
+              <h2 id="resultHeadline">预测结果</h2>
+            </div>
+            <span class="method-badge" id="methodBadge">单模型</span>
+          </header>
+
+          <section class="prediction-card">
+            <div class="prediction-label">模型预测</div>
+            <div class="prediction-line">
+              <span class="prediction-value" id="predictionValue">--</span>
+              <span class="prediction-unit" id="predictionUnit"></span>
+            </div>
+            <div class="prediction-context" id="predictionContext"></div>
+            <div class="result-meta">
+              <span><b>任务</b><i id="resultTask">--</i></span>
+              <span><b>架构</b><i id="resultConv">--</i></span>
+              <span><b>耗时</b><i id="resultRuntime">--</i></span>
+            </div>
+          </section>
+
+          <section class="uncertainty-card" id="uncertaintyCard" hidden>
+            <div class="card-heading">
+              <div><span class="card-kicker">UNCERTAINTY</span><h3>可信程度</h3></div>
+              <span class="confidence-pill" id="confidencePill">经验估计</span>
+            </div>
+            <div class="uncertainty-grid">
+              <div><span>预测区间</span><strong id="uncertaintyRange">--</strong></div>
+              <div><span id="uncertaintyMetricLabel">离散度</span><strong id="uncertaintyMetric">--</strong></div>
+            </div>
+            <div class="interval-track" id="intervalTrack" hidden>
+              <span class="interval-fill" id="intervalFill"></span>
+              <span class="interval-point" id="intervalPoint"></span>
+            </div>
+            <p class="card-note" id="uncertaintyNote"></p>
+          </section>
+
+          <section class="viz-grid" id="vizGrid">
+            <div class="viz-card" id="structureCard" hidden>
+              <div class="card-heading compact">
+                <div><span class="card-kicker">STRUCTURE</span><h3>结构重要性</h3></div>
+                <span class="viz-tag">GNNExplainer</span>
+              </div>
+              <div class="figure-frame"><img id="structureImage" alt="分子原子与键的重要性着色图"></div>
+              <div class="heat-legend">
+                <span>低</span><i class="heat-gradient"></i><span>高</span>
+              </div>
+            </div>
+            <div class="viz-card" id="attentionCard" hidden>
+              <div class="card-heading compact">
+                <div><span class="card-kicker">ATTENTION</span><h3>多头注意力</h3></div>
+                <span class="viz-tag" id="attentionTag">--</span>
+              </div>
+              <div class="figure-frame"><img id="attentionImage" alt="GAT 注意力分子图"></div>
+              <div class="heat-legend"><span>低</span><i class="heat-gradient attention-gradient"></i><span>高</span></div>
+            </div>
+          </section>
+
+          <section class="head-grid" id="headGrid" hidden></section>
+          <section class="combo-card" id="comboCard" hidden>
+            <div class="card-heading compact"><div><span class="card-kicker">PER-HEAD</span><h3>逐头对比</h3></div></div>
+            <div class="figure-frame"><img id="comboImage" alt="GAT 各注意力头对比图"></div>
+          </section>
+
+          <section class="edge-card" id="edgeCard" hidden>
+            <div class="card-heading compact"><div><span class="card-kicker">SIGNAL</span><h3>关键结构信号</h3></div></div>
+            <div class="edge-list" id="edgeList"></div>
+          </section>
+
+          <section class="llm-card" id="llmCard" hidden>
+            <div class="llm-heading">
+              <span class="llm-mark" aria-hidden="true">AI</span>
+              <div><span class="card-kicker">CHEMICAL NARRATIVE</span><h3>LLM 化学解释</h3></div>
+              <span class="viz-tag" id="llmTag">Qwen 2.5 · 3B</span>
+            </div>
+            <div class="llm-loading" id="llmLoading" hidden><span></span><span></span><span></span><small id="llmLoadingText">正在生成化学解释，首次加载可能较慢</small></div>
+            <div id="llmContent">
+              <p class="llm-text" id="llmText"></p>
+              <div class="group-chips" id="functionalGroups"></div>
+              <p class="consistency-warning" id="consistencyWarning" hidden></p>
+            </div>
+          </section>
+        </article>
+      </section>
+    </main>
+
+    <section class="history-section" aria-labelledby="historyTitle">
+      <div class="history-heading">
+        <div><span class="eyebrow">03 · HISTORY</span><h2 id="historyTitle">最近分析</h2></div>
+        <button type="button" class="text-button" id="clearHistoryBtn">清空记录</button>
+      </div>
+      <div class="history-table-wrap">
+        <table class="history-table">
+          <thead>
+            <tr><th>分子</th><th>任务</th><th>架构</th><th>方法</th><th>预测值</th><th>不确定性</th><th></th></tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+        <div class="history-empty" id="historyEmpty">暂无记录。完成一次分析后会自动保存到本地。</div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>MolGNN · 工程实践项目</span>
+      <span>预测结果仅用于研究与教学，不构成实验或临床结论。</span>
+    </footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

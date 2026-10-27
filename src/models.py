@@ -10,6 +10,8 @@
 共同结构：若干层图卷积 + 全局平均池化 + MLP 输出头。
 回归任务输出 1 维，分类任务输出 num_classes 维。
 """
+import threading
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -20,7 +22,11 @@ from torch_geometric.nn import GCNConv, GATConv, SAGEConv, global_mean_pool
 
 
 class SAGEConvEdge(SAGEConv):
-    """GraphSAGE + 键特征：邻居消息加入边特征投影（选题特征工程 · 键特征版）"""
+    """GraphSAGE + 键特征：邻居消息加入边特征投影。
+
+    边特征通过 thread-local 暂存，不同请求线程之间不会共享临时状态，
+    可用于 Flask 多线程推理。
+    """
 
     def __init__(self, in_channels, out_channels, edge_dim=0, **kwargs):
         super().__init__(in_channels, out_channels, **kwargs)
@@ -31,14 +37,18 @@ class SAGEConvEdge(SAGEConv):
             self.edge_lin = nn.Linear(edge_dim, src, bias=False)
         else:
             self.edge_lin = None
-        self._ea = None
+        self._edge_attr_local = threading.local()
 
     def forward(self, x, edge_index, edge_attr=None, size=None):
         if isinstance(x, torch.Tensor):
             x = (x, x)
-        self._ea = edge_attr  # 经实例属性传入 message（绕过 jinja propagate 签名检查）
-        out = self.propagate(edge_index, x=x, size=size)
-        self._ea = None
+        # PyG 2.8 的 SAGEConv.propagate 不接收额外的 edge_attr 参数；这里使用
+        # thread-local 暂存，避免 Flask 多线程请求之间共享临时状态。
+        self._edge_attr_local.value = edge_attr
+        try:
+            out = self.propagate(edge_index, x=x, size=size)
+        finally:
+            del self._edge_attr_local.value
         out = self.lin_l(out)
         x_r = x[1]
         if self.root_weight and x_r is not None:
@@ -48,8 +58,9 @@ class SAGEConvEdge(SAGEConv):
         return out
 
     def message(self, x_j):
-        if self._ea is not None and self.edge_lin is not None:
-            return x_j + self.edge_lin(self._ea)
+        edge_attr = getattr(self._edge_attr_local, "value", None)
+        if edge_attr is not None and self.edge_lin is not None:
+            return x_j + self.edge_lin(edge_attr)
         return x_j
 
 

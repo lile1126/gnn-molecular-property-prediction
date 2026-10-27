@@ -1,0 +1,11 @@
+# Optional dependencies for the local Qwen LLM explanation endpoint.
+# Install after the core requirements:
+#   pip install -r requirements-llm.txt
+#
+# DeepSeek API 通道（provider=deepseek）无需额外依赖：
+# 使用 Python 标准库 urllib 调用 https://api.deepseek.com/chat/completions，
+# 只需配置 API Key（环境变量 DEEPSEEK_API_KEY 或项目根 deepseek_config.json）。
+transformers>=4.45
+accelerate>=1.0
+bitsandbytes>=0.44
+safetensors>=0.4

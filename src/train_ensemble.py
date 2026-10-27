@@ -25,6 +25,7 @@ from torch_geometric.loader import DataLoader
 
 from data_prep import TASK_TYPE, load
 from models import build_model
+from task_config import TARGET_COL, compute_class_weight
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_DIR = os.path.join(ROOT, "models")
@@ -97,9 +98,8 @@ def train_one(conv_type, name, seed, epochs=300):
     # Clintox 双列标签：col0=FDA_APPROVED（近乎全正类），col1=CT_TOX（毒性，正类 7.6%）。
     # 注意：PyG 2.8 __getitem__ 返回克隆，对 dataset 元素重写 y 不生效，
     # 统一通过 run_epoch 的 target_col 直接取列（与 feat 数据口径一致）。
-    is_clintox = name == "Clintox"
-    class_weight = torch.tensor([1.0, 12.0]).to(DEVICE) if is_clintox else None
-    target_col = 1 if is_clintox else 0
+    target_col = TARGET_COL[name]
+    class_weight = compute_class_weight(name, dataset, split["train"], target_col=target_col)
     train_loader = DataLoader(dataset[[int(i) for i in split["train"]]], batch_size=BATCH_SIZE, shuffle=True)
     val_loader = DataLoader(dataset[[int(i) for i in split["val"]]], batch_size=BATCH_SIZE, shuffle=False)
     task = TASK_TYPE[name]
