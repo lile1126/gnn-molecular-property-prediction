@@ -1,6 +1,6 @@
 {
-  "tag": "v1.0-freeze-144ckpt",
-  "generated_at": "2026-11-20 15:31:40",
+  "tag": "v1.1-scaffold-multiseed",
+  "generated_at": "2026-11-20 15:55:52",
   "n_checkpoints": 310,
   "n_main_144": 144,
   "structure": {
