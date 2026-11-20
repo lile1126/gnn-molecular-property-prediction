@@ -181,7 +181,7 @@ add_text(s, 0.9, 4.56, 5.6, 0.35, "2026 年 11 月 20 日", size=13, color=GRAY)
 
 for i, (v, lab, c) in enumerate([
     ("4", "MoleculeNet 数据集", BLUE),
-    ("225", "主实验 checkpoint", BLUE),
+    ("310", "checkpoint 总数（主实验 144）", BLUE),
     ("4", "训练种子复验", ORANGE),
     ("120", "解释一致性分子", ORANGE),
 ]):
