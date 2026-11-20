@@ -114,7 +114,7 @@ GNNExplainer 输出的是原子/键重要性掩码，普通用户难以直接理
 ### 方法
 - **模型**：DeepSeek API（`deepseek-chat`，OpenAI 兼容接口，标准库 urllib 调用，无额外依赖）
   - 早期版本曾用本地 Qwen2.5-3B-Instruct（4bit 量化），但该路径依赖 CUDA GPU，
-    项目运行环境为纯 CPU，已移除；本地权重与下载脚本一并删除
+    当前 CPU 运行环境无法运行，已移除；本地权重与下载脚本一并删除
 - **流程**：GNNExplainer 掩码 → top-k 重要原子/键 → RDKit 官能团匹配（18 种 SMARTS）→
   结构化提示词 → LLM 生成 2~3 句化学解释 → 官能团一致性校验（LLM 提及项必须在 RDKit 检出集内）
 - **归因与推理模式一一对应**：单模型 / MC → 当前 conv×feat 的 seed42 模型；

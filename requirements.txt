@@ -6,9 +6,10 @@ torch>=2.6
 torch-geometric>=2.6
 rdkit>=2024.9
 numpy>=1.26
-pandas>=2.0
 scikit-learn>=1.4
 scipy>=1.12
 matplotlib>=3.8
 flask>=3.0
 networkx>=3.0
+# 可选：重新生成答辩 PPT（不影响训练/推理/测试）
+python-pptx>=1.0

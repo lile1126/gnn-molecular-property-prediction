@@ -1,0 +1,1317 @@
+{
+  "tag": "v1.0-freeze-144ckpt",
+  "generated_at": "2026-11-20 15:31:40",
+  "n_checkpoints": 310,
+  "n_main_144": 144,
+  "structure": {
+    "convs": [
+      "GAT",
+      "GCN",
+      "GraphSAGE"
+    ],
+    "datasets": [
+      "BBBP",
+      "Clintox",
+      "ESOL",
+      "FreeSolv"
+    ],
+    "feat_levels": [
+      "a",
+      "b",
+      "c"
+    ],
+    "seeds": [
+      7,
+      13,
+      21,
+      42
+    ]
+  },
+  "groups": {
+    "feat": {
+      "description": "随机划分主模型（seed42，9 配置 × 4 数据集）",
+      "n_files": 36
+    },
+    "feat_ensemble": {
+      "description": "随机划分额外种子（7/13/21，用于同构/异质集成）",
+      "n_files": 108
+    },
+    "feat_scaffold": {
+      "description": "Murcko 骨架划分模型（seed42 + 多种子）",
+      "n_files": 108
+    },
+    "ensemble": {
+      "description": "基线特征深度集成成员",
+      "n_files": 36
+    },
+    "hybrid": {
+      "description": "HybridAgg 架构级融合（负结果）",
+      "n_files": 8
+    },
+    "distill": {
+      "description": "蒸馏学生模型（负结果）",
+      "n_files": 8
+    },
+    "pretrained": {
+      "description": "自监督预训练权重",
+      "n_files": 6
+    }
+  },
+  "checksums": {
+    "feat": {
+      "GAT_BBBP_feata.pt": {
+        "size_bytes": 385267,
+        "sha256": "795390bf2ecf58de"
+      },
+      "GAT_BBBP_featb.pt": {
+        "size_bytes": 406107,
+        "sha256": "71445743e4300743"
+      },
+      "GAT_BBBP_featc.pt": {
+        "size_bytes": 465941,
+        "sha256": "2a97b021139bd27b"
+      },
+      "GAT_Clintox_feata.pt": {
+        "size_bytes": 385267,
+        "sha256": "923553f05b271dfd"
+      },
+      "GAT_Clintox_featb.pt": {
+        "size_bytes": 406107,
+        "sha256": "fc39710df2ec59f0"
+      },
+      "GAT_Clintox_featc.pt": {
+        "size_bytes": 465941,
+        "sha256": "c5d9ba7321c82963"
+      },
+      "GAT_ESOL_feata.pt": {
+        "size_bytes": 384947,
+        "sha256": "5e7b7293e786e887"
+      },
+      "GAT_ESOL_featb.pt": {
+        "size_bytes": 405851,
+        "sha256": "d4563d70cce1aa9b"
+      },
+      "GAT_ESOL_featc.pt": {
+        "size_bytes": 465685,
+        "sha256": "bc24bb7a50a78f2f"
+      },
+      "GAT_FreeSolv_feata.pt": {
+        "size_bytes": 384947,
+        "sha256": "70e75b04a26afd64"
+      },
+      "GAT_FreeSolv_featb.pt": {
+        "size_bytes": 405851,
+        "sha256": "82d92b64f16dcdcb"
+      },
+      "GAT_FreeSolv_featc.pt": {
+        "size_bytes": 465685,
+        "sha256": "b2fbca5a1bef7dce"
+      },
+      "GCN_BBBP_feata.pt": {
+        "size_bytes": 61765,
+        "sha256": "2d792405ee3e5a97"
+      },
+      "GCN_BBBP_featb.pt": {
+        "size_bytes": 62463,
+        "sha256": "cdddd7a39ea7ca65"
+      },
+      "GCN_BBBP_featc.pt": {
+        "size_bytes": 122169,
+        "sha256": "bb8a88cd8d6c27f3"
+      },
+      "GCN_Clintox_feata.pt": {
+        "size_bytes": 61765,
+        "sha256": "b32400264a9b2166"
+      },
+      "GCN_Clintox_featb.pt": {
+        "size_bytes": 62463,
+        "sha256": "2805f560e806e60a"
+      },
+      "GCN_Clintox_featc.pt": {
+        "size_bytes": 122169,
+        "sha256": "b222cc8db5de6f41"
+      },
+      "GCN_ESOL_feata.pt": {
+        "size_bytes": 61509,
+        "sha256": "a2e46c7b985a9777"
+      },
+      "GCN_ESOL_featb.pt": {
+        "size_bytes": 62207,
+        "sha256": "f3b9df590a307f5d"
+      },
+      "GCN_ESOL_featc.pt": {
+        "size_bytes": 121913,
+        "sha256": "901432272acdfc6f"
+      },
+      "GCN_FreeSolv_feata.pt": {
+        "size_bytes": 61509,
+        "sha256": "9060e352f715e05b"
+      },
+      "GCN_FreeSolv_featb.pt": {
+        "size_bytes": 62207,
+        "sha256": "d518328d89d8f385"
+      },
+      "GCN_FreeSolv_featc.pt": {
+        "size_bytes": 121913,
+        "sha256": "898289f28967034a"
+      },
+      "GraphSAGE_BBBP_feata.pt": {
+        "size_bytes": 102396,
+        "sha256": "317fb6e50abd53bf"
+      },
+      "GraphSAGE_BBBP_featb.pt": {
+        "size_bytes": 108269,
+        "sha256": "ddfa38ea7d33722c"
+      },
+      "GraphSAGE_BBBP_featc.pt": {
+        "size_bytes": 167975,
+        "sha256": "4c650f67fb200f1c"
+      },
+      "GraphSAGE_Clintox_feata.pt": {
+        "size_bytes": 102396,
+        "sha256": "d846214a78d8dc0e"
+      },
+      "GraphSAGE_Clintox_featb.pt": {
+        "size_bytes": 108269,
+        "sha256": "d6ab7637c7a962ed"
+      },
+      "GraphSAGE_Clintox_featc.pt": {
+        "size_bytes": 167975,
+        "sha256": "3b7e6b9c17b453a3"
+      },
+      "GraphSAGE_ESOL_feata.pt": {
+        "size_bytes": 102140,
+        "sha256": "ee6a9a9112a7d011"
+      },
+      "GraphSAGE_ESOL_featb.pt": {
+        "size_bytes": 108013,
+        "sha256": "235dec4e7db93578"
+      },
+      "GraphSAGE_ESOL_featc.pt": {
+        "size_bytes": 167719,
+        "sha256": "97d465507d8ceec5"
+      },
+      "GraphSAGE_FreeSolv_feata.pt": {
+        "size_bytes": 102140,
+        "sha256": "b4f59a23091810e8"
+      },
+      "GraphSAGE_FreeSolv_featb.pt": {
+        "size_bytes": 108013,
+        "sha256": "7989adde273c0dd5"
+      },
+      "GraphSAGE_FreeSolv_featc.pt": {
+        "size_bytes": 167719,
+        "sha256": "7d2fc22063db7d3d"
+      }
+    },
+    "feat_ensemble": {
+      "GAT_BBBP_feata_s13.pt": {
+        "size_bytes": 385267,
+        "sha256": "34ee8dc0379cf5ef"
+      },
+      "GAT_BBBP_feata_s21.pt": {
+        "size_bytes": 385267,
+        "sha256": "b16982efc6bb7a14"
+      },
+      "GAT_BBBP_feata_s7.pt": {
+        "size_bytes": 385267,
+        "sha256": "ea61dbcd15c0a2d4"
+      },
+      "GAT_BBBP_featb_s13.pt": {
+        "size_bytes": 406107,
+        "sha256": "685ffcbd0b916aa2"
+      },
+      "GAT_BBBP_featb_s21.pt": {
+        "size_bytes": 406107,
+        "sha256": "5584557c3524517c"
+      },
+      "GAT_BBBP_featb_s7.pt": {
+        "size_bytes": 406107,
+        "sha256": "37e782a615a29fec"
+      },
+      "GAT_BBBP_featc_s13.pt": {
+        "size_bytes": 465941,
+        "sha256": "d9eb3705705163c5"
+      },
+      "GAT_BBBP_featc_s21.pt": {
+        "size_bytes": 465941,
+        "sha256": "78b08c48c81bfcb8"
+      },
+      "GAT_BBBP_featc_s7.pt": {
+        "size_bytes": 465941,
+        "sha256": "914553f4ba1ec9fe"
+      },
+      "GAT_Clintox_feata_s13.pt": {
+        "size_bytes": 385267,
+        "sha256": "9ad81d484d6d4270"
+      },
+      "GAT_Clintox_feata_s21.pt": {
+        "size_bytes": 385267,
+        "sha256": "986ac3ddd4d82108"
+      },
+      "GAT_Clintox_feata_s7.pt": {
+        "size_bytes": 385267,
+        "sha256": "e9bd995be4cd4f72"
+      },
+      "GAT_Clintox_featb_s13.pt": {
+        "size_bytes": 406107,
+        "sha256": "c2ef77c315a97872"
+      },
+      "GAT_Clintox_featb_s21.pt": {
+        "size_bytes": 406107,
+        "sha256": "4adbd2d99d9f3bc3"
+      },
+      "GAT_Clintox_featb_s7.pt": {
+        "size_bytes": 406107,
+        "sha256": "f9684a1d0ae25c18"
+      },
+      "GAT_Clintox_featc_s13.pt": {
+        "size_bytes": 465941,
+        "sha256": "84fea8527db81e41"
+      },
+      "GAT_Clintox_featc_s21.pt": {
+        "size_bytes": 465941,
+        "sha256": "ebfe97ccb6fe29e1"
+      },
+      "GAT_Clintox_featc_s7.pt": {
+        "size_bytes": 465941,
+        "sha256": "50c7cf5377826893"
+      },
+      "GAT_ESOL_feata_s13.pt": {
+        "size_bytes": 385011,
+        "sha256": "d35034023f5033b0"
+      },
+      "GAT_ESOL_feata_s21.pt": {
+        "size_bytes": 385011,
+        "sha256": "932d38d9200de962"
+      },
+      "GAT_ESOL_feata_s7.pt": {
+        "size_bytes": 385011,
+        "sha256": "004d9d820d11a22e"
+      },
+      "GAT_ESOL_featb_s13.pt": {
+        "size_bytes": 405851,
+        "sha256": "5ea1c3e5ed587721"
+      },
+      "GAT_ESOL_featb_s21.pt": {
+        "size_bytes": 405851,
+        "sha256": "59f2debad95cacfa"
+      },
+      "GAT_ESOL_featb_s7.pt": {
+        "size_bytes": 405851,
+        "sha256": "9413f2af352505d7"
+      },
+      "GAT_ESOL_featc_s13.pt": {
+        "size_bytes": 465685,
+        "sha256": "8c51b08e3116b32c"
+      },
+      "GAT_ESOL_featc_s21.pt": {
+        "size_bytes": 465685,
+        "sha256": "ead7ec9fa85f69c6"
+      },
+      "GAT_ESOL_featc_s7.pt": {
+        "size_bytes": 465685,
+        "sha256": "126c01264d1990a5"
+      },
+      "GAT_FreeSolv_feata_s13.pt": {
+        "size_bytes": 385011,
+        "sha256": "42babe6510d59f73"
+      },
+      "GAT_FreeSolv_feata_s21.pt": {
+        "size_bytes": 385011,
+        "sha256": "d6abf729070375cc"
+      },
+      "GAT_FreeSolv_feata_s7.pt": {
+        "size_bytes": 385011,
+        "sha256": "237a66a1d1d77daa"
+      },
+      "GAT_FreeSolv_featb_s13.pt": {
+        "size_bytes": 405851,
+        "sha256": "f42d3f30b42e3ba0"
+      },
+      "GAT_FreeSolv_featb_s21.pt": {
+        "size_bytes": 405851,
+        "sha256": "b004ee18e4609a6c"
+      },
+      "GAT_FreeSolv_featb_s7.pt": {
+        "size_bytes": 405851,
+        "sha256": "ea10f50b627af239"
+      },
+      "GAT_FreeSolv_featc_s13.pt": {
+        "size_bytes": 465685,
+        "sha256": "a7a930204881ed85"
+      },
+      "GAT_FreeSolv_featc_s21.pt": {
+        "size_bytes": 465685,
+        "sha256": "63206d3a21286668"
+      },
+      "GAT_FreeSolv_featc_s7.pt": {
+        "size_bytes": 465685,
+        "sha256": "c12055d660205a65"
+      },
+      "GCN_BBBP_feata_s13.pt": {
+        "size_bytes": 61765,
+        "sha256": "d105d4cb25a5c2da"
+      },
+      "GCN_BBBP_feata_s21.pt": {
+        "size_bytes": 61765,
+        "sha256": "17b3b79719aacab8"
+      },
+      "GCN_BBBP_feata_s7.pt": {
+        "size_bytes": 61765,
+        "sha256": "03158bdb550f0a0a"
+      },
+      "GCN_BBBP_featb_s13.pt": {
+        "size_bytes": 62463,
+        "sha256": "c273a23d605a5aac"
+      },
+      "GCN_BBBP_featb_s21.pt": {
+        "size_bytes": 62463,
+        "sha256": "89f55487cdbc2b03"
+      },
+      "GCN_BBBP_featb_s7.pt": {
+        "size_bytes": 62463,
+        "sha256": "e3cc53f7622a46d0"
+      },
+      "GCN_BBBP_featc_s13.pt": {
+        "size_bytes": 122233,
+        "sha256": "8b53ce6d54dc9581"
+      },
+      "GCN_BBBP_featc_s21.pt": {
+        "size_bytes": 122233,
+        "sha256": "750b15e8ae52f75e"
+      },
+      "GCN_BBBP_featc_s7.pt": {
+        "size_bytes": 122233,
+        "sha256": "26387945e0fe2137"
+      },
+      "GCN_Clintox_feata_s13.pt": {
+        "size_bytes": 61765,
+        "sha256": "79ba6b0dec203337"
+      },
+      "GCN_Clintox_feata_s21.pt": {
+        "size_bytes": 61765,
+        "sha256": "663aeef63a1b51ad"
+      },
+      "GCN_Clintox_feata_s7.pt": {
+        "size_bytes": 61765,
+        "sha256": "9974beac71e83550"
+      },
+      "GCN_Clintox_featb_s13.pt": {
+        "size_bytes": 62463,
+        "sha256": "f10e17115786d085"
+      },
+      "GCN_Clintox_featb_s21.pt": {
+        "size_bytes": 62463,
+        "sha256": "a7f0656b90b284fb"
+      },
+      "GCN_Clintox_featb_s7.pt": {
+        "size_bytes": 62463,
+        "sha256": "d2827783a2eefd94"
+      },
+      "GCN_Clintox_featc_s13.pt": {
+        "size_bytes": 122233,
+        "sha256": "cac852e9fa67d8ab"
+      },
+      "GCN_Clintox_featc_s21.pt": {
+        "size_bytes": 122233,
+        "sha256": "42a0b4fd342b5feb"
+      },
+      "GCN_Clintox_featc_s7.pt": {
+        "size_bytes": 122233,
+        "sha256": "08a58fde65b2c60f"
+      },
+      "GCN_ESOL_feata_s13.pt": {
+        "size_bytes": 61509,
+        "sha256": "d6dc79c5821dc37c"
+      },
+      "GCN_ESOL_feata_s21.pt": {
+        "size_bytes": 61509,
+        "sha256": "ac45362dbf69325e"
+      },
+      "GCN_ESOL_feata_s7.pt": {
+        "size_bytes": 61509,
+        "sha256": "bcedae3bf7f1840c"
+      },
+      "GCN_ESOL_featb_s13.pt": {
+        "size_bytes": 62207,
+        "sha256": "c608bb818b3ac339"
+      },
+      "GCN_ESOL_featb_s21.pt": {
+        "size_bytes": 62207,
+        "sha256": "280dafea7ea32e36"
+      },
+      "GCN_ESOL_featb_s7.pt": {
+        "size_bytes": 62207,
+        "sha256": "4014ecda64869ccd"
+      },
+      "GCN_ESOL_featc_s13.pt": {
+        "size_bytes": 121913,
+        "sha256": "2f2e3514f06ec78b"
+      },
+      "GCN_ESOL_featc_s21.pt": {
+        "size_bytes": 121913,
+        "sha256": "15171224f24b47ab"
+      },
+      "GCN_ESOL_featc_s7.pt": {
+        "size_bytes": 121913,
+        "sha256": "5eac89bb67745989"
+      },
+      "GCN_FreeSolv_feata_s13.pt": {
+        "size_bytes": 61509,
+        "sha256": "7367b4ff5970ecae"
+      },
+      "GCN_FreeSolv_feata_s21.pt": {
+        "size_bytes": 61509,
+        "sha256": "97b1c49b855dd2a8"
+      },
+      "GCN_FreeSolv_feata_s7.pt": {
+        "size_bytes": 61509,
+        "sha256": "99bb6ddb11edb8f2"
+      },
+      "GCN_FreeSolv_featb_s13.pt": {
+        "size_bytes": 62207,
+        "sha256": "753d082a4813f095"
+      },
+      "GCN_FreeSolv_featb_s21.pt": {
+        "size_bytes": 62207,
+        "sha256": "777bba852a375849"
+      },
+      "GCN_FreeSolv_featb_s7.pt": {
+        "size_bytes": 62207,
+        "sha256": "55806327fb9ba767"
+      },
+      "GCN_FreeSolv_featc_s13.pt": {
+        "size_bytes": 121913,
+        "sha256": "04228c4641bbbd68"
+      },
+      "GCN_FreeSolv_featc_s21.pt": {
+        "size_bytes": 121913,
+        "sha256": "0a31f829e7ff3ad4"
+      },
+      "GCN_FreeSolv_featc_s7.pt": {
+        "size_bytes": 121913,
+        "sha256": "60edc1909d3d03b3"
+      },
+      "GraphSAGE_BBBP_feata_s13.pt": {
+        "size_bytes": 102396,
+        "sha256": "78b334c9573374ed"
+      },
+      "GraphSAGE_BBBP_feata_s21.pt": {
+        "size_bytes": 102396,
+        "sha256": "870ece73d983d3e6"
+      },
+      "GraphSAGE_BBBP_feata_s7.pt": {
+        "size_bytes": 102396,
+        "sha256": "79209d5c64bb4d33"
+      },
+      "GraphSAGE_BBBP_featb_s13.pt": {
+        "size_bytes": 108269,
+        "sha256": "c7b601168a81891a"
+      },
+      "GraphSAGE_BBBP_featb_s21.pt": {
+        "size_bytes": 108269,
+        "sha256": "a2c476b234e3c22f"
+      },
+      "GraphSAGE_BBBP_featb_s7.pt": {
+        "size_bytes": 108269,
+        "sha256": "0fc39dbf11a4a9e5"
+      },
+      "GraphSAGE_BBBP_featc_s13.pt": {
+        "size_bytes": 168039,
+        "sha256": "dea9db360a53e93a"
+      },
+      "GraphSAGE_BBBP_featc_s21.pt": {
+        "size_bytes": 168039,
+        "sha256": "8116380fc843542b"
+      },
+      "GraphSAGE_BBBP_featc_s7.pt": {
+        "size_bytes": 168039,
+        "sha256": "04f5ff6be51797ab"
+      },
+      "GraphSAGE_Clintox_feata_s13.pt": {
+        "size_bytes": 102396,
+        "sha256": "5a033ed26e564eea"
+      },
+      "GraphSAGE_Clintox_feata_s21.pt": {
+        "size_bytes": 102396,
+        "sha256": "d8eb0139f332e0f7"
+      },
+      "GraphSAGE_Clintox_feata_s7.pt": {
+        "size_bytes": 102396,
+        "sha256": "8e4280679cc9fe86"
+      },
+      "GraphSAGE_Clintox_featb_s13.pt": {
+        "size_bytes": 108269,
+        "sha256": "7adb17159640cac8"
+      },
+      "GraphSAGE_Clintox_featb_s21.pt": {
+        "size_bytes": 108269,
+        "sha256": "b870c41ee87c1732"
+      },
+      "GraphSAGE_Clintox_featb_s7.pt": {
+        "size_bytes": 108269,
+        "sha256": "500e420b1b8ca318"
+      },
+      "GraphSAGE_Clintox_featc_s13.pt": {
+        "size_bytes": 168039,
+        "sha256": "945382c63380817b"
+      },
+      "GraphSAGE_Clintox_featc_s21.pt": {
+        "size_bytes": 168039,
+        "sha256": "84c1854eddf3411a"
+      },
+      "GraphSAGE_Clintox_featc_s7.pt": {
+        "size_bytes": 168039,
+        "sha256": "97e81b70c6d090b0"
+      },
+      "GraphSAGE_ESOL_feata_s13.pt": {
+        "size_bytes": 102140,
+        "sha256": "e70fdecb3a34756b"
+      },
+      "GraphSAGE_ESOL_feata_s21.pt": {
+        "size_bytes": 102140,
+        "sha256": "88462ac17a4567e6"
+      },
+      "GraphSAGE_ESOL_feata_s7.pt": {
+        "size_bytes": 102140,
+        "sha256": "79e13827eecdf984"
+      },
+      "GraphSAGE_ESOL_featb_s13.pt": {
+        "size_bytes": 108013,
+        "sha256": "0c1eae055395495a"
+      },
+      "GraphSAGE_ESOL_featb_s21.pt": {
+        "size_bytes": 108013,
+        "sha256": "f172e5668c58b4f7"
+      },
+      "GraphSAGE_ESOL_featb_s7.pt": {
+        "size_bytes": 108013,
+        "sha256": "9c48d6c1a85675cb"
+      },
+      "GraphSAGE_ESOL_featc_s13.pt": {
+        "size_bytes": 167783,
+        "sha256": "5c0fa1c7b8b93662"
+      },
+      "GraphSAGE_ESOL_featc_s21.pt": {
+        "size_bytes": 167783,
+        "sha256": "d1d0397e2fadc012"
+      },
+      "GraphSAGE_ESOL_featc_s7.pt": {
+        "size_bytes": 167783,
+        "sha256": "282ad3546b6f1808"
+      },
+      "GraphSAGE_FreeSolv_feata_s13.pt": {
+        "size_bytes": 102140,
+        "sha256": "a821bdd59c0e7d50"
+      },
+      "GraphSAGE_FreeSolv_feata_s21.pt": {
+        "size_bytes": 102140,
+        "sha256": "6a411152febef45d"
+      },
+      "GraphSAGE_FreeSolv_feata_s7.pt": {
+        "size_bytes": 102140,
+        "sha256": "ae82947fa345dc0d"
+      },
+      "GraphSAGE_FreeSolv_featb_s13.pt": {
+        "size_bytes": 108013,
+        "sha256": "eeed3db6b8635b2a"
+      },
+      "GraphSAGE_FreeSolv_featb_s21.pt": {
+        "size_bytes": 108013,
+        "sha256": "3a9b347d64ecef53"
+      },
+      "GraphSAGE_FreeSolv_featb_s7.pt": {
+        "size_bytes": 108013,
+        "sha256": "9d9b85bd30827f16"
+      },
+      "GraphSAGE_FreeSolv_featc_s13.pt": {
+        "size_bytes": 167783,
+        "sha256": "fd7fecade5519d25"
+      },
+      "GraphSAGE_FreeSolv_featc_s21.pt": {
+        "size_bytes": 167783,
+        "sha256": "b2458f6728a7e801"
+      },
+      "GraphSAGE_FreeSolv_featc_s7.pt": {
+        "size_bytes": 167783,
+        "sha256": "f3d853936108e06f"
+      }
+    },
+    "feat_scaffold": {
+      "GAT_BBBP_feata.pt": {
+        "size_bytes": 385075,
+        "sha256": "91032638723f03fb"
+      },
+      "GAT_BBBP_feata_s13.pt": {
+        "size_bytes": 385139,
+        "sha256": "350d4efdd61b84d4"
+      },
+      "GAT_BBBP_feata_s21.pt": {
+        "size_bytes": 385139,
+        "sha256": "c2bdfe3a6d976dab"
+      },
+      "GAT_BBBP_feata_s7.pt": {
+        "size_bytes": 385139,
+        "sha256": "eb94fbb045c62c77"
+      },
+      "GAT_BBBP_featb.pt": {
+        "size_bytes": 405787,
+        "sha256": "be86d3c23ec21031"
+      },
+      "GAT_BBBP_featb_s13.pt": {
+        "size_bytes": 405915,
+        "sha256": "ba52554e2d0b21a3"
+      },
+      "GAT_BBBP_featb_s21.pt": {
+        "size_bytes": 405915,
+        "sha256": "6e7ca93761c56c22"
+      },
+      "GAT_BBBP_featb_s7.pt": {
+        "size_bytes": 405915,
+        "sha256": "7c4bc2b84a321b18"
+      },
+      "GAT_BBBP_featc.pt": {
+        "size_bytes": 465621,
+        "sha256": "c37069da3e1e06b4"
+      },
+      "GAT_BBBP_featc_s13.pt": {
+        "size_bytes": 465685,
+        "sha256": "ac2f771fb5d5e57f"
+      },
+      "GAT_BBBP_featc_s21.pt": {
+        "size_bytes": 465685,
+        "sha256": "66838a2e8e448ca2"
+      },
+      "GAT_BBBP_featc_s7.pt": {
+        "size_bytes": 465685,
+        "sha256": "9ca377e45b4b31c9"
+      },
+      "GAT_ESOL_feata.pt": {
+        "size_bytes": 384819,
+        "sha256": "2eb730ad49db95af"
+      },
+      "GAT_ESOL_feata_s13.pt": {
+        "size_bytes": 384883,
+        "sha256": "690a0ba9ac1f9548"
+      },
+      "GAT_ESOL_feata_s21.pt": {
+        "size_bytes": 384883,
+        "sha256": "bf09c77fd567f85d"
+      },
+      "GAT_ESOL_feata_s7.pt": {
+        "size_bytes": 384883,
+        "sha256": "a88a43c95ff70c1b"
+      },
+      "GAT_ESOL_featb.pt": {
+        "size_bytes": 405531,
+        "sha256": "1cdc3e94f0666b00"
+      },
+      "GAT_ESOL_featb_s13.pt": {
+        "size_bytes": 405659,
+        "sha256": "3c8ffeea08dceccc"
+      },
+      "GAT_ESOL_featb_s21.pt": {
+        "size_bytes": 405659,
+        "sha256": "03577be9be4650f1"
+      },
+      "GAT_ESOL_featb_s7.pt": {
+        "size_bytes": 405659,
+        "sha256": "7cc3b28dfaf283e7"
+      },
+      "GAT_ESOL_featc.pt": {
+        "size_bytes": 465365,
+        "sha256": "11ecda30cd3c06ba"
+      },
+      "GAT_ESOL_featc_s13.pt": {
+        "size_bytes": 465429,
+        "sha256": "fdcc100833e09424"
+      },
+      "GAT_ESOL_featc_s21.pt": {
+        "size_bytes": 465429,
+        "sha256": "9d7868f9a6bd2742"
+      },
+      "GAT_ESOL_featc_s7.pt": {
+        "size_bytes": 465429,
+        "sha256": "a15cb52540845344"
+      },
+      "GAT_FreeSolv_feata.pt": {
+        "size_bytes": 384819,
+        "sha256": "dbceef190007be48"
+      },
+      "GAT_FreeSolv_feata_s13.pt": {
+        "size_bytes": 384883,
+        "sha256": "d07dff5c329040f3"
+      },
+      "GAT_FreeSolv_feata_s21.pt": {
+        "size_bytes": 384883,
+        "sha256": "adcb195238f0813d"
+      },
+      "GAT_FreeSolv_feata_s7.pt": {
+        "size_bytes": 384883,
+        "sha256": "9e7f5d49b73993e6"
+      },
+      "GAT_FreeSolv_featb.pt": {
+        "size_bytes": 405531,
+        "sha256": "5d7ef4d2c47d158d"
+      },
+      "GAT_FreeSolv_featb_s13.pt": {
+        "size_bytes": 405659,
+        "sha256": "8888a26ed56ed5b8"
+      },
+      "GAT_FreeSolv_featb_s21.pt": {
+        "size_bytes": 405659,
+        "sha256": "7bcbfe1a9f3e1a0d"
+      },
+      "GAT_FreeSolv_featb_s7.pt": {
+        "size_bytes": 405659,
+        "sha256": "a91e8f8e07a4be2d"
+      },
+      "GAT_FreeSolv_featc.pt": {
+        "size_bytes": 465365,
+        "sha256": "ac7816175c6434d4"
+      },
+      "GAT_FreeSolv_featc_s13.pt": {
+        "size_bytes": 465429,
+        "sha256": "d98f52d07adf6ff5"
+      },
+      "GAT_FreeSolv_featc_s21.pt": {
+        "size_bytes": 465429,
+        "sha256": "3e9e8e3e67f01f6d"
+      },
+      "GAT_FreeSolv_featc_s7.pt": {
+        "size_bytes": 465429,
+        "sha256": "cf151601165db1e0"
+      },
+      "GCN_BBBP_feata.pt": {
+        "size_bytes": 61701,
+        "sha256": "3745c203f537f526"
+      },
+      "GCN_BBBP_feata_s13.pt": {
+        "size_bytes": 61765,
+        "sha256": "85aa7afea8388df0"
+      },
+      "GCN_BBBP_feata_s21.pt": {
+        "size_bytes": 61765,
+        "sha256": "f78053e91e191cda"
+      },
+      "GCN_BBBP_feata_s7.pt": {
+        "size_bytes": 61765,
+        "sha256": "0a4c084d071a067b"
+      },
+      "GCN_BBBP_featb.pt": {
+        "size_bytes": 62335,
+        "sha256": "f067becbac25dfb2"
+      },
+      "GCN_BBBP_featb_s13.pt": {
+        "size_bytes": 62399,
+        "sha256": "4cd84615218f13d8"
+      },
+      "GCN_BBBP_featb_s21.pt": {
+        "size_bytes": 62399,
+        "sha256": "ca4e8e2d18177868"
+      },
+      "GCN_BBBP_featb_s7.pt": {
+        "size_bytes": 62399,
+        "sha256": "5675b56cd34ffc3e"
+      },
+      "GCN_BBBP_featc.pt": {
+        "size_bytes": 122105,
+        "sha256": "d57f7f491f4c1e05"
+      },
+      "GCN_BBBP_featc_s13.pt": {
+        "size_bytes": 122169,
+        "sha256": "83433438ba888153"
+      },
+      "GCN_BBBP_featc_s21.pt": {
+        "size_bytes": 122169,
+        "sha256": "f17d17accf14c875"
+      },
+      "GCN_BBBP_featc_s7.pt": {
+        "size_bytes": 122169,
+        "sha256": "c91ce916db6d8151"
+      },
+      "GCN_ESOL_feata.pt": {
+        "size_bytes": 61381,
+        "sha256": "7919a0992b4518c7"
+      },
+      "GCN_ESOL_feata_s13.pt": {
+        "size_bytes": 61445,
+        "sha256": "18cb1026369c615a"
+      },
+      "GCN_ESOL_feata_s21.pt": {
+        "size_bytes": 61445,
+        "sha256": "5b740a5626655b59"
+      },
+      "GCN_ESOL_feata_s7.pt": {
+        "size_bytes": 61445,
+        "sha256": "12a26c33d908cbe0"
+      },
+      "GCN_ESOL_featb.pt": {
+        "size_bytes": 62079,
+        "sha256": "8298e11e77364334"
+      },
+      "GCN_ESOL_featb_s13.pt": {
+        "size_bytes": 62143,
+        "sha256": "c023d6427a9a8c4e"
+      },
+      "GCN_ESOL_featb_s21.pt": {
+        "size_bytes": 62143,
+        "sha256": "c302fb29f354f0c0"
+      },
+      "GCN_ESOL_featb_s7.pt": {
+        "size_bytes": 62143,
+        "sha256": "d5f9695a7e7cb9a4"
+      },
+      "GCN_ESOL_featc.pt": {
+        "size_bytes": 121785,
+        "sha256": "e5b1a5dff95c3abf"
+      },
+      "GCN_ESOL_featc_s13.pt": {
+        "size_bytes": 121849,
+        "sha256": "7a6d21528bc0411d"
+      },
+      "GCN_ESOL_featc_s21.pt": {
+        "size_bytes": 121849,
+        "sha256": "0028fe9315e45df2"
+      },
+      "GCN_ESOL_featc_s7.pt": {
+        "size_bytes": 121849,
+        "sha256": "f43e30cc883925c5"
+      },
+      "GCN_FreeSolv_feata.pt": {
+        "size_bytes": 61381,
+        "sha256": "b991af514d7cb591"
+      },
+      "GCN_FreeSolv_feata_s13.pt": {
+        "size_bytes": 61445,
+        "sha256": "d44e0704c9882422"
+      },
+      "GCN_FreeSolv_feata_s21.pt": {
+        "size_bytes": 61445,
+        "sha256": "aa2eea79dbf0d2b3"
+      },
+      "GCN_FreeSolv_feata_s7.pt": {
+        "size_bytes": 61445,
+        "sha256": "499d7c39f0eb2583"
+      },
+      "GCN_FreeSolv_featb.pt": {
+        "size_bytes": 62079,
+        "sha256": "b2aef1d87a2a987c"
+      },
+      "GCN_FreeSolv_featb_s13.pt": {
+        "size_bytes": 62143,
+        "sha256": "64795b2403d62a3b"
+      },
+      "GCN_FreeSolv_featb_s21.pt": {
+        "size_bytes": 62143,
+        "sha256": "ff8d9b113c182c1d"
+      },
+      "GCN_FreeSolv_featb_s7.pt": {
+        "size_bytes": 62143,
+        "sha256": "911814aa4ef41b6e"
+      },
+      "GCN_FreeSolv_featc.pt": {
+        "size_bytes": 121785,
+        "sha256": "08bd3e43bb4e4e90"
+      },
+      "GCN_FreeSolv_featc_s13.pt": {
+        "size_bytes": 121849,
+        "sha256": "b8b40c78b38f0835"
+      },
+      "GCN_FreeSolv_featc_s21.pt": {
+        "size_bytes": 121849,
+        "sha256": "890350455e731b5f"
+      },
+      "GCN_FreeSolv_featc_s7.pt": {
+        "size_bytes": 121849,
+        "sha256": "f7d9b0a2b44cf12d"
+      },
+      "GraphSAGE_BBBP_feata.pt": {
+        "size_bytes": 102268,
+        "sha256": "bfebe3f614680218"
+      },
+      "GraphSAGE_BBBP_feata_s13.pt": {
+        "size_bytes": 102332,
+        "sha256": "9a1b449f519658ea"
+      },
+      "GraphSAGE_BBBP_feata_s21.pt": {
+        "size_bytes": 102332,
+        "sha256": "5ca43d050c73b82a"
+      },
+      "GraphSAGE_BBBP_feata_s7.pt": {
+        "size_bytes": 102332,
+        "sha256": "e0d6b42dd4f48300"
+      },
+      "GraphSAGE_BBBP_featb.pt": {
+        "size_bytes": 108077,
+        "sha256": "d3a3c45a0d3794cc"
+      },
+      "GraphSAGE_BBBP_featb_s13.pt": {
+        "size_bytes": 108141,
+        "sha256": "86e13ed1fcd28706"
+      },
+      "GraphSAGE_BBBP_featb_s21.pt": {
+        "size_bytes": 108141,
+        "sha256": "244057f2236d7db7"
+      },
+      "GraphSAGE_BBBP_featb_s7.pt": {
+        "size_bytes": 108141,
+        "sha256": "f7b0f1fca731f794"
+      },
+      "GraphSAGE_BBBP_featc.pt": {
+        "size_bytes": 167847,
+        "sha256": "2b4772a421d21f44"
+      },
+      "GraphSAGE_BBBP_featc_s13.pt": {
+        "size_bytes": 167911,
+        "sha256": "5d45571ca4bc65c6"
+      },
+      "GraphSAGE_BBBP_featc_s21.pt": {
+        "size_bytes": 167911,
+        "sha256": "5d30cfe1a6e685b5"
+      },
+      "GraphSAGE_BBBP_featc_s7.pt": {
+        "size_bytes": 167911,
+        "sha256": "c325ce256c4d87d0"
+      },
+      "GraphSAGE_ESOL_feata.pt": {
+        "size_bytes": 102012,
+        "sha256": "23b412381a54e2f5"
+      },
+      "GraphSAGE_ESOL_feata_s13.pt": {
+        "size_bytes": 102076,
+        "sha256": "474a6122c0a80c73"
+      },
+      "GraphSAGE_ESOL_feata_s21.pt": {
+        "size_bytes": 102076,
+        "sha256": "6ccae39d077628fb"
+      },
+      "GraphSAGE_ESOL_feata_s7.pt": {
+        "size_bytes": 102076,
+        "sha256": "2a7a718972612d58"
+      },
+      "GraphSAGE_ESOL_featb.pt": {
+        "size_bytes": 107821,
+        "sha256": "88b449a1f9df5a94"
+      },
+      "GraphSAGE_ESOL_featb_s13.pt": {
+        "size_bytes": 107885,
+        "sha256": "184130dcc7f50f2d"
+      },
+      "GraphSAGE_ESOL_featb_s21.pt": {
+        "size_bytes": 107885,
+        "sha256": "23521b4ed82aa3b3"
+      },
+      "GraphSAGE_ESOL_featb_s7.pt": {
+        "size_bytes": 107885,
+        "sha256": "075a04c196fa283d"
+      },
+      "GraphSAGE_ESOL_featc.pt": {
+        "size_bytes": 167527,
+        "sha256": "0ba0c4f08a07fb96"
+      },
+      "GraphSAGE_ESOL_featc_s13.pt": {
+        "size_bytes": 167655,
+        "sha256": "1ba0e4e5ffd01640"
+      },
+      "GraphSAGE_ESOL_featc_s21.pt": {
+        "size_bytes": 167655,
+        "sha256": "a7845f928b52947b"
+      },
+      "GraphSAGE_ESOL_featc_s7.pt": {
+        "size_bytes": 167655,
+        "sha256": "7cae65c9174d23f4"
+      },
+      "GraphSAGE_FreeSolv_feata.pt": {
+        "size_bytes": 102012,
+        "sha256": "8a64257a43482187"
+      },
+      "GraphSAGE_FreeSolv_feata_s13.pt": {
+        "size_bytes": 102076,
+        "sha256": "67ba89df981499ad"
+      },
+      "GraphSAGE_FreeSolv_feata_s21.pt": {
+        "size_bytes": 102076,
+        "sha256": "aebe531515d4369e"
+      },
+      "GraphSAGE_FreeSolv_feata_s7.pt": {
+        "size_bytes": 102076,
+        "sha256": "a2262eeff3570b37"
+      },
+      "GraphSAGE_FreeSolv_featb.pt": {
+        "size_bytes": 107821,
+        "sha256": "de7c3defce719a2a"
+      },
+      "GraphSAGE_FreeSolv_featb_s13.pt": {
+        "size_bytes": 107885,
+        "sha256": "426d36969866c10f"
+      },
+      "GraphSAGE_FreeSolv_featb_s21.pt": {
+        "size_bytes": 107885,
+        "sha256": "1ea205abb8749d4c"
+      },
+      "GraphSAGE_FreeSolv_featb_s7.pt": {
+        "size_bytes": 107885,
+        "sha256": "db46c30af9c515a0"
+      },
+      "GraphSAGE_FreeSolv_featc.pt": {
+        "size_bytes": 167527,
+        "sha256": "b4bdf1487cac4861"
+      },
+      "GraphSAGE_FreeSolv_featc_s13.pt": {
+        "size_bytes": 167655,
+        "sha256": "45ee2e388c1a702a"
+      },
+      "GraphSAGE_FreeSolv_featc_s21.pt": {
+        "size_bytes": 167655,
+        "sha256": "13f9dc833fc8e5f7"
+      },
+      "GraphSAGE_FreeSolv_featc_s7.pt": {
+        "size_bytes": 167655,
+        "sha256": "386d2cc70e542ae4"
+      }
+    },
+    "ensemble": {
+      "GAT_BBBP_s13.pt": {
+        "size_bytes": 366771,
+        "sha256": "64ee00ec1a7f5f11"
+      },
+      "GAT_BBBP_s21.pt": {
+        "size_bytes": 366771,
+        "sha256": "a4df35d8dd4af86e"
+      },
+      "GAT_BBBP_s7.pt": {
+        "size_bytes": 366771,
+        "sha256": "7f133ff9a698fd3c"
+      },
+      "GAT_Clintox_s13.pt": {
+        "size_bytes": 366771,
+        "sha256": "619332bf3970f2c7"
+      },
+      "GAT_Clintox_s21.pt": {
+        "size_bytes": 366771,
+        "sha256": "5bd9ef3345755356"
+      },
+      "GAT_Clintox_s7.pt": {
+        "size_bytes": 366771,
+        "sha256": "bb2c4f1565c3ebda"
+      },
+      "GAT_ESOL_s13.pt": {
+        "size_bytes": 366515,
+        "sha256": "976da6f2cb5ae015"
+      },
+      "GAT_ESOL_s21.pt": {
+        "size_bytes": 366515,
+        "sha256": "f1ff641351b61ec3"
+      },
+      "GAT_ESOL_s7.pt": {
+        "size_bytes": 366515,
+        "sha256": "354006403f1fa741"
+      },
+      "GAT_FreeSolv_s13.pt": {
+        "size_bytes": 366515,
+        "sha256": "a4f02168c09efa92"
+      },
+      "GAT_FreeSolv_s21.pt": {
+        "size_bytes": 366515,
+        "sha256": "8e159ef714a57734"
+      },
+      "GAT_FreeSolv_s7.pt": {
+        "size_bytes": 366515,
+        "sha256": "df6a011f9ce90356"
+      },
+      "GCN_BBBP_s13.pt": {
+        "size_bytes": 57093,
+        "sha256": "609afab3f14d7cd2"
+      },
+      "GCN_BBBP_s21.pt": {
+        "size_bytes": 57093,
+        "sha256": "a61b9f1b9f42cc07"
+      },
+      "GCN_BBBP_s7.pt": {
+        "size_bytes": 57093,
+        "sha256": "f912c8dd808301f4"
+      },
+      "GCN_Clintox_s13.pt": {
+        "size_bytes": 57093,
+        "sha256": "317a8780a665d888"
+      },
+      "GCN_Clintox_s21.pt": {
+        "size_bytes": 57093,
+        "sha256": "622cd6e9df23363b"
+      },
+      "GCN_Clintox_s7.pt": {
+        "size_bytes": 57093,
+        "sha256": "11a47d664e95c263"
+      },
+      "GCN_ESOL_s13.pt": {
+        "size_bytes": 56837,
+        "sha256": "bb6f6d54d7bcf927"
+      },
+      "GCN_ESOL_s21.pt": {
+        "size_bytes": 56837,
+        "sha256": "e03a22b579c727c8"
+      },
+      "GCN_ESOL_s7.pt": {
+        "size_bytes": 56837,
+        "sha256": "be622a3ef2a6da43"
+      },
+      "GCN_FreeSolv_s13.pt": {
+        "size_bytes": 56837,
+        "sha256": "82116ff397f93f1b"
+      },
+      "GCN_FreeSolv_s21.pt": {
+        "size_bytes": 56837,
+        "sha256": "172e670b0458b885"
+      },
+      "GCN_FreeSolv_s7.pt": {
+        "size_bytes": 56837,
+        "sha256": "7bbf02a7b405678c"
+      },
+      "GraphSAGE_BBBP_s13.pt": {
+        "size_bytes": 93116,
+        "sha256": "4ccb83b715dfd756"
+      },
+      "GraphSAGE_BBBP_s21.pt": {
+        "size_bytes": 93116,
+        "sha256": "660be73af30b9a18"
+      },
+      "GraphSAGE_BBBP_s7.pt": {
+        "size_bytes": 93116,
+        "sha256": "001657e51b82b944"
+      },
+      "GraphSAGE_Clintox_s13.pt": {
+        "size_bytes": 93116,
+        "sha256": "d6ddbbce72b3fdf0"
+      },
+      "GraphSAGE_Clintox_s21.pt": {
+        "size_bytes": 93116,
+        "sha256": "67051dce1869b94b"
+      },
+      "GraphSAGE_Clintox_s7.pt": {
+        "size_bytes": 93116,
+        "sha256": "a70b56aca7b3b37d"
+      },
+      "GraphSAGE_ESOL_s13.pt": {
+        "size_bytes": 92860,
+        "sha256": "cd9b4b6907e34b9c"
+      },
+      "GraphSAGE_ESOL_s21.pt": {
+        "size_bytes": 92860,
+        "sha256": "585be4a73faf8c93"
+      },
+      "GraphSAGE_ESOL_s7.pt": {
+        "size_bytes": 92860,
+        "sha256": "a1a8e3a5d865438a"
+      },
+      "GraphSAGE_FreeSolv_s13.pt": {
+        "size_bytes": 92860,
+        "sha256": "3e9c92b6b4808fb5"
+      },
+      "GraphSAGE_FreeSolv_s21.pt": {
+        "size_bytes": 92860,
+        "sha256": "c4a17d1ebf9cde94"
+      },
+      "GraphSAGE_FreeSolv_s7.pt": {
+        "size_bytes": 92860,
+        "sha256": "1f630f4f930a4667"
+      }
+    },
+    "hybrid": {
+      "HybridAgg_BBBP_featc_s13.pt": {
+        "size_bytes": 300548,
+        "sha256": "5efe1ff9d9e6b567"
+      },
+      "HybridAgg_BBBP_featc_s21.pt": {
+        "size_bytes": 300548,
+        "sha256": "cbf67aa262c79115"
+      },
+      "HybridAgg_BBBP_featc_s42.pt": {
+        "size_bytes": 300548,
+        "sha256": "68676acedc237439"
+      },
+      "HybridAgg_BBBP_featc_s7.pt": {
+        "size_bytes": 300548,
+        "sha256": "38a9be6f2dd4f53f"
+      },
+      "HybridAgg_ESOL_featc_s13.pt": {
+        "size_bytes": 300292,
+        "sha256": "8e0d7793b4ce3634"
+      },
+      "HybridAgg_ESOL_featc_s21.pt": {
+        "size_bytes": 300292,
+        "sha256": "7a3dea71fe796275"
+      },
+      "HybridAgg_ESOL_featc_s42.pt": {
+        "size_bytes": 300292,
+        "sha256": "22510b553b7d0e8b"
+      },
+      "HybridAgg_ESOL_featc_s7.pt": {
+        "size_bytes": 300292,
+        "sha256": "2bf2bdad8e1668f1"
+      }
+    },
+    "distill": {
+      "Student_BBBP_GCN_featc_s13.pt": {
+        "size_bytes": 122105,
+        "sha256": "21b295f7c731c4e4"
+      },
+      "Student_BBBP_GCN_featc_s21.pt": {
+        "size_bytes": 122105,
+        "sha256": "7a8263c34d757829"
+      },
+      "Student_BBBP_GCN_featc_s42.pt": {
+        "size_bytes": 122105,
+        "sha256": "9e1da11c4d123155"
+      },
+      "Student_BBBP_GCN_featc_s7.pt": {
+        "size_bytes": 122105,
+        "sha256": "c8972457ee5020c4"
+      },
+      "Student_ESOL_GraphSAGE_featb_s13.pt": {
+        "size_bytes": 107885,
+        "sha256": "8e96c570f0af835c"
+      },
+      "Student_ESOL_GraphSAGE_featb_s21.pt": {
+        "size_bytes": 107885,
+        "sha256": "f7c974ea51d6a763"
+      },
+      "Student_ESOL_GraphSAGE_featb_s42.pt": {
+        "size_bytes": 107885,
+        "sha256": "5f8538a7db4877a9"
+      },
+      "Student_ESOL_GraphSAGE_featb_s7.pt": {
+        "size_bytes": 107885,
+        "sha256": "8d288fffabb3a9ab"
+      }
+    },
+    "pretrained": {
+      "GAT_pretrain_full.pt": {
+        "size_bytes": 347903,
+        "sha256": "345adb0981c5f8fb"
+      },
+      "GCN_pretrain_drop.pt": {
+        "size_bytes": 38549,
+        "sha256": "52d1e450d1191c3f"
+      },
+      "GCN_pretrain_full.pt": {
+        "size_bytes": 38549,
+        "sha256": "abf63ef9d0e9ad32"
+      },
+      "GCN_pretrain_mask.pt": {
+        "size_bytes": 38549,
+        "sha256": "0feb087e5c092b0d"
+      },
+      "GCN_pretrain_perturb.pt": {
+        "size_bytes": 38549,
+        "sha256": "ec9a6fdcd6082e14"
+      },
+      "GraphSAGE_pretrain_full.pt": {
+        "size_bytes": 74249,
+        "sha256": "c2bbbd3b73f3ae71"
+      }
+    }
+  },
+  "note": "144 = feat(36) + feat_ensemble(108)；其余为骨架划分、基线与负结果复现权重"
+}

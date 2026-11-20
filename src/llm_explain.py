@@ -71,7 +71,11 @@ FUNCTIONAL_GROUPS = [
 
 
 def extract_structure(smiles, node_mask, edge_mask, data, top_k=8):
-    """从掩码提取关键结构特征（RDKit）"""
+    """从掩码提取关键结构特征（RDKit），并把原子/键重要性聚合到官能团。
+
+    注意分层：functional_groups 是 RDKit 的"存在性识别"；top_groups 才是
+    GNNExplainer 归因决定的"重要性排序"，LLM 只能引用后者。
+    """
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:
         return {"error": "SMILES 无法解析"}
@@ -92,16 +96,32 @@ def extract_structure(smiles, node_mask, edge_mask, data, top_k=8):
     for i in top_idx:
         atom = mol.GetAtomWithIdx(i)
         key_atoms.append(f"{atom.GetSymbol()}{'(芳香)' if atom.GetIsAromatic() else ''}")
-    # 官能团匹配
+    # 官能团匹配（RDKit 识别，只回答"有什么"）
     groups = []
-    for name, smarts in FUNCTIONAL_GROUPS:
+    for gname, smarts in FUNCTIONAL_GROUPS:
         patt = Chem.MolFromSmarts(smarts)
         if patt is not None and mol.HasSubstructMatch(patt):
-            groups.append(name)
+            groups.append(gname)
+
+    # 官能团级归因（GNNExplainer 重要性聚合，回答"哪个重要"）
+    top_groups, group_layers = [], None
+    try:
+        from functional_group_explain import aggregate, bond_importance_from_mask
+        bond_imp = bond_importance_from_mask(mol, ei, edge_mask)
+        fg = aggregate(smiles, node_mask, bond_imp)
+        top_groups = [{"group": g["group"], "score": g["atom_importance_mean"],
+                       "share": g["importance_share"], "atoms": g["atoms"],
+                       "n_atoms": g["n_atoms"]} for g in fg["top3"]]
+        group_layers = fg["layers"]
+    except Exception as e:  # 聚合失败不应阻断解释
+        print("官能团聚合失败:", e)
+
     return {
         "key_atoms": key_atoms,
         "key_bonds": key_bonds,
         "functional_groups": groups,
+        "top_groups": top_groups,
+        "group_layers": group_layers,
         "heavy_atoms": mol.GetNumHeavyAtoms(),
         "smiles": smiles,
     }
@@ -112,6 +132,8 @@ def build_prompt(structure, dataset, model_note, pred, task_type, task_label):
     sys_prompt = ("你是计算化学与机器学习交叉领域的助手。请基于给定的分子结构证据，"
                   "用简洁、准确的中文解释图神经网络（GNN）为何做出该预测。"
                   "只使用提供的证据，不要编造不存在的官能团或性质；不超过 3 句话。"
+                  "官能团的重要性排序由 GNNExplainer 归因给出，你只能按给定顺序引用，"
+                  "不得自行决定或替换哪个官能团更重要。"
                   "注意化学常识：羟基、羧基、氨基等极性基团增强水溶性（logS 更大）；"
                   "长烷基链、芳环、卤素降低水溶性。不要写出自相矛盾的化学逻辑。")
     task_prior = {
@@ -120,6 +142,13 @@ def build_prompt(structure, dataset, model_note, pred, task_type, task_label):
         "BBBP": "血脑屏障渗透概率：接近 1 表示预测可渗透。渗透性与脂溶性、分子量、氢键供体数相关。",
         "Clintox": "药物毒性（CT_TOX）：接近 1 表示预测有毒。毒性常与亲电/反应性基团（硝基、芳香胺、卤素取代等）及代谢活化位点相关。",
     }[dataset]
+    top_groups = structure.get("top_groups") or []
+    if top_groups:
+        group_line = "；".join(
+            f"{g['group']}（组内平均重要性 {g['score']:.3f}，占全分子 {g['share']*100:.0f}%）"
+            for g in top_groups)
+    else:
+        group_line = "未能聚合出官能团级归因"
     user_prompt = (
         f"预测任务：{task_label}。归因模型：{model_note}。"
         f"预测结果：{pred:.4f}（{'数值越大性质越强' if task_type == 'classification' else '数值即目标属性'}）。\n"
@@ -127,10 +156,38 @@ def build_prompt(structure, dataset, model_note, pred, task_type, task_label):
         f"分子 SMILES：{structure['smiles']}（含 {structure['heavy_atoms']} 个重原子）。\n"
         f"GNNExplainer 识别的高重要性原子（按重要度排序）：{', '.join(structure['key_atoms'])}。\n"
         f"高重要性化学键：{', '.join(structure['key_bonds'])}。\n"
-        f"分子含有的官能团：{', '.join(structure['functional_groups']) if structure['functional_groups'] else '未匹配到常见官能团'}。\n"
+        f"GNNExplainer 聚合的 Top-3 重要官能团（模型归因，禁止改动顺序）：{group_line}。\n"
+        f"RDKit 检出的全部官能团（仅表示存在，不代表重要）："
+        f"{', '.join(structure['functional_groups']) if structure['functional_groups'] else '未匹配到常见官能团'}。\n"
         "请结合上述证据解释该预测结果的化学依据。"
     )
     return sys_prompt, user_prompt
+
+
+def rule_based_explanation(structure, dataset, pred, task_type):
+    """离线/无 API Key 时的规则模板解释（不调用 LLM）。
+
+    只复述三类事实：预测方向、GNNExplainer 的 Top 官能团、RDKit 的官能团存在性。
+    明确标注为模板生成，避免被误读为语言模型的化学推理。
+    """
+    direction = {
+        "ESOL": ("预测 logS 偏大，倾向易溶" if pred >= 0 else "预测 logS 偏小，倾向难溶"),
+        "FreeSolv": ("预测水合自由能偏负，溶剂化较有利" if pred < 0 else "预测水合自由能偏正，溶剂化不利"),
+        "BBBP": ("预测可渗透血脑屏障" if pred >= 0.5 else "预测不易渗透血脑屏障"),
+        "Clintox": ("预测存在毒性风险" if pred >= 0.5 else "预测毒性风险较低"),
+    }[dataset]
+    top = structure.get("top_groups") or []
+    parts = [f"【规则模板】模型预测值 {pred:.4f}，{direction}。"]
+    if top:
+        names = "、".join(f"{g['group']}（重要性 {g['score']:.3f}）" for g in top)
+        parts.append(f"GNNExplainer 归因显示，对该预测贡献最集中的结构依次为：{names}。")
+    else:
+        parts.append("该分子未匹配到可聚合的常见官能团，归因集中在骨架原子。")
+    detected = structure.get("functional_groups") or []
+    if detected:
+        parts.append(f"RDKit 结构识别结果：分子含 {('、'.join(detected[:6]))} 等基团（存在性判定，不代表重要性）。")
+    parts.append("说明：本段为无 LLM 时的模板解释，仅复述模型归因与结构识别结果，不构成化学机理推断。")
+    return "".join(parts)
 
 
 def check_consistency(text, structure):
@@ -171,12 +228,13 @@ def _mean_masks(models, datas, task_type, epochs=100):
 
 def generate_explanation(smiles, dataset="ESOL", conv="GCN", top_k=8, model=None, data=None,
                          models=None, datas=None, method="single", model_note=None,
-                         prediction=None):
-    """完整流程：掩码 → 结构 → LLM 解释 → 一致性校验
+                         prediction=None, llm_timeout=60):
+    """完整流程：掩码 → 结构 → LLM 解释（失败自动降级为规则模板）→ 一致性校验
 
     model/data      : 单模型归因（method=single / mc / ensemble / attention）
     models/datas    : 多模型掩码平均（method=hetero，9 配置 seed42 主成员）
     prediction      : 界面已显示的推理结果；传入时解释文本引用它，保证与推理模式一致
+    llm_timeout     : API 超时（秒）；无 Key 或断网时降级为规则模板，不阻塞页面
     """
     name = dataset
     task_type = TASK_TYPE[name]
@@ -200,7 +258,12 @@ def generate_explanation(smiles, dataset="ESOL", conv="GCN", top_k=8, model=None
     note = model_note or f"{conv} × 单模型"
     sys_prompt, user_prompt = build_prompt(structure, dataset, note, pred, task_type,
                                            TASK_LABEL[name])
-    llm_text = _call_llm_deepseek(sys_prompt, user_prompt)
+    provider, fallback_reason = "deepseek", None
+    try:
+        llm_text = _call_llm_deepseek(sys_prompt, user_prompt, timeout=llm_timeout)
+    except RuntimeError as e:
+        llm_text = rule_based_explanation(structure, dataset, float(pred), task_type)
+        provider, fallback_reason = "rule_template", str(e)[:200]
     consistency = check_consistency(llm_text, structure)
     return {
         "smiles": smiles,
@@ -208,7 +271,8 @@ def generate_explanation(smiles, dataset="ESOL", conv="GCN", top_k=8, model=None
         "structure": structure,
         "explanation": llm_text,
         "consistency": consistency,
-        "provider": "deepseek",
+        "provider": provider,
+        "fallback_reason": fallback_reason,
         "method": method,
         "model_note": note,
     }

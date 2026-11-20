@@ -29,6 +29,30 @@
 
 **读法**：骨架划分下三个数据集的 all9 集成全部优于最强单模型，且**增益幅度大于随机划分**（ESOL +2.0、FreeSolv +22.0、BBBP +8.4 个点，对比随机划分的 +0.6 / +0.8 / +2.1）。FreeSolv 的巨幅提升来自模型选择鲁棒性：val 仅 64 条，val 排序把 test R² 0.562 的模型选成第一，而其余成员在 0.66–0.73 之间，集成摊平了这个选择风险。ESOL 上 3 专家反而低于单模型（0.7437 vs 0.7581），说明难划分下成员数量是硬约束。
 
+> **重要：以上为单种子初探，下列 4 种子复验才是最终结论；单种子数字不再单独引用。**
+
+### 2.1 4 种子复验（9 配置 × 4 种子 = 108 成员，CPU）
+
+| 数据集 | 最强单模型（val 选） | 同构（同配置多种子） | 同构（同架构×特征档，12 成员） | 异质（3 专家） | 异质 all9（36 成员） |
+|---|---|---|---|---|---|
+| ESOL (R²) | 0.7640 ± 0.0105 | 0.7703 ± 0.0034 | 0.7730 ± 0.0028 | 0.7781 ± 0.0091 | **0.7876 ± 0.0016** |
+| FreeSolv (R²) | 0.5545 ± 0.0449 | 0.5736 ± 0.0137 | 0.7620 ± 0.0021 | 0.6699 ± 0.0122 | **0.7805 ± 0.0012** |
+| BBBP (AUC) | 0.7804 ± 0.0322 | 0.7687 ± 0.0100 | **0.8243 ± 0.0043** | 0.7975 ± 0.0029 | 0.8182 ± 0.0023 |
+
+| 对照（Δ 主指标，95% bootstrap CI，2000 次） | ESOL | FreeSolv | BBBP |
+|---|---|---|---|
+| all9 − 最强单模型 | +0.0296 [+0.0021, +0.0650] 稳定 | +0.2189 [+0.0987, +0.4399] 稳定 | +0.0789 [+0.0145, +0.1451] 稳定 |
+| 同架构×特征档 − 最强单模型 | +0.0152 [−0.0108, +0.0465] **趋势性** | +0.2011 [+0.0883, +0.4083] 稳定 | +0.0807 [+0.0247, +0.1384] 稳定 |
+| all9 − 同架构×特征档 | +0.0144 [+0.0021, +0.0283] 稳定 | +0.0178 [−0.0007, +0.0482] **趋势性** | −0.0019 [−0.0235, +0.0211] **无提升** |
+
+**复验修正**：
+
+1. 同构种子集成仍基本无效（+0.6 / +1.9 / −1.2 点），与误差相关 0.92–0.95 的诊断一致；
+2. 骨架划分的主要增益来自**特征档多样性**：同架构 3 档 × 4 种子的 12 成员已拿到 FreeSolv +20.1、BBBP +8.1 点，且这两个 CI 不含 0；
+3. 跨架构 all9 在 ESOL 再 +1.4 点（稳定）、FreeSolv +1.8 点（**趋势性**）、BBBP −0.2 点（**无提升**）——"架构越多越好"不成立；
+4. BBBP 上集成不提高上限：事后最优固定配置 GCN_feata 4 种子均值 0.8339 ± 0.0142，高于 all9（0.8182）与 12 成员（0.8243）；
+5. ESOL/BBBP 的"稳定提升"是对部署基线（seed42）而言，逐种子配对分别有 2/4、3/4 的 CI 含 0，幅度随基线种子波动。
+
 ![融合策略 × 数据划分](figures/fusion_split_compare.png)
 
 ## 3. 误差多样性（test 残差平均相关系数，越低融合收益越大）
@@ -66,11 +90,12 @@
 
 ## 6. 结论
 
-1. **融合的有效层级是"模型级"，不是"架构级"**。层内并联加权（HybridAgg）与蒸馏压缩均失败，模型级异质等权是唯一在全部数据集-划分组合上稳定提升的方案。
-2. **多样性的来源决定融合收益**。同构种子平均（相关 0.92）常无增益甚至倒退；跨架构（相关 0.61–0.87）才产生有效互补。
-3. **增益随分布外难度递增**。骨架划分下集成收益（+2.0～+22.0 点）显著大于随机划分（+0.6～+2.1 点），在更接近真实药物筛选的场景中价值更高。
-4. **成员数量是难划分下的硬约束**。3 专家在 ESOL 骨架划分上反而低于单模型，必须覆盖全部 9 个「架构 × 特征档」组合。
+1. **融合的有效层级是"模型级"，不是"架构级"**。层内并联加权（HybridAgg）与蒸馏压缩均失败，模型级等权是稳的默认方案。
+2. **多样性的来源决定融合收益**。同构种子平均（相关 0.92–0.95）无增益甚至倒退；**特征档多样性是骨架划分下的主要增益来源**（12 成员在 FreeSolv/BBBP 稳定 +20.1/+8.1 点）；跨架构只在 ESOL 上有额外稳定增益（+1.4 点）。
+3. **增益随分布外难度递增，但幅度依赖基线种子**。骨架划分下 all9 相对 seed42 单模型 +3.0/+21.9/+7.9 点（CI 均不含 0），远大于随机划分的 +0.6/+0.8/+2.1；但 ESOL/BBBP 逐种子配对中分别有 2/4、3/4 的 CI 含 0，只能称"方向稳定、幅度波动"。
+4. **成员覆盖比成员数量更重要**。3 专家（0.7781）已高于单模型（0.7640），但仍低于 all9；关键是要覆盖不同特征档，而不是简单堆架构。
 5. **静态加权不可靠**。NNLS 在 val 上拟合的权重在 FreeSolv、Clintox 上坍缩为单专家（权重 1.0/0/0），等权是更稳的默认选择。
+6. **BBBP 上不要宣称集成提高上限**：事后最优单配置 GCN_feata（0.8339）高于 all9（0.8182）；集成价值是降方差与免调模。
 
 ## 7. 复现
 
@@ -78,7 +103,9 @@
 python src/analyze_error_diversity.py          # 144 checkpoint 多样性 + 融合预实验
 python src/scaffold_split.py                   # 生成 4 个 Murcko 骨架划分
 python src/train_feat.py --split scaffold --convs GCN GAT GraphSAGE --levels a b c
-python src/fusion_scaffold.py --names ESOL FreeSolv BBBP   # 骨架划分三方对比
+python src/fusion_scaffold.py --names ESOL FreeSolv BBBP   # 骨架划分三方对比（单种子）
+python src/train_scaffold_multiseed.py          # 补 7/13/21 三个种子（CPU）
+python src/analyze_scaffold_multiseed.py        # 均值±std、bootstrap CI、Wilcoxon
 python src/train_hybrid.py --names ESOL BBBP --levels c --seeds 42 7 13 21
 python src/distill_ensemble.py --names ESOL BBBP --seeds 42 7 13 21 --epochs 300
 python src/gen_figures.py                      # 全部图表
@@ -86,4 +113,4 @@ python src/gen_figures.py                      # 全部图表
 
 ## 8. 数据溯源
 
-`reports/diversity/error_diversity.json`、`reports/diversity/fusion_preview.json`、`reports/fusion_scaffold.json`、`reports/hybrid_results.json`、`reports/distill_results.json`、`models/feat/`、`models/feat_ensemble/`、`models/feat_scaffold/`、`models/hybrid/`、`models/distill/`。
+`reports/diversity/error_diversity.json`、`reports/diversity/fusion_preview.json`、`reports/fusion_scaffold.json`、`reports/scaffold_multiseed_results.json`、`reports/scaffold_multiseed_analysis.json`、`reports/hybrid_results.json`、`reports/distill_results.json`、`models/feat/`、`models/feat_ensemble/`、`models/feat_scaffold/`、`models/hybrid/`、`models/distill/`。

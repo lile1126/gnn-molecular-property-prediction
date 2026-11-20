@@ -8,6 +8,7 @@ Web 演示服务
     python src/app.py     # 启动后访问 http://127.0.0.1:5000
 """
 import base64
+import csv
 import io
 import json
 import os
@@ -21,22 +22,28 @@ except Exception:
 import numpy as np
 import torch
 import torch.nn.functional as F
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, Response, jsonify, render_template, request
 from torch_geometric.utils import from_smiles
 
 from data_prep import TASK_TYPE
 from interpret import draw_molecule, explain_one, load_trained
+from llm_explain import _load_deepseek_key
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 ENSEMBLE_DIR = os.path.join(ROOT, "models", "ensemble")
+MANIFEST_PATH = os.path.join(ROOT, "reports", "model_manifest.json")
+CONSISTENCY_PATH = os.path.join(ROOT, "reports", "explanation_consistency.json")
 
 CONVS = ["GCN", "GAT", "GraphSAGE"]
 DATASETS = ["ESOL", "FreeSolv", "BBBP", "Clintox"]
 FEAT_LEVELS = ["base", "a", "b", "c"]
 MC_T = 30
+MAX_SMILES_LEN = 300          # 超长分子拦截（正常药物分子 SMILES 远小于此值）
+MAX_BATCH_ROWS = 200          # 批量上传上限，避免单次请求过长阻塞
+LLM_TIMEOUT = 30              # Web 端 API 超时；失败立即降级为规则模板
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path=os.environ.get("STATIC_URL_PATH", "/static"))
 MODELS = {}
 ENSEMBLES = {}
 FEAT_MODELS = {}
@@ -133,6 +140,92 @@ def _build_data(smiles, level):
 
 def _feat_info(level):
     return {"feat": level, "feat_label": FEAT_LABEL[level]}
+
+
+# ---------------------------------------------------------------------------
+# 模型版本 / 解释一致性 / 输入校验（P0-5）
+# ---------------------------------------------------------------------------
+_MANIFEST_CACHE = None
+_CONSISTENCY_CACHE = None
+
+
+def _model_version():
+    """返回模型清单（reports/model_manifest.json，由 src/model_manifest.py 生成）。"""
+    global _MANIFEST_CACHE
+    if _MANIFEST_CACHE is not None:
+        return _MANIFEST_CACHE
+    if os.path.exists(MANIFEST_PATH):
+        try:
+            with open(MANIFEST_PATH, encoding="utf-8") as f:
+                _MANIFEST_CACHE = json.load(f)
+            return _MANIFEST_CACHE
+        except Exception as e:
+            print("读取模型清单失败:", e)
+    _MANIFEST_CACHE = {"tag": "unknown", "generated_at": None,
+                       "note": "未找到 MODEL_MANIFEST.json，请运行 python src/model_manifest.py"}
+    return _MANIFEST_CACHE
+
+
+def _consistency_info(name):
+    """解释一致性等级（高/中/低）+ 关键指标，来自 explanation_consistency.json。"""
+    global _CONSISTENCY_CACHE
+    if _CONSISTENCY_CACHE is None:
+        _CONSISTENCY_CACHE = {}
+        if os.path.exists(CONSISTENCY_PATH):
+            try:
+                with open(CONSISTENCY_PATH, encoding="utf-8") as f:
+                    raw = json.load(f)
+                for ds, info in raw.items():
+                    if isinstance(info, dict) and "summary" in info:
+                        s = info["summary"]
+                        _CONSISTENCY_CACHE[ds] = {
+                            "level": s.get("level", "未评估"),
+                            "jaccard_top10_atom": (s.get("jaccard_top10_atom") or {}).get("mean"),
+                            "spearman_atom": (s.get("spearman_atom") or {}).get("mean"),
+                            "pred_std": (s.get("pred_std") or {}).get("mean"),
+                            "n_molecules": info.get("n_molecules"),
+                            "note": "9 配置两两平均；等级阈值见 reports/explanation_consistency.json",
+                        }
+            except Exception as e:
+                print("读取解释一致性失败:", e)
+    return _CONSISTENCY_CACHE.get(name, {"level": "未评估", "note": "尚未运行 explanation_consistency.py"})
+
+
+def _validate_smiles_input(smiles, field="SMILES"):
+    """空输入 / 超长分子统一拦截。返回清洗后的字符串，非法时抛 ValueError。"""
+    smiles = (smiles or "").strip()
+    if not smiles:
+        raise ValueError(f"{field} 为空，请输入分子结构（例如 CCCO）")
+    if len(smiles) > MAX_SMILES_LEN:
+        raise ValueError(f"{field} 过长（{len(smiles)} 字符，上限 {MAX_SMILES_LEN}）；"
+                         f"请确认输入的是单个分子而非反应式/聚合物")
+    return smiles
+
+
+def _functional_group_payload(smiles, node_mask=None, edge_mask=None, data=None):
+    """官能团级归因：有掩码则聚合法重要性，无掩码只做 RDKit 识别（importance_available=False）。"""
+    try:
+        from functional_group_explain import aggregate, detect_groups
+        from rdkit import Chem
+        mol = Chem.MolFromSmiles(smiles)
+        if mol is None:
+            return None
+        if node_mask is not None and edge_mask is not None and data is not None:
+            from functional_group_explain import bond_importance_from_mask
+            bond_imp = bond_importance_from_mask(mol, data.edge_index.cpu().numpy(), edge_mask)
+            res = aggregate(smiles, node_mask, bond_imp)
+            return {"top3": res["top3"], "groups_detected": res["groups_detected"],
+                    "atom_assignment_coverage": res["atom_assignment_coverage"],
+                    "importance_available": True, "layers": res["layers"],
+                    "note": "重要性来自 GNNExplainer 原子掩码（组内均值）；官能团由 RDKit 识别"}
+        groups, _ = detect_groups(mol)
+        return {"top3": [], "groups_detected": len(groups),
+                "detected": [g["name"] for g in groups],
+                "importance_available": False,
+                "note": "未生成结构掩码，仅展示 RDKit 识别的官能团（不做重要性排序）"}
+    except Exception as e:
+        print("官能团聚合失败:", e)
+        return None
 
 
 # ---------------------------------------------------------------------------
@@ -262,6 +355,7 @@ def api_meta():
     ens = sorted(f"{c}|{d}|{lv}" for c, d, lv in ENSEMBLE_OK)
     hetero = [n for n in DATASETS if _hetero_ready(n)]
     n_seed = _feat_seed_count()
+    version = _model_version()
     return jsonify({
         "convs": CONVS, "datasets": DATASETS, "feat_levels": FEAT_LEVELS,
         "feat_labels": FEAT_LABEL, "task_labels": TASK_LABEL, "unit_labels": UNIT_LABEL,
@@ -269,6 +363,13 @@ def api_meta():
         "hetero_ok": hetero, "hetero_n": len(HETERO_LEVELS) * len(CONVS) * n_seed,
         "mc_t": MC_T, "ensemble_n": 4,
         "llm_provider": "deepseek",
+        "llm_available": bool(_load_deepseek_key()),
+        "model_version": {"tag": version.get("tag", "unknown"),
+                          "generated_at": version.get("generated_at"),
+                          "n_checkpoints": version.get("n_checkpoints")},
+        "explanation_consistency": {n: _consistency_info(n) for n in DATASETS},
+        "max_smiles_len": MAX_SMILES_LEN,
+        "max_batch_rows": MAX_BATCH_ROWS,
     })
 
 
@@ -351,7 +452,6 @@ def index():
 @app.route("/api/predict", methods=["POST"])
 def predict():
     body = request.get_json(force=True) or {}
-    smiles = (body.get("smiles") or "").strip()
     conv = body.get("conv", "GCN")
     name = body.get("dataset", "ESOL")
     method = body.get("method", "single")
@@ -362,8 +462,10 @@ def predict():
         return jsonify({"error": "无效的特征等级参数"}), 400
     if method not in ("single", "mc", "ensemble", "hetero"):
         return jsonify({"error": "无效的方法参数"}), 400
-    if not smiles:
-        return jsonify({"error": "SMILES 为空"}), 400
+    try:
+        smiles = _validate_smiles_input(body.get("smiles"))
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     task_type = TASK_TYPE[name]
 
     # 异质集成：9 配置 × 4 种子等权，与 conv / feat 选择无关（模型级融合的最终方案）
@@ -423,6 +525,10 @@ def predict():
             if img:
                 resp["image"] = img
             resp["attribution"] = f"{n_attr} 个配置 seed42 主成员掩码平均"
+        resp["consistency"] = _consistency_info(name)
+        resp["model_version"] = _model_version().get("tag", "unknown")
+        resp["functional_groups"] = _functional_group_payload(
+            smiles, node_mask, edge_mask, first_data)
         return jsonify(resp)
 
     try:
@@ -456,6 +562,10 @@ def predict():
         "unit": UNIT_LABEL[name],
     }
     resp.update(_feat_info(level))
+    resp["consistency"] = _consistency_info(name)
+    resp["model_version"] = _model_version().get("tag", "unknown")
+    resp["functional_groups"] = _functional_group_payload(
+        smiles, node_mask, edge_mask, data if node_mask is not None else None)
     if node_mask is not None:
         resp["node_mask"] = [round(float(v), 4) for v in node_mask]
         resp["edge_mask"] = [round(float(v), 4) for v in edge_mask]
@@ -509,14 +619,15 @@ def attention_viz():
     per_head=true 时额外返回 4 张单头图 + 1 张 2x2 逐头对比图（选题深挖 · 方向3）。"""
     from attention_viz import draw_per_head, extract_attention, draw_attention_molecule
     body = request.get_json(force=True) or {}
-    smiles = (body.get("smiles") or "").strip()
     name = body.get("dataset", "BBBP")
     layer = int(body.get("layer", 0))
     per_head = bool(body.get("per_head", False))
     if name not in DATASETS:
         return jsonify({"error": "无效的数据集参数"}), 400
-    if not smiles:
-        return jsonify({"error": "SMILES 为空"}), 400
+    try:
+        smiles = _validate_smiles_input(body.get("smiles"))
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     if ("GAT", name) not in MODELS:
         from interpret import load_trained
         try:
@@ -578,6 +689,204 @@ def attention_viz():
         return jsonify({"error": f"注意力计算失败: {e}"}), 500
 
 
+# ---------------------------------------------------------------------------
+# 批量预测与 CSV 导出（P0-5）
+# ---------------------------------------------------------------------------
+def _light_predict(smiles, name, conv, level, method):
+    """批量场景的轻量推理：不跑 GNNExplainer，返回统一的预测字段。"""
+    task_type = TASK_TYPE[name]
+    unit = UNIT_LABEL[name]
+    if method == "hetero":
+        if not _hetero_ready(name):
+            raise ValueError(f"{name} 的异质集成成员不齐（需 9 配置 × 4 种子）")
+        mean, unc, n_cfg = hetero_predict(name, smiles, task_type)
+        out = {"prediction": round(float(mean), 4),
+               "method": f"异质集成（{n_cfg} 配置 × 4 种子）",
+               "n_members": n_cfg * 4}
+        if task_type == "regression":
+            out["std"] = round(float(unc), 4)
+            out["ci90"] = [round(float(mean - 1.645 * unc), 4), round(float(mean + 1.645 * unc), 4)]
+        else:
+            out["entropy"] = round(float(unc), 4)
+        out.update({"unit": unit, "feat": "hetero"})
+        return out
+
+    data = _build_data(smiles, level)
+    if level == "base":
+        model = MODELS.get((conv, name))
+        if model is None:
+            model, _ = load_trained(conv, name)
+            MODELS[(conv, name)] = model
+    else:
+        model = _load_feat_model(conv, name, level)
+
+    if method == "mc":
+        mean, unc = mc_predict_single(model, data, task_type)
+        out = {"prediction": round(float(mean), 4), "method": f"MC-Dropout（{MC_T} 次采样）",
+               "mc_samples": MC_T}
+    elif method == "ensemble":
+        members = _load_ensemble_members(conv, name, level)
+        if len(members) < 2:
+            raise ValueError("同构集成成员不足（至少需要 2 个种子模型）")
+        mean, unc = ensemble_predict_single(members, data, task_type)
+        out = {"prediction": round(float(mean), 4),
+               "method": f"同构集成（{len(members)} 成员）", "n_members": len(members)}
+    else:
+        with torch.no_grad():
+            d = data.to(DEVICE)
+            pred = model.forward_data(d)
+        if task_type == "regression":
+            out = {"prediction": round(float(pred.squeeze(-1).item()), 4), "method": "单模型"}
+        else:
+            out = {"prediction": round(float(torch.softmax(pred, dim=-1)[0, 1].item()), 4),
+                   "method": "单模型"}
+    if method in ("mc", "ensemble"):
+        if task_type == "regression":
+            out["std"] = round(float(unc), 4)
+            out["ci90"] = [round(float(mean - 1.645 * unc), 4), round(float(mean + 1.645 * unc), 4)]
+        else:
+            out["entropy"] = round(float(unc), 4)
+    out.update({"unit": unit, "feat": level})
+    return out
+
+
+@app.route("/api/batch", methods=["POST"])
+def batch_predict():
+    """批量 CSV 上传 / JSON 列表 → 逐行预测（不跑解释器，适合虚拟筛选）。"""
+    import time as _time
+    body = request.get_json(silent=True) or {}
+    conv = request.form.get("conv") or body.get("conv", "GCN")
+    name = request.form.get("dataset") or body.get("dataset", "ESOL")
+    level = request.form.get("feat") or body.get("feat", "base")
+    method = request.form.get("method") or body.get("method", "single")
+    if conv not in CONVS or name not in DATASETS:
+        return jsonify({"error": "无效的模型参数"}), 400
+    if level not in FEAT_LEVELS:
+        return jsonify({"error": "无效的特征等级参数"}), 400
+    if method not in ("single", "mc", "ensemble", "hetero"):
+        return jsonify({"error": "批量预测支持 single / mc / ensemble / hetero（attention 请单条运行）"}), 400
+
+    rows = []
+    if "file" in request.files:
+        upload = request.files["file"]
+        raw = upload.read()
+        if len(raw) > 2 * 1024 * 1024:
+            return jsonify({"error": "CSV 文件过大（上限 2 MB）"}), 400
+        text = raw.decode("utf-8-sig", errors="replace")
+        reader = csv.reader(io.StringIO(text))
+        header = next(reader, None)
+        if not header:
+            return jsonify({"error": "CSV 为空或缺少表头"}), 400
+        lowered = [h.strip().lower() for h in header]
+        idx_smi = next((i for i, h in enumerate(lowered)
+                        if h in ("smiles", "smile", "canonical_smiles", "structure")), 0)
+        idx_id = next((i for i, h in enumerate(lowered)
+                       if h in ("id", "name", "molecule", "compound")), None)
+        for r_i, row in enumerate(reader, start=2):
+            if not row:
+                continue
+            smi = row[idx_smi].strip() if idx_smi < len(row) else ""
+            if not smi:
+                continue
+            rid = row[idx_id].strip() if (idx_id is not None and idx_id < len(row)) else ""
+            rows.append({"row": r_i, "id": rid, "smiles": smi})
+    else:
+        lst = body.get("smiles_list") or []
+        if not isinstance(lst, list):
+            return jsonify({"error": "smiles_list 必须是字符串数组"}), 400
+        for i, smi in enumerate(lst, start=1):
+            if isinstance(smi, dict):
+                rows.append({"row": i, "id": str(smi.get("id", "")), "smiles": str(smi.get("smiles", "")).strip()})
+            else:
+                rows.append({"row": i, "id": "", "smiles": str(smi).strip()})
+
+    rows = [r for r in rows if r["smiles"]]
+    if not rows:
+        return jsonify({"error": "没有可预测的 SMILES（请检查 CSV 的 smiles 列或空输入）"}), 400
+    if len(rows) > MAX_BATCH_ROWS:
+        return jsonify({"error": f"单次最多 {MAX_BATCH_ROWS} 条（当前 {len(rows)} 条），请拆分文件"}), 400
+
+    # 模型可用性前置检查，避免每行重复报错
+    if method != "hetero":
+        if level == "base":
+            if not os.path.exists(os.path.join(ROOT, "models", f"{conv}_{name}.pt")):
+                return jsonify({"error": f"模型缺失：{conv} × {name} 基线权重不存在，请先运行 train_eval.py"}), 400
+            if method == "ensemble":
+                cnt = 1 + sum(1 for p in os.listdir(ENSEMBLE_DIR)
+                              if p.startswith(f"{conv}_{name}_s") and p.endswith(".pt")) if os.path.isdir(ENSEMBLE_DIR) else 1
+                if cnt < 2:
+                    return jsonify({"error": f"模型缺失：{conv} × {name} 的同构集成成员不足"}), 400
+        elif not os.path.exists(os.path.join(ROOT, "models", "feat", f"{conv}_{name}_feat{level}.pt")):
+            return jsonify({"error": f"模型缺失：{conv} × {name} × feat_{level} 权重不存在，请先运行 train_feat.py"}), 400
+        elif method == "ensemble":
+            cnt = 1 + sum(1 for p in os.listdir(os.path.join(ROOT, "models", "feat_ensemble"))
+                          if p.startswith(f"{conv}_{name}_feat{level}_s") and p.endswith(".pt")) \
+                if os.path.isdir(os.path.join(ROOT, "models", "feat_ensemble")) else 1
+            if cnt < 2:
+                return jsonify({"error": f"模型缺失：{conv} × {name} × feat_{level} 的同构集成成员不足"}), 400
+    elif not _hetero_ready(name):
+        return jsonify({"error": f"{name} 的异质集成成员不齐（需 9 配置 × 4 种子）"}), 400
+
+    t0 = _time.time()
+    results, errors = [], []
+    for r in rows:
+        try:
+            smi = _validate_smiles_input(r["smiles"])
+            out = _light_predict(smi, name, conv, level, method)
+            results.append({"row": r["row"], "id": r["id"], "smiles": smi,
+                            "status": "ok", "task_type": TASK_TYPE[name], **out})
+        except ValueError as e:
+            errors.append({"row": r["row"], "id": r["id"], "smiles": r["smiles"],
+                           "status": "error", "error": str(e)})
+        except Exception as e:
+            errors.append({"row": r["row"], "id": r["id"], "smiles": r["smiles"],
+                           "status": "error", "error": f"预测失败: {e}"})
+    return jsonify({
+        "dataset": name, "conv": conv, "feat": level, "method": method,
+        "task_label": TASK_LABEL[name], "unit": UNIT_LABEL[name],
+        "results": results, "errors": errors,
+        "n_ok": len(results), "n_error": len(errors),
+        "elapsed_s": round(_time.time() - t0, 2),
+        "model_version": _model_version().get("tag", "unknown"),
+        "note": "批量模式不生成 GNNExplainer 结构解释；导出 CSV 可在 Excel 中直接打开",
+    })
+
+
+@app.route("/api/export", methods=["POST"])
+def export_csv():
+    """把批量预测结果导出为 CSV（UTF-8 BOM，Excel 中文不乱码）。"""
+    body = request.get_json(force=True) or {}
+    rows = body.get("results") or []
+    errors = body.get("errors") or []
+    if not rows and not errors:
+        return jsonify({"error": "没有可导出的结果"}), 400
+    fields = ["row", "id", "smiles", "status", "prediction", "std", "entropy",
+              "ci90_low", "ci90_high", "unit", "method", "error", "task_type", "dataset", "model_version"]
+    buf = io.StringIO()
+    writer = csv.DictWriter(buf, fieldnames=fields)
+    writer.writeheader()
+    version = _model_version().get("tag", "unknown")
+    for r in rows:
+        ci = r.get("ci90") or [None, None]
+        writer.writerow({
+            "row": r.get("row"), "id": r.get("id", ""), "smiles": r.get("smiles", ""),
+            "status": r.get("status", "ok"), "prediction": r.get("prediction"),
+            "std": r.get("std", ""), "entropy": r.get("entropy", ""),
+            "ci90_low": ci[0] if ci else "", "ci90_high": ci[1] if len(ci) > 1 else "",
+            "unit": r.get("unit", ""), "method": r.get("method", ""), "error": "",
+            "task_type": r.get("task_type", ""), "dataset": body.get("dataset", ""),
+            "model_version": version,
+        })
+    for e in errors:
+        writer.writerow({"row": e.get("row"), "id": e.get("id", ""), "smiles": e.get("smiles", ""),
+                         "status": "error", "error": e.get("error", ""),
+                         "dataset": body.get("dataset", ""), "model_version": version})
+    csv_text = "\ufeff" + buf.getvalue()
+    fname = f"molgnn_batch_{body.get('dataset', 'result')}_{_model_version().get('tag', 'v')}.csv"
+    return Response(csv_text.encode("utf-8"), mimetype="text/csv; charset=utf-8",
+                    headers={"Content-Disposition": f'attachment; filename="{fname}"'})
+
+
 @app.route("/api/explain", methods=["POST"])
 def explain_llm():
     """LLM 化学解释：GNNExplainer 掩码 → 结构证据 → DeepSeek API 生成解释
@@ -590,7 +899,6 @@ def explain_llm():
     body.prediction 若传入（界面已显示的推理结果），解释文本引用它，避免数值口径错位。
     """
     body = request.get_json(force=True) or {}
-    smiles = (body.get("smiles") or "").strip()
     conv = body.get("conv", "GCN")
     name = body.get("dataset", "ESOL")
     level = body.get("feat", "base")
@@ -602,8 +910,10 @@ def explain_llm():
         return jsonify({"error": "无效的特征等级参数"}), 400
     if method not in ("single", "mc", "ensemble", "hetero", "attention"):
         return jsonify({"error": "无效的推理模式参数"}), 400
-    if not smiles:
-        return jsonify({"error": "SMILES 为空"}), 400
+    try:
+        smiles = _validate_smiles_input(body.get("smiles"))
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     pred = None
     try:
         if raw_pred is not None:
@@ -649,7 +959,8 @@ def explain_llm():
             note = f"{conv} · feat_{level} {'MC-Dropout' if method == 'mc' else '单模型'}"
         result = generate_explanation(smiles, dataset=name, conv=conv,
                                       models=models, datas=datas, method=method,
-                                      model_note=note, prediction=pred, data=datas[0])
+                                      model_note=note, prediction=pred, data=datas[0],
+                                      llm_timeout=LLM_TIMEOUT)
     except FileNotFoundError as e:
         return jsonify({"error": str(e)}), 400
     except ValueError as e:
@@ -662,13 +973,18 @@ def explain_llm():
         "explanation": result["explanation"],
         "prediction": result["prediction"],
         "functional_groups": result["structure"]["functional_groups"],
+        "top_groups": result["structure"].get("top_groups", []),
+        "group_layers": result["structure"].get("group_layers"),
         "key_atoms": result["structure"]["key_atoms"],
         "consistency": result["consistency"],
         "feat": level,
         "method": method,
         "model_note": result.get("model_note"),
-        "provider": "deepseek",
-        "llm_method": "DeepSeek API (deepseek-chat)",
+        "provider": result.get("provider", "deepseek"),
+        "fallback_reason": result.get("fallback_reason"),
+        "llm_method": ("DeepSeek API (deepseek-chat)" if result.get("provider") == "deepseek"
+                       else "规则模板（离线降级）"),
+        "model_version": _model_version().get("tag", "unknown"),
     })
 
 
@@ -692,4 +1008,6 @@ def _render_image(smiles, conv, name, data, node_mask, edge_mask):
 
 if __name__ == "__main__":
     load_all()
-    app.run(host="127.0.0.1", port=5000, debug=False, threaded=True)
+    app.run(host=os.environ.get("HOST", "127.0.0.1"),
+            port=int(os.environ.get("PORT", "5000")),
+            debug=False, threaded=True)

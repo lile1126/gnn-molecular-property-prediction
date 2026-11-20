@@ -1,0 +1,12 @@
+id,smiles,note
+p1,CCCO,正丙醇（易溶）
+p2,c1ccccc1,苯（疏水）
+p3,CC(=O)Oc1ccccc1C(=O)O,阿司匹林
+p4,CN1C=NC2=C1C(=O)N(C(=O)N2C)C,咖啡因
+p5,CC(C)Cc1ccc(cc1)C(C)C(=O)O,布洛芬
+p6,CCO,乙醇
+p7,ClCCl,二氯甲烷
+p8,CC(=O)O,乙酸
+p9,c1ccncc1,吡啶
+p10,CCN(CC)CC,三乙胺
+bad1,C1=CC=CC(C)C,非法 SMILES（用于演示错误提示）

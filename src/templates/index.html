@@ -223,6 +223,20 @@
             <p class="card-note" id="uncertaintyNote"></p>
           </section>
 
+          <section class="explain-meta-card" id="explainMetaCard" hidden>
+            <div class="card-heading">
+              <div><span class="card-kicker">EXPLAINABILITY</span><h3>解释一致性 · 官能团归因</h3></div>
+              <span class="consistency-pill" id="consistencyPill">--</span>
+            </div>
+            <div class="explain-meta-grid">
+              <div><span>Top-10 原子 Jaccard</span><strong id="consistencyJaccard">--</strong></div>
+              <div><span>原子排序 Spearman</span><strong id="consistencySpearman">--</strong></div>
+              <div><span>模型间预测 σ</span><strong id="consistencyStd">--</strong></div>
+            </div>
+            <div class="fg-list" id="functionalGroupList"></div>
+            <p class="card-note" id="explainMetaNote"></p>
+          </section>
+
           <section class="viz-grid" id="vizGrid">
             <div class="viz-card" id="structureCard" hidden>
               <div class="card-heading compact">
@@ -290,12 +304,53 @@
       </div>
     </section>
 
+    <section class="batch-section" aria-labelledby="batchTitle">
+      <div class="history-heading">
+        <div><span class="eyebrow">04 · BATCH</span><h2 id="batchTitle">批量预测</h2></div>
+        <span class="micro-note">CSV 需含 smiles 列 · 单次 ≤200 行 · 不跑解释器</span>
+      </div>
+      <div class="batch-grid">
+        <label class="batch-drop" id="batchDrop">
+          <input type="file" id="batchFile" accept=".csv,text/csv">
+          <strong>选择 CSV 文件</strong>
+          <small>第一列默认作为 SMILES，可含 id / name 列</small>
+          <span id="batchFileName">未选择文件</span>
+        </label>
+        <div class="batch-controls">
+          <label>任务<select id="batchDataset"></select></label>
+          <label>架构<select id="batchConv"></select></label>
+          <label>特征<select id="batchFeat"></select></label>
+          <label>方式<select id="batchMethod">
+            <option value="single">单模型</option>
+            <option value="hetero">异质集成</option>
+            <option value="mc">MC-Dropout</option>
+            <option value="ensemble">同构集成</option>
+          </select></label>
+        </div>
+        <div class="batch-actions">
+          <button type="button" class="button button-primary" id="batchRunBtn">运行批量预测</button>
+          <button type="button" class="button button-secondary" id="batchExportBtn" disabled>导出 CSV</button>
+          <button type="button" class="button button-ghost" id="batchClearBtn">清空</button>
+        </div>
+      </div>
+      <div class="batch-status" id="batchStatus" role="status" aria-live="polite"></div>
+      <div class="batch-table-wrap">
+        <table class="history-table">
+          <thead><tr><th>行</th><th>ID</th><th>SMILES</th><th>预测</th><th>不确定性</th><th>状态</th></tr></thead>
+          <tbody id="batchBody"></tbody>
+        </table>
+        <div class="history-empty" id="batchEmpty">尚无批量结果。上传 CSV 后可一次预测并下载结果。</div>
+      </div>
+    </section>
+
     <footer class="footer">
       <span>MolGNN · 工程实践项目</span>
+      <span id="modelVersionLine">模型版本 · --</span>
       <span>预测结果仅用于研究与教学，不构成实验或临床结论。</span>
     </footer>
   </div>
 
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/batch.js') }}"></script>
 </body>
 </html>

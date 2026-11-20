@@ -69,7 +69,9 @@
       "structureCard", "structureImage", "structureNote", "attentionCard", "attentionImage",
       "attentionTag", "headGrid", "comboCard", "comboImage", "edgeCard", "edgeList",
       "llmCard", "llmLoading", "llmContent", "llmText", "functionalGroups", "llmModelNote",
-      "consistencyWarning", "historyBody", "historyEmpty", "clearHistoryBtn"
+      "consistencyWarning", "historyBody", "historyEmpty", "clearHistoryBtn",
+      "explainMetaCard", "consistencyPill", "consistencyJaccard", "consistencySpearman",
+      "consistencyStd", "functionalGroupList", "explainMetaNote", "modelVersionLine"
     ].forEach((id) => { els[id] = $(id); });
   }
 
@@ -133,10 +135,14 @@
 
   async function loadMeta() {
     try {
-      state.meta = await fetchJSON("/api/meta", undefined, 15000);
+      state.meta = await fetchJSON("api/meta", undefined, 15000);
       populateFromMeta();
       const count = state.meta.trained?.length || 0;
       setSystemState(`${count} 个模型组合可用`, "ready");
+      if (els.modelVersionLine) {
+        const v = state.meta.model_version || {};
+        els.modelVersionLine.textContent = `模型版本 · ${v.tag || "unknown"}${v.n_checkpoints ? ` · ${v.n_checkpoints} ckpt` : ""}`;
+      }
     } catch (error) {
       state.meta = { ...DEFAULT_META };
       populateFromMeta();
@@ -262,7 +268,7 @@
     if (state.validated?.input === smiles) return;
 
     try {
-      const data = await fetchJSON("/api/validate", {
+      const data = await fetchJSON("api/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ smiles }),
@@ -362,6 +368,7 @@
 
     renderUncertainty(data, isClassification);
     renderStructure(data);
+    renderExplainMeta(data);
     hideAttentionResult();
     els.llmCard.hidden = true;
     els.resultLoading.hidden = true;
@@ -415,6 +422,62 @@
     }
   }
 
+  function dashNumber(value, digits = 3) {
+    return (value === null || value === undefined) ? "--" : formatNumber(value, digits);
+  }
+
+  function renderExplainMeta(data) {
+    const consistency = data.consistency;
+    const fg = data.functional_groups;
+    if (!consistency && !fg) {
+      els.explainMetaCard.hidden = true;
+      return;
+    }
+    els.explainMetaCard.hidden = false;
+
+    const level = consistency?.level || "未评估";
+    els.consistencyPill.textContent = `${level}一致性`;
+    els.consistencyPill.className = `consistency-pill ${
+      level === "高" ? "is-high"
+        : level === "中" ? "is-medium"
+          : level === "低" ? "is-low" : "is-unknown"}`;
+    els.consistencyJaccard.textContent = dashNumber(consistency?.jaccard_top10_atom, 3);
+    els.consistencySpearman.textContent = dashNumber(consistency?.spearman_atom, 3);
+    els.consistencyStd.textContent = dashNumber(consistency?.pred_std, 3);
+
+    els.functionalGroupList.replaceChildren();
+    const groups = (fg && fg.top3) || [];
+    if (groups.length) {
+      groups.forEach((group, index) => {
+        const chip = document.createElement("span");
+        chip.className = "fg-chip";
+        const rank = document.createElement("b");
+        rank.textContent = `#${index + 1}`;
+        const name = document.createElement("span");
+        name.textContent = group.group;
+        const score = document.createElement("i");
+        score.textContent = Number.isFinite(Number(group.atom_importance_mean))
+          ? Number(group.atom_importance_mean).toFixed(3) : "--";
+        chip.append(rank, name, score);
+        els.functionalGroupList.appendChild(chip);
+      });
+      const caption = document.createElement("small");
+      caption.textContent = "Top-3 由 GNNExplainer 归因排序；官能团由 RDKit 识别";
+      els.functionalGroupList.appendChild(caption);
+    } else if (fg && fg.detected?.length) {
+      fg.detected.slice(0, 8).forEach((nameText) => {
+        const chip = document.createElement("span");
+        chip.className = "fg-chip is-muted";
+        chip.textContent = nameText;
+        els.functionalGroupList.appendChild(chip);
+      });
+      const caption = document.createElement("small");
+      caption.textContent = "未生成掩码，仅展示 RDKit 识别的官能团（无重要性）";
+      els.functionalGroupList.appendChild(caption);
+    }
+    els.explainMetaNote.textContent = (fg && fg.note) || (consistency && consistency.note) || "";
+  }
+
   function hideAttentionResult() {
     els.attentionCard.hidden = true;
     els.headGrid.hidden = true;
@@ -444,6 +507,7 @@
     els.uncertaintyCard.hidden = true;
     els.structureCard.hidden = true;
     els.llmCard.hidden = true;
+    els.explainMetaCard.hidden = true;
     const hasImage = setImage(els.attentionImage, data.image);
     els.attentionCard.hidden = !hasImage;
     if (!hasImage && data.warning) showError(data.warning);
@@ -525,13 +589,13 @@
     try {
       let data;
       if (method === "attention") {
-        data = await fetchJSON("/api/attention", {
+        data = await fetchJSON("api/attention", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ smiles, dataset, per_head: true, layer: 0 }),
         }, 150000);
       } else {
-        data = await fetchJSON("/api/predict", {
+        data = await fetchJSON("api/predict", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -610,7 +674,7 @@
     if (labelNode) labelNode.textContent = "解释生成中...";
 
     try {
-      const data = await fetchJSON("/api/explain", {
+      const data = await fetchJSON("api/explain", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -630,10 +694,18 @@
           : "";
       }
       els.llmText.textContent = data.explanation || "未返回解释文本。";
+      els.llmTag.textContent = data.provider === "rule_template"
+        ? "规则模板 · 离线降级" : "DeepSeek · API";
       els.functionalGroups.replaceChildren();
+      (data.top_groups || []).forEach((group) => {
+        const chip = document.createElement("span");
+        chip.className = "group-chip is-ranked";
+        chip.textContent = `${group.group} · ${formatNumber(group.score, 3)}`;
+        els.functionalGroups.appendChild(chip);
+      });
       (data.functional_groups || []).forEach((group) => {
         const chip = document.createElement("span");
-        chip.className = "group-chip";
+        chip.className = "group-chip is-muted";
         chip.textContent = group;
         els.functionalGroups.appendChild(chip);
       });
@@ -642,6 +714,10 @@
       els.consistencyWarning.textContent = missing.length
         ? `一致性校验：解释中提及但分子中未检出 ${missing.join("、")}，请以 RDKit 结果为准。`
         : "";
+      if (data.provider === "rule_template" && data.fallback_reason) {
+        els.consistencyWarning.hidden = false;
+        els.consistencyWarning.textContent += `${els.consistencyWarning.textContent ? " " : ""}已降级为规则模板（${data.fallback_reason}）。`;
+      }
       els.llmLoading.hidden = true;
       els.llmContent.hidden = false;
     } catch (error) {

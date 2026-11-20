@@ -27,12 +27,27 @@ class WebUiTests(unittest.TestCase):
         self.assertIn("MolGNN", html)
         self.assertIn("/static/css/app.css", html)
         self.assertIn("/static/js/app.js", html)
+        self.assertIn("/static/js/batch.js", html)
+        self.assertIn("批量预测", html)
+        self.assertIn("解释一致性", html)
         css_response = self.client.get("/static/css/app.css")
         js_response = self.client.get("/static/js/app.js")
+        batch_response = self.client.get("/static/js/batch.js")
         self.assertEqual(css_response.status_code, 200)
         self.assertEqual(js_response.status_code, 200)
-        css_response.close()
-        js_response.close()
+        self.assertEqual(batch_response.status_code, 200)
+        for resp in (css_response, js_response, batch_response):
+            resp.close()
+
+    def test_meta_exposes_version_consistency_and_limits(self):
+        response = self.client.get("/api/meta")
+        self.assertEqual(response.status_code, 200)
+        payload = response.get_json()
+        for key in ("model_version", "explanation_consistency", "max_smiles_len", "max_batch_rows"):
+            self.assertIn(key, payload)
+        self.assertLessEqual(payload["max_smiles_len"], 512)
+        self.assertIn("level", payload["explanation_consistency"]["ESOL"])
+        self.assertEqual(payload["llm_available"] in (True, False), True)
 
     def test_smiles_validation(self):
         valid = self.client.post("/api/validate", json={"smiles": "CCCO"})
