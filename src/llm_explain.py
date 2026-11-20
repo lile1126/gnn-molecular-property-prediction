@@ -5,17 +5,17 @@ LLM 化学解释增强（方向 3）
 流程：SMILES + GNNExplainer 原子/键重要性掩码 → RDKit 提取关键结构特征 →
 LLM 生成化学语言解释 → 官能团一致性校验。
 
-支持两种 LLM 通道（--provider / Web 端可选）：
-  - local    ：本地 Qwen2.5-3B-Instruct（4bit 量化，GTX 1660 Ti 6GB 可跑）
-  - deepseek ：DeepSeek API（deepseek-chat，需 DEEPSEEK_API_KEY 或 deepseek_config.json）
+唯一 LLM 通道：DeepSeek API（deepseek-chat，需 DEEPSEEK_API_KEY 或 deepseek_config.json）。
+（本地 Qwen 4bit 通道已移除：需要 CUDA GPU，项目运行环境为纯 CPU。）
 
 关键点：
   - 掩码→结构：top-k 重要原子 + 高重要性键 → RDKit 官能团/子结构匹配
   - 提示词注入结构事实，LLM 只做"基于证据的化学解释"，防止幻觉
+  - 归因模型与 Web 推理模式一一对应：单模型 / MC / 同构集成主成员 / 异质集成 9 配置主成员
 
 用法:
     python src/llm_explain.py --smiles "CCCO" --dataset ESOL --conv GCN
-    python src/llm_explain.py --smiles "CCCO" --dataset ESOL --conv GCN --provider deepseek
+    python src/llm_explain.py --smiles "CCCO" --dataset BBBP --method hetero
 """
 import argparse
 import json
@@ -30,15 +30,12 @@ except Exception:
 import numpy as np
 import torch
 from rdkit import Chem
-from rdkit.Chem import Draw, AllChem
 from torch_geometric.utils import from_smiles
 
 from data_prep import TASK_TYPE
 from interpret import explain_one, load_trained
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_DIR = os.path.join(ROOT, "models", "Qwen2.5-3B-Instruct", "models",
-                         "Qwen--Qwen2.5-3B-Instruct", "snapshots", "master")
 REPORT_DIR = os.path.join(ROOT, "reports")
 
 # DeepSeek API（OpenAI 兼容接口，标准库 urllib 调用，无额外依赖）
@@ -46,6 +43,9 @@ DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 DEEPSEEK_MODEL = "deepseek-chat"
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+TASK_LABEL = {"ESOL": "水溶解度 logS", "FreeSolv": "水合自由能",
+              "BBBP": "血脑屏障渗透", "Clintox": "药物毒性（CT_TOX）"}
 
 # 常见官能团 SMARTS（用于结构特征提取与一致性校验）
 FUNCTIONAL_GROUPS = [
@@ -107,8 +107,8 @@ def extract_structure(smiles, node_mask, edge_mask, data, top_k=8):
     }
 
 
-def build_prompt(structure, dataset, conv, pred, task_type, task_label):
-    """基于结构证据构造提示词（Qwen chat 模板）"""
+def build_prompt(structure, dataset, model_note, pred, task_type, task_label):
+    """基于结构证据构造提示词"""
     sys_prompt = ("你是计算化学与机器学习交叉领域的助手。请基于给定的分子结构证据，"
                   "用简洁、准确的中文解释图神经网络（GNN）为何做出该预测。"
                   "只使用提供的证据，不要编造不存在的官能团或性质；不超过 3 句话。"
@@ -121,7 +121,7 @@ def build_prompt(structure, dataset, conv, pred, task_type, task_label):
         "Clintox": "药物毒性（CT_TOX）：接近 1 表示预测有毒。毒性常与亲电/反应性基团（硝基、芳香胺、卤素取代等）及代谢活化位点相关。",
     }[dataset]
     user_prompt = (
-        f"预测任务：{task_label}。模型：{conv} 图神经网络。"
+        f"预测任务：{task_label}。归因模型：{model_note}。"
         f"预测结果：{pred:.4f}（{'数值越大性质越强' if task_type == 'classification' else '数值即目标属性'}）。\n"
         f"任务化学先验：{task_prior}\n"
         f"分子 SMILES：{structure['smiles']}（含 {structure['heavy_atoms']} 个重原子）。\n"
@@ -147,31 +147,60 @@ def check_consistency(text, structure):
     return {"mentioned_detected": mentioned, "mentioned_undetected": fake}
 
 
+def _mean_masks(models, datas, task_type, epochs=100):
+    """对多个归因模型分别求 GNNExplainer 掩码，再按样本平均。
+
+    models 与 datas 一一对应（不同架构/特征档的输入维度不同，需各自的 data）。
+    多模型时默认 epochs=100（单模型 300）：9 配置串行归因，300 会到 30 秒量级。
+    返回 (node_mask, edge_mask, pred_mean)
+    """
+    node_masks, edge_masks, preds = [], [], []
+    for model, data in zip(models, datas):
+        nm, em, p = explain_one(model, data, task_type, epochs=epochs)
+        node_masks.append(np.asarray(nm, dtype=np.float64))
+        edge_masks.append(np.asarray(em, dtype=np.float64))
+        preds.append(float(p))
+    n_len = node_masks[0].shape[0]
+    node_mask = np.mean([m for m in node_masks if m.shape[0] == n_len], axis=0)
+    # 同一分子各特征档的边集一致；架构不同不影响边数
+    e_len = edge_masks[0].shape[0]
+    same = [m for m in edge_masks if m.shape[0] == e_len]
+    edge_mask = np.mean(same, axis=0) if same else edge_masks[0]
+    return node_mask, edge_mask, float(np.mean(preds))
+
+
 def generate_explanation(smiles, dataset="ESOL", conv="GCN", top_k=8, model=None, data=None,
-                         provider="local"):
+                         models=None, datas=None, method="single", model_note=None,
+                         prediction=None):
     """完整流程：掩码 → 结构 → LLM 解释 → 一致性校验
 
-    model/data 可外部传入（复用 Web 已加载的模型与特征数据，避免显存重复占用）；
-    未传时自动加载基线模型。
-    provider: "local"（本地 Qwen2.5-3B）或 "deepseek"（DeepSeek API）
+    model/data      : 单模型归因（method=single / mc / ensemble / attention）
+    models/datas    : 多模型掩码平均（method=hetero，9 配置 seed42 主成员）
+    prediction      : 界面已显示的推理结果；传入时解释文本引用它，保证与推理模式一致
     """
     name = dataset
     task_type = TASK_TYPE[name]
-    if model is None:
-        model, _ = load_trained(conv, name)
-    if data is None:
-        data = from_smiles(smiles)
-    node_mask, edge_mask, pred = explain_one(model, data, task_type)
-    structure = extract_structure(smiles, node_mask, edge_mask, data, top_k=top_k)
+    if models:
+        # epochs=60 与 Web 端异质集成结构图（HETERO_MASK_EPOCHS）保持一致，
+        # 保证解释文本与图上高重要性原子来自同一批掩码
+        node_mask, edge_mask, pred = _mean_masks(models, datas, task_type, epochs=60)
+        first_data = datas[0]
+    else:
+        if model is None:
+            model, _ = load_trained(conv, name)
+        if data is None:
+            data = from_smiles(smiles)
+        node_mask, edge_mask, pred = explain_one(model, data, task_type)
+        first_data = data
+    if prediction is not None:
+        pred = float(prediction)
+    structure = extract_structure(smiles, node_mask, edge_mask, first_data, top_k=top_k)
     if "error" in structure:
         return {"error": structure["error"]}
-    sys_prompt, user_prompt = build_prompt(structure, dataset, conv, pred, task_type,
-                                           {"ESOL": "水溶解度 logS", "FreeSolv": "水合自由能",
-                                            "BBBP": "血脑屏障渗透", "Clintox": "药物毒性（CT_TOX）"}[name])
-    if provider == "deepseek":
-        llm_text = _call_llm_deepseek(sys_prompt, user_prompt)
-    else:
-        llm_text = _call_llm(sys_prompt, user_prompt)
+    note = model_note or f"{conv} × 单模型"
+    sys_prompt, user_prompt = build_prompt(structure, dataset, note, pred, task_type,
+                                           TASK_LABEL[name])
+    llm_text = _call_llm_deepseek(sys_prompt, user_prompt)
     consistency = check_consistency(llm_text, structure)
     return {
         "smiles": smiles,
@@ -179,34 +208,10 @@ def generate_explanation(smiles, dataset="ESOL", conv="GCN", top_k=8, model=None
         "structure": structure,
         "explanation": llm_text,
         "consistency": consistency,
-        "provider": provider,
+        "provider": "deepseek",
+        "method": method,
+        "model_note": note,
     }
-
-
-_LLM = {"pipe": None, "tokenizer": None}
-
-
-def _call_llm(sys_prompt, user_prompt, max_new_tokens=160):
-    """调用本地 Qwen2.5-3B（懒加载 + 4bit 量化）"""
-    if _LLM["pipe"] is None:
-        from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-        bnb = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
-                                 bnb_4bit_compute_dtype=torch.float16)
-        tok = AutoTokenizer.from_pretrained(MODEL_DIR, trust_remote_code=True)
-        mdl = AutoModelForCausalLM.from_pretrained(
-            MODEL_DIR, quantization_config=bnb, device_map="auto",
-            torch_dtype=torch.float16, trust_remote_code=True)
-        _LLM["pipe"] = mdl
-        _LLM["tokenizer"] = tok
-    mdl = _LLM["pipe"]
-    tok = _LLM["tokenizer"]
-    messages = [{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_prompt}]
-    text = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    inputs = tok(text, return_tensors="pt").to(mdl.device)
-    with torch.no_grad():
-        out = mdl.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=True,
-                           temperature=0.6, top_p=0.9, pad_token_id=tok.pad_token_id or tok.eos_token_id)
-    return tok.decode(out[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True).strip()
 
 
 def _load_deepseek_key():
@@ -276,10 +281,11 @@ def main():
     ap.add_argument("--smiles", default="CCCO")
     ap.add_argument("--dataset", default="ESOL", choices=["ESOL", "FreeSolv", "BBBP", "Clintox"])
     ap.add_argument("--conv", default="GCN", choices=["GCN", "GAT", "GraphSAGE"])
-    ap.add_argument("--provider", default="local", choices=["local", "deepseek"],
-                    help="LLM 通道：local=本地 Qwen2.5-3B，deepseek=DeepSeek API")
+    ap.add_argument("--method", default="single", choices=["single", "mc", "ensemble", "attention"],
+                    help="归因模式（hetero 需经 Web 端调用，CLI 仅支持单模型归因）")
     args = ap.parse_args()
-    result = generate_explanation(args.smiles, args.dataset, args.conv, provider=args.provider)
+    result = generate_explanation(args.smiles, args.dataset, args.conv, method=args.method,
+                                  model_note=f"{args.conv} × 单模型（{args.method}）")
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 

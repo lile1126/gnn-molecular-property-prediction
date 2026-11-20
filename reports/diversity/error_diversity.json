@@ -1,0 +1,2666 @@
+{
+  "ESOL": {
+    "task": "regression",
+    "diversity": {
+      "n_members": 36,
+      "mean_corr_same_config_cross_seed": 0.9176,
+      "mean_corr_cross_architecture": 0.6064,
+      "mean_corr_same_arch_cross_level": 0.5695,
+      "mean_corr_config_level": 0.6356
+    },
+    "config_metrics": {
+      "GAT_feata": {
+        "val": {
+          "RMSE": 1.0504,
+          "MAE": 0.6906,
+          "R2": 0.7871
+        },
+        "test": {
+          "RMSE": 0.7916,
+          "MAE": 0.5883,
+          "R2": 0.8507
+        },
+        "members": [
+          "GAT_feata",
+          "GAT_feata_s13",
+          "GAT_feata_s21",
+          "GAT_feata_s7"
+        ]
+      },
+      "GAT_featb": {
+        "val": {
+          "RMSE": 0.9828,
+          "MAE": 0.607,
+          "R2": 0.8136
+        },
+        "test": {
+          "RMSE": 0.7532,
+          "MAE": 0.5571,
+          "R2": 0.8649
+        },
+        "members": [
+          "GAT_featb",
+          "GAT_featb_s13",
+          "GAT_featb_s21",
+          "GAT_featb_s7"
+        ]
+      },
+      "GAT_featc": {
+        "val": {
+          "RMSE": 0.7317,
+          "MAE": 0.547,
+          "R2": 0.8967
+        },
+        "test": {
+          "RMSE": 0.6982,
+          "MAE": 0.5222,
+          "R2": 0.8839
+        },
+        "members": [
+          "GAT_featc",
+          "GAT_featc_s13",
+          "GAT_featc_s21",
+          "GAT_featc_s7"
+        ]
+      },
+      "GCN_feata": {
+        "val": {
+          "RMSE": 0.9687,
+          "MAE": 0.654,
+          "R2": 0.8189
+        },
+        "test": {
+          "RMSE": 0.6828,
+          "MAE": 0.5158,
+          "R2": 0.8889
+        },
+        "members": [
+          "GCN_feata",
+          "GCN_feata_s13",
+          "GCN_feata_s21",
+          "GCN_feata_s7"
+        ]
+      },
+      "GCN_featb": {
+        "val": {
+          "RMSE": 1.0282,
+          "MAE": 0.7268,
+          "R2": 0.796
+        },
+        "test": {
+          "RMSE": 0.7026,
+          "MAE": 0.5228,
+          "R2": 0.8824
+        },
+        "members": [
+          "GCN_featb",
+          "GCN_featb_s13",
+          "GCN_featb_s21",
+          "GCN_featb_s7"
+        ]
+      },
+      "GCN_featc": {
+        "val": {
+          "RMSE": 0.7074,
+          "MAE": 0.5258,
+          "R2": 0.9034
+        },
+        "test": {
+          "RMSE": 0.6879,
+          "MAE": 0.5252,
+          "R2": 0.8873
+        },
+        "members": [
+          "GCN_featc",
+          "GCN_featc_s13",
+          "GCN_featc_s21",
+          "GCN_featc_s7"
+        ]
+      },
+      "GraphSAGE_feata": {
+        "val": {
+          "RMSE": 0.7332,
+          "MAE": 0.5751,
+          "R2": 0.8963
+        },
+        "test": {
+          "RMSE": 0.6592,
+          "MAE": 0.4988,
+          "R2": 0.8965
+        },
+        "members": [
+          "GraphSAGE_feata",
+          "GraphSAGE_feata_s13",
+          "GraphSAGE_feata_s21",
+          "GraphSAGE_feata_s7"
+        ]
+      },
+      "GraphSAGE_featb": {
+        "val": {
+          "RMSE": 0.6815,
+          "MAE": 0.5116,
+          "R2": 0.9104
+        },
+        "test": {
+          "RMSE": 0.6118,
+          "MAE": 0.4816,
+          "R2": 0.9108
+        },
+        "members": [
+          "GraphSAGE_featb",
+          "GraphSAGE_featb_s13",
+          "GraphSAGE_featb_s21",
+          "GraphSAGE_featb_s7"
+        ]
+      },
+      "GraphSAGE_featc": {
+        "val": {
+          "RMSE": 0.7117,
+          "MAE": 0.5278,
+          "R2": 0.9023
+        },
+        "test": {
+          "RMSE": 0.7368,
+          "MAE": 0.5417,
+          "R2": 0.8707
+        },
+        "members": [
+          "GraphSAGE_featc",
+          "GraphSAGE_featc_s13",
+          "GraphSAGE_featc_s21",
+          "GraphSAGE_featc_s7"
+        ]
+      }
+    },
+    "fusion_preview": {
+      "best_single(val选)": {
+        "test": {
+          "RMSE": 0.6002,
+          "MAE": 0.4766,
+          "R2": 0.9142
+        }
+      },
+      "best_homo_ensemble(val选)": {
+        "test": {
+          "RMSE": 0.6118,
+          "MAE": 0.4816,
+          "R2": 0.9108
+        }
+      },
+      "hetero_equal(val选3专家)": {
+        "test": {
+          "RMSE": 0.5911,
+          "MAE": 0.4674,
+          "R2": 0.9168
+        }
+      },
+      "hetero_equal_all9": {
+        "test": {
+          "RMSE": 0.5776,
+          "MAE": 0.4385,
+          "R2": 0.9205
+        }
+      },
+      "hetero_equal_featc": {
+        "test": {
+          "RMSE": 0.6913,
+          "MAE": 0.5175,
+          "R2": 0.8861
+        }
+      },
+      "hetero_nnls(val拟合)": {
+        "test": {
+          "RMSE": 0.5678,
+          "MAE": 0.4516,
+          "R2": 0.9232
+        }
+      }
+    },
+    "fusion_detail": {
+      "best_single": "GraphSAGE_featb_s21",
+      "best_homo_ensemble": "GraphSAGE_featb",
+      "experts_by_val": [
+        "GCN_featc",
+        "GAT_featc",
+        "GraphSAGE_featb"
+      ],
+      "nnls_weights": {
+        "GCN_featc": 0.2867,
+        "GAT_featc": 0.1534,
+        "GraphSAGE_featb": 0.5598
+      }
+    },
+    "model_metrics": {
+      "GAT_feata": {
+        "val": {
+          "RMSE": 1.0481,
+          "MAE": 0.6942,
+          "R2": 0.788
+        },
+        "test": {
+          "RMSE": 0.7937,
+          "MAE": 0.6037,
+          "R2": 0.8499
+        }
+      },
+      "GAT_feata_s13": {
+        "val": {
+          "RMSE": 1.0501,
+          "MAE": 0.7073,
+          "R2": 0.7872
+        },
+        "test": {
+          "RMSE": 0.8591,
+          "MAE": 0.6464,
+          "R2": 0.8241
+        }
+      },
+      "GAT_feata_s21": {
+        "val": {
+          "RMSE": 1.0404,
+          "MAE": 0.7143,
+          "R2": 0.7911
+        },
+        "test": {
+          "RMSE": 0.8149,
+          "MAE": 0.6057,
+          "R2": 0.8418
+        }
+      },
+      "GAT_feata_s7": {
+        "val": {
+          "RMSE": 1.1636,
+          "MAE": 0.7845,
+          "R2": 0.7387
+        },
+        "test": {
+          "RMSE": 0.8171,
+          "MAE": 0.5936,
+          "R2": 0.8409
+        }
+      },
+      "GAT_featb": {
+        "val": {
+          "RMSE": 0.9338,
+          "MAE": 0.5951,
+          "R2": 0.8317
+        },
+        "test": {
+          "RMSE": 0.7461,
+          "MAE": 0.5403,
+          "R2": 0.8674
+        }
+      },
+      "GAT_featb_s13": {
+        "val": {
+          "RMSE": 1.0269,
+          "MAE": 0.6817,
+          "R2": 0.7965
+        },
+        "test": {
+          "RMSE": 0.7695,
+          "MAE": 0.5821,
+          "R2": 0.8589
+        }
+      },
+      "GAT_featb_s21": {
+        "val": {
+          "RMSE": 0.9692,
+          "MAE": 0.618,
+          "R2": 0.8187
+        },
+        "test": {
+          "RMSE": 0.8165,
+          "MAE": 0.6123,
+          "R2": 0.8412
+        }
+      },
+      "GAT_featb_s7": {
+        "val": {
+          "RMSE": 1.0832,
+          "MAE": 0.6424,
+          "R2": 0.7736
+        },
+        "test": {
+          "RMSE": 0.7842,
+          "MAE": 0.5869,
+          "R2": 0.8535
+        }
+      },
+      "GAT_featc": {
+        "val": {
+          "RMSE": 0.7637,
+          "MAE": 0.607,
+          "R2": 0.8874
+        },
+        "test": {
+          "RMSE": 0.7003,
+          "MAE": 0.5479,
+          "R2": 0.8832
+        }
+      },
+      "GAT_featc_s13": {
+        "val": {
+          "RMSE": 0.7783,
+          "MAE": 0.5645,
+          "R2": 0.8831
+        },
+        "test": {
+          "RMSE": 0.7265,
+          "MAE": 0.554,
+          "R2": 0.8742
+        }
+      },
+      "GAT_featc_s21": {
+        "val": {
+          "RMSE": 0.768,
+          "MAE": 0.5698,
+          "R2": 0.8862
+        },
+        "test": {
+          "RMSE": 0.7586,
+          "MAE": 0.5646,
+          "R2": 0.8629
+        }
+      },
+      "GAT_featc_s7": {
+        "val": {
+          "RMSE": 0.7555,
+          "MAE": 0.5715,
+          "R2": 0.8898
+        },
+        "test": {
+          "RMSE": 0.754,
+          "MAE": 0.5682,
+          "R2": 0.8645
+        }
+      },
+      "GCN_feata": {
+        "val": {
+          "RMSE": 1.0554,
+          "MAE": 0.6928,
+          "R2": 0.7851
+        },
+        "test": {
+          "RMSE": 0.6976,
+          "MAE": 0.5423,
+          "R2": 0.8841
+        }
+      },
+      "GCN_feata_s13": {
+        "val": {
+          "RMSE": 1.0043,
+          "MAE": 0.6685,
+          "R2": 0.8054
+        },
+        "test": {
+          "RMSE": 0.7332,
+          "MAE": 0.5465,
+          "R2": 0.8719
+        }
+      },
+      "GCN_feata_s21": {
+        "val": {
+          "RMSE": 0.9343,
+          "MAE": 0.6227,
+          "R2": 0.8316
+        },
+        "test": {
+          "RMSE": 0.662,
+          "MAE": 0.5094,
+          "R2": 0.8956
+        }
+      },
+      "GCN_feata_s7": {
+        "val": {
+          "RMSE": 0.9391,
+          "MAE": 0.6929,
+          "R2": 0.8298
+        },
+        "test": {
+          "RMSE": 0.7191,
+          "MAE": 0.5367,
+          "R2": 0.8768
+        }
+      },
+      "GCN_featb": {
+        "val": {
+          "RMSE": 1.1854,
+          "MAE": 0.8106,
+          "R2": 0.7288
+        },
+        "test": {
+          "RMSE": 0.7879,
+          "MAE": 0.5874,
+          "R2": 0.8521
+        }
+      },
+      "GCN_featb_s13": {
+        "val": {
+          "RMSE": 0.9669,
+          "MAE": 0.6939,
+          "R2": 0.8196
+        },
+        "test": {
+          "RMSE": 0.6908,
+          "MAE": 0.5203,
+          "R2": 0.8863
+        }
+      },
+      "GCN_featb_s21": {
+        "val": {
+          "RMSE": 1.045,
+          "MAE": 0.7335,
+          "R2": 0.7893
+        },
+        "test": {
+          "RMSE": 0.7044,
+          "MAE": 0.5305,
+          "R2": 0.8818
+        }
+      },
+      "GCN_featb_s7": {
+        "val": {
+          "RMSE": 0.9621,
+          "MAE": 0.6932,
+          "R2": 0.8214
+        },
+        "test": {
+          "RMSE": 0.7136,
+          "MAE": 0.537,
+          "R2": 0.8787
+        }
+      },
+      "GCN_featc": {
+        "val": {
+          "RMSE": 0.7703,
+          "MAE": 0.5678,
+          "R2": 0.8855
+        },
+        "test": {
+          "RMSE": 0.6803,
+          "MAE": 0.5405,
+          "R2": 0.8898
+        }
+      },
+      "GCN_featc_s13": {
+        "val": {
+          "RMSE": 0.7356,
+          "MAE": 0.5608,
+          "R2": 0.8956
+        },
+        "test": {
+          "RMSE": 0.7546,
+          "MAE": 0.5545,
+          "R2": 0.8644
+        }
+      },
+      "GCN_featc_s21": {
+        "val": {
+          "RMSE": 0.7215,
+          "MAE": 0.5452,
+          "R2": 0.8995
+        },
+        "test": {
+          "RMSE": 0.7286,
+          "MAE": 0.561,
+          "R2": 0.8735
+        }
+      },
+      "GCN_featc_s7": {
+        "val": {
+          "RMSE": 0.7197,
+          "MAE": 0.5497,
+          "R2": 0.9001
+        },
+        "test": {
+          "RMSE": 0.7152,
+          "MAE": 0.5613,
+          "R2": 0.8782
+        }
+      },
+      "GraphSAGE_feata": {
+        "val": {
+          "RMSE": 0.7872,
+          "MAE": 0.6224,
+          "R2": 0.8804
+        },
+        "test": {
+          "RMSE": 0.7234,
+          "MAE": 0.5414,
+          "R2": 0.8753
+        }
+      },
+      "GraphSAGE_feata_s13": {
+        "val": {
+          "RMSE": 0.7269,
+          "MAE": 0.5554,
+          "R2": 0.8981
+        },
+        "test": {
+          "RMSE": 0.7014,
+          "MAE": 0.5292,
+          "R2": 0.8828
+        }
+      },
+      "GraphSAGE_feata_s21": {
+        "val": {
+          "RMSE": 0.7592,
+          "MAE": 0.604,
+          "R2": 0.8888
+        },
+        "test": {
+          "RMSE": 0.6521,
+          "MAE": 0.507,
+          "R2": 0.8987
+        }
+      },
+      "GraphSAGE_feata_s7": {
+        "val": {
+          "RMSE": 0.7559,
+          "MAE": 0.5805,
+          "R2": 0.8897
+        },
+        "test": {
+          "RMSE": 0.6522,
+          "MAE": 0.4815,
+          "R2": 0.8987
+        }
+      },
+      "GraphSAGE_featb": {
+        "val": {
+          "RMSE": 0.7034,
+          "MAE": 0.5237,
+          "R2": 0.9045
+        },
+        "test": {
+          "RMSE": 0.6404,
+          "MAE": 0.5095,
+          "R2": 0.9023
+        }
+      },
+      "GraphSAGE_featb_s13": {
+        "val": {
+          "RMSE": 0.7098,
+          "MAE": 0.5382,
+          "R2": 0.9028
+        },
+        "test": {
+          "RMSE": 0.6675,
+          "MAE": 0.5191,
+          "R2": 0.8938
+        }
+      },
+      "GraphSAGE_featb_s21": {
+        "val": {
+          "RMSE": 0.684,
+          "MAE": 0.5181,
+          "R2": 0.9097
+        },
+        "test": {
+          "RMSE": 0.6002,
+          "MAE": 0.4766,
+          "R2": 0.9142
+        }
+      },
+      "GraphSAGE_featb_s7": {
+        "val": {
+          "RMSE": 0.6948,
+          "MAE": 0.5133,
+          "R2": 0.9068
+        },
+        "test": {
+          "RMSE": 0.6233,
+          "MAE": 0.4948,
+          "R2": 0.9074
+        }
+      },
+      "GraphSAGE_featc": {
+        "val": {
+          "RMSE": 0.7432,
+          "MAE": 0.5761,
+          "R2": 0.8934
+        },
+        "test": {
+          "RMSE": 0.7861,
+          "MAE": 0.5891,
+          "R2": 0.8528
+        }
+      },
+      "GraphSAGE_featc_s13": {
+        "val": {
+          "RMSE": 0.7667,
+          "MAE": 0.5471,
+          "R2": 0.8866
+        },
+        "test": {
+          "RMSE": 0.7408,
+          "MAE": 0.5419,
+          "R2": 0.8693
+        }
+      },
+      "GraphSAGE_featc_s21": {
+        "val": {
+          "RMSE": 0.7316,
+          "MAE": 0.5648,
+          "R2": 0.8967
+        },
+        "test": {
+          "RMSE": 0.7504,
+          "MAE": 0.5503,
+          "R2": 0.8658
+        }
+      },
+      "GraphSAGE_featc_s7": {
+        "val": {
+          "RMSE": 0.7135,
+          "MAE": 0.5378,
+          "R2": 0.9018
+        },
+        "test": {
+          "RMSE": 0.7594,
+          "MAE": 0.5711,
+          "R2": 0.8626
+        }
+      }
+    }
+  },
+  "FreeSolv": {
+    "task": "regression",
+    "diversity": {
+      "n_members": 36,
+      "mean_corr_same_config_cross_seed": 0.9139,
+      "mean_corr_cross_architecture": 0.7496,
+      "mean_corr_same_arch_cross_level": 0.7122,
+      "mean_corr_config_level": 0.7935
+    },
+    "config_metrics": {
+      "GAT_feata": {
+        "val": {
+          "RMSE": 1.1512,
+          "MAE": 0.7082,
+          "R2": 0.8974
+        },
+        "test": {
+          "RMSE": 1.2292,
+          "MAE": 0.8576,
+          "R2": 0.903
+        },
+        "members": [
+          "GAT_feata",
+          "GAT_feata_s13",
+          "GAT_feata_s21",
+          "GAT_feata_s7"
+        ]
+      },
+      "GAT_featb": {
+        "val": {
+          "RMSE": 1.0715,
+          "MAE": 0.6574,
+          "R2": 0.9111
+        },
+        "test": {
+          "RMSE": 1.1178,
+          "MAE": 0.7672,
+          "R2": 0.9198
+        },
+        "members": [
+          "GAT_featb",
+          "GAT_featb_s13",
+          "GAT_featb_s21",
+          "GAT_featb_s7"
+        ]
+      },
+      "GAT_featc": {
+        "val": {
+          "RMSE": 0.5237,
+          "MAE": 0.4111,
+          "R2": 0.9788
+        },
+        "test": {
+          "RMSE": 1.1225,
+          "MAE": 0.6119,
+          "R2": 0.9191
+        },
+        "members": [
+          "GAT_featc",
+          "GAT_featc_s13",
+          "GAT_featc_s21",
+          "GAT_featc_s7"
+        ]
+      },
+      "GCN_feata": {
+        "val": {
+          "RMSE": 1.0332,
+          "MAE": 0.6517,
+          "R2": 0.9174
+        },
+        "test": {
+          "RMSE": 1.2274,
+          "MAE": 0.863,
+          "R2": 0.9033
+        },
+        "members": [
+          "GCN_feata",
+          "GCN_feata_s13",
+          "GCN_feata_s21",
+          "GCN_feata_s7"
+        ]
+      },
+      "GCN_featb": {
+        "val": {
+          "RMSE": 1.1345,
+          "MAE": 0.7121,
+          "R2": 0.9004
+        },
+        "test": {
+          "RMSE": 1.2166,
+          "MAE": 0.8786,
+          "R2": 0.905
+        },
+        "members": [
+          "GCN_featb",
+          "GCN_featb_s13",
+          "GCN_featb_s21",
+          "GCN_featb_s7"
+        ]
+      },
+      "GCN_featc": {
+        "val": {
+          "RMSE": 0.5786,
+          "MAE": 0.4313,
+          "R2": 0.9741
+        },
+        "test": {
+          "RMSE": 1.0403,
+          "MAE": 0.5907,
+          "R2": 0.9305
+        },
+        "members": [
+          "GCN_featc",
+          "GCN_featc_s13",
+          "GCN_featc_s21",
+          "GCN_featc_s7"
+        ]
+      },
+      "GraphSAGE_feata": {
+        "val": {
+          "RMSE": 1.2114,
+          "MAE": 0.7727,
+          "R2": 0.8864
+        },
+        "test": {
+          "RMSE": 1.376,
+          "MAE": 0.9522,
+          "R2": 0.8785
+        },
+        "members": [
+          "GraphSAGE_feata",
+          "GraphSAGE_feata_s13",
+          "GraphSAGE_feata_s21",
+          "GraphSAGE_feata_s7"
+        ]
+      },
+      "GraphSAGE_featb": {
+        "val": {
+          "RMSE": 1.1659,
+          "MAE": 0.734,
+          "R2": 0.8948
+        },
+        "test": {
+          "RMSE": 1.3698,
+          "MAE": 0.9371,
+          "R2": 0.8796
+        },
+        "members": [
+          "GraphSAGE_featb",
+          "GraphSAGE_featb_s13",
+          "GraphSAGE_featb_s21",
+          "GraphSAGE_featb_s7"
+        ]
+      },
+      "GraphSAGE_featc": {
+        "val": {
+          "RMSE": 0.6144,
+          "MAE": 0.435,
+          "R2": 0.9708
+        },
+        "test": {
+          "RMSE": 1.0959,
+          "MAE": 0.5934,
+          "R2": 0.9229
+        },
+        "members": [
+          "GraphSAGE_featc",
+          "GraphSAGE_featc_s13",
+          "GraphSAGE_featc_s21",
+          "GraphSAGE_featc_s7"
+        ]
+      }
+    },
+    "fusion_preview": {
+      "best_single(val选)": {
+        "test": {
+          "RMSE": 1.1461,
+          "MAE": 0.5766,
+          "R2": 0.9157
+        }
+      },
+      "best_homo_ensemble(val选)": {
+        "test": {
+          "RMSE": 1.1225,
+          "MAE": 0.6119,
+          "R2": 0.9191
+        }
+      },
+      "hetero_equal(val选3专家)": {
+        "test": {
+          "RMSE": 1.0817,
+          "MAE": 0.5934,
+          "R2": 0.9249
+        }
+      },
+      "hetero_equal_all9": {
+        "test": {
+          "RMSE": 1.0873,
+          "MAE": 0.7034,
+          "R2": 0.9241
+        }
+      },
+      "hetero_equal_featc": {
+        "test": {
+          "RMSE": 1.0817,
+          "MAE": 0.5934,
+          "R2": 0.9249
+        }
+      },
+      "hetero_nnls(val拟合)": {
+        "test": {
+          "RMSE": 1.1225,
+          "MAE": 0.6119,
+          "R2": 0.9191
+        }
+      }
+    },
+    "fusion_detail": {
+      "best_single": "GCN_featc_s13",
+      "best_homo_ensemble": "GAT_featc",
+      "experts_by_val": [
+        "GCN_featc",
+        "GAT_featc",
+        "GraphSAGE_featc"
+      ],
+      "nnls_weights": {
+        "GCN_featc": 0.0,
+        "GAT_featc": 1.0,
+        "GraphSAGE_featc": 0.0
+      }
+    },
+    "model_metrics": {
+      "GAT_feata": {
+        "val": {
+          "RMSE": 1.3249,
+          "MAE": 0.8991,
+          "R2": 0.8641
+        },
+        "test": {
+          "RMSE": 1.6004,
+          "MAE": 1.1848,
+          "R2": 0.8356
+        }
+      },
+      "GAT_feata_s13": {
+        "val": {
+          "RMSE": 1.246,
+          "MAE": 0.7286,
+          "R2": 0.8798
+        },
+        "test": {
+          "RMSE": 1.1054,
+          "MAE": 0.7761,
+          "R2": 0.9216
+        }
+      },
+      "GAT_feata_s21": {
+        "val": {
+          "RMSE": 1.252,
+          "MAE": 0.8256,
+          "R2": 0.8787
+        },
+        "test": {
+          "RMSE": 1.3124,
+          "MAE": 0.8619,
+          "R2": 0.8894
+        }
+      },
+      "GAT_feata_s7": {
+        "val": {
+          "RMSE": 1.0783,
+          "MAE": 0.6571,
+          "R2": 0.91
+        },
+        "test": {
+          "RMSE": 1.1568,
+          "MAE": 0.8462,
+          "R2": 0.9141
+        }
+      },
+      "GAT_featb": {
+        "val": {
+          "RMSE": 1.1277,
+          "MAE": 0.7127,
+          "R2": 0.9016
+        },
+        "test": {
+          "RMSE": 1.0821,
+          "MAE": 0.7284,
+          "R2": 0.9248
+        }
+      },
+      "GAT_featb_s13": {
+        "val": {
+          "RMSE": 1.2076,
+          "MAE": 0.7803,
+          "R2": 0.8871
+        },
+        "test": {
+          "RMSE": 1.1821,
+          "MAE": 0.9019,
+          "R2": 0.9103
+        }
+      },
+      "GAT_featb_s21": {
+        "val": {
+          "RMSE": 1.0141,
+          "MAE": 0.6142,
+          "R2": 0.9204
+        },
+        "test": {
+          "RMSE": 1.1605,
+          "MAE": 0.7427,
+          "R2": 0.9136
+        }
+      },
+      "GAT_featb_s7": {
+        "val": {
+          "RMSE": 1.1439,
+          "MAE": 0.7176,
+          "R2": 0.8987
+        },
+        "test": {
+          "RMSE": 1.1784,
+          "MAE": 0.8266,
+          "R2": 0.9109
+        }
+      },
+      "GAT_featc": {
+        "val": {
+          "RMSE": 0.5763,
+          "MAE": 0.474,
+          "R2": 0.9743
+        },
+        "test": {
+          "RMSE": 1.4777,
+          "MAE": 0.6815,
+          "R2": 0.8598
+        }
+      },
+      "GAT_featc_s13": {
+        "val": {
+          "RMSE": 0.6482,
+          "MAE": 0.4866,
+          "R2": 0.9675
+        },
+        "test": {
+          "RMSE": 1.055,
+          "MAE": 0.6307,
+          "R2": 0.9286
+        }
+      },
+      "GAT_featc_s21": {
+        "val": {
+          "RMSE": 0.6146,
+          "MAE": 0.4611,
+          "R2": 0.9708
+        },
+        "test": {
+          "RMSE": 1.0358,
+          "MAE": 0.6269,
+          "R2": 0.9311
+        }
+      },
+      "GAT_featc_s7": {
+        "val": {
+          "RMSE": 0.5352,
+          "MAE": 0.4046,
+          "R2": 0.9778
+        },
+        "test": {
+          "RMSE": 1.0559,
+          "MAE": 0.6573,
+          "R2": 0.9284
+        }
+      },
+      "GCN_feata": {
+        "val": {
+          "RMSE": 1.0673,
+          "MAE": 0.6457,
+          "R2": 0.9118
+        },
+        "test": {
+          "RMSE": 1.1353,
+          "MAE": 0.8142,
+          "R2": 0.9173
+        }
+      },
+      "GCN_feata_s13": {
+        "val": {
+          "RMSE": 1.1232,
+          "MAE": 0.7899,
+          "R2": 0.9023
+        },
+        "test": {
+          "RMSE": 1.4926,
+          "MAE": 0.9725,
+          "R2": 0.857
+        }
+      },
+      "GCN_feata_s21": {
+        "val": {
+          "RMSE": 1.0359,
+          "MAE": 0.641,
+          "R2": 0.9169
+        },
+        "test": {
+          "RMSE": 1.1085,
+          "MAE": 0.7747,
+          "R2": 0.9211
+        }
+      },
+      "GCN_feata_s7": {
+        "val": {
+          "RMSE": 1.1438,
+          "MAE": 0.7619,
+          "R2": 0.8987
+        },
+        "test": {
+          "RMSE": 1.6143,
+          "MAE": 1.0066,
+          "R2": 0.8327
+        }
+      },
+      "GCN_featb": {
+        "val": {
+          "RMSE": 1.2353,
+          "MAE": 0.8423,
+          "R2": 0.8819
+        },
+        "test": {
+          "RMSE": 1.2715,
+          "MAE": 0.9138,
+          "R2": 0.8962
+        }
+      },
+      "GCN_featb_s13": {
+        "val": {
+          "RMSE": 1.1396,
+          "MAE": 0.7306,
+          "R2": 0.8995
+        },
+        "test": {
+          "RMSE": 1.2039,
+          "MAE": 0.8949,
+          "R2": 0.907
+        }
+      },
+      "GCN_featb_s21": {
+        "val": {
+          "RMSE": 1.168,
+          "MAE": 0.7225,
+          "R2": 0.8944
+        },
+        "test": {
+          "RMSE": 1.194,
+          "MAE": 0.8128,
+          "R2": 0.9085
+        }
+      },
+      "GCN_featb_s7": {
+        "val": {
+          "RMSE": 1.2107,
+          "MAE": 0.7289,
+          "R2": 0.8865
+        },
+        "test": {
+          "RMSE": 1.3751,
+          "MAE": 0.9473,
+          "R2": 0.8786
+        }
+      },
+      "GCN_featc": {
+        "val": {
+          "RMSE": 0.6572,
+          "MAE": 0.4853,
+          "R2": 0.9666
+        },
+        "test": {
+          "RMSE": 1.0085,
+          "MAE": 0.5897,
+          "R2": 0.9347
+        }
+      },
+      "GCN_featc_s13": {
+        "val": {
+          "RMSE": 0.5324,
+          "MAE": 0.4157,
+          "R2": 0.9781
+        },
+        "test": {
+          "RMSE": 1.1461,
+          "MAE": 0.5766,
+          "R2": 0.9157
+        }
+      },
+      "GCN_featc_s21": {
+        "val": {
+          "RMSE": 0.6767,
+          "MAE": 0.5013,
+          "R2": 0.9646
+        },
+        "test": {
+          "RMSE": 1.0448,
+          "MAE": 0.6661,
+          "R2": 0.9299
+        }
+      },
+      "GCN_featc_s7": {
+        "val": {
+          "RMSE": 0.6361,
+          "MAE": 0.479,
+          "R2": 0.9687
+        },
+        "test": {
+          "RMSE": 1.0682,
+          "MAE": 0.6227,
+          "R2": 0.9268
+        }
+      },
+      "GraphSAGE_feata": {
+        "val": {
+          "RMSE": 1.2673,
+          "MAE": 0.835,
+          "R2": 0.8757
+        },
+        "test": {
+          "RMSE": 1.6134,
+          "MAE": 1.0284,
+          "R2": 0.8329
+        }
+      },
+      "GraphSAGE_feata_s13": {
+        "val": {
+          "RMSE": 1.2173,
+          "MAE": 0.7582,
+          "R2": 0.8853
+        },
+        "test": {
+          "RMSE": 1.187,
+          "MAE": 0.8881,
+          "R2": 0.9096
+        }
+      },
+      "GraphSAGE_feata_s21": {
+        "val": {
+          "RMSE": 1.222,
+          "MAE": 0.7768,
+          "R2": 0.8844
+        },
+        "test": {
+          "RMSE": 1.4465,
+          "MAE": 0.9548,
+          "R2": 0.8657
+        }
+      },
+      "GraphSAGE_feata_s7": {
+        "val": {
+          "RMSE": 1.2707,
+          "MAE": 0.8133,
+          "R2": 0.875
+        },
+        "test": {
+          "RMSE": 1.3851,
+          "MAE": 0.9943,
+          "R2": 0.8769
+        }
+      },
+      "GraphSAGE_featb": {
+        "val": {
+          "RMSE": 1.1221,
+          "MAE": 0.721,
+          "R2": 0.9025
+        },
+        "test": {
+          "RMSE": 1.4372,
+          "MAE": 0.9208,
+          "R2": 0.8674
+        }
+      },
+      "GraphSAGE_featb_s13": {
+        "val": {
+          "RMSE": 1.2495,
+          "MAE": 0.8348,
+          "R2": 0.8792
+        },
+        "test": {
+          "RMSE": 1.5216,
+          "MAE": 1.0828,
+          "R2": 0.8514
+        }
+      },
+      "GraphSAGE_featb_s21": {
+        "val": {
+          "RMSE": 1.2234,
+          "MAE": 0.7612,
+          "R2": 0.8841
+        },
+        "test": {
+          "RMSE": 1.2173,
+          "MAE": 0.8906,
+          "R2": 0.9049
+        }
+      },
+      "GraphSAGE_featb_s7": {
+        "val": {
+          "RMSE": 1.1987,
+          "MAE": 0.7604,
+          "R2": 0.8888
+        },
+        "test": {
+          "RMSE": 1.4275,
+          "MAE": 0.949,
+          "R2": 0.8692
+        }
+      },
+      "GraphSAGE_featc": {
+        "val": {
+          "RMSE": 0.6638,
+          "MAE": 0.4708,
+          "R2": 0.9659
+        },
+        "test": {
+          "RMSE": 1.1013,
+          "MAE": 0.6317,
+          "R2": 0.9221
+        }
+      },
+      "GraphSAGE_featc_s13": {
+        "val": {
+          "RMSE": 0.6773,
+          "MAE": 0.5123,
+          "R2": 0.9645
+        },
+        "test": {
+          "RMSE": 1.1434,
+          "MAE": 0.6654,
+          "R2": 0.9161
+        }
+      },
+      "GraphSAGE_featc_s21": {
+        "val": {
+          "RMSE": 0.6585,
+          "MAE": 0.4856,
+          "R2": 0.9664
+        },
+        "test": {
+          "RMSE": 1.1555,
+          "MAE": 0.6374,
+          "R2": 0.9143
+        }
+      },
+      "GraphSAGE_featc_s7": {
+        "val": {
+          "RMSE": 0.6098,
+          "MAE": 0.4541,
+          "R2": 0.9712
+        },
+        "test": {
+          "RMSE": 1.0847,
+          "MAE": 0.5474,
+          "R2": 0.9245
+        }
+      }
+    }
+  },
+  "BBBP": {
+    "task": "classification",
+    "diversity": {
+      "n_members": 36,
+      "mean_corr_same_config_cross_seed": 0.952,
+      "mean_corr_cross_architecture": 0.8711,
+      "mean_corr_same_arch_cross_level": 0.8437,
+      "mean_corr_config_level": 0.896
+    },
+    "config_metrics": {
+      "GAT_feata": {
+        "val": {
+          "Accuracy": 0.8522,
+          "AUC": 0.9125,
+          "F1": 0.9091
+        },
+        "test": {
+          "Accuracy": 0.8439,
+          "AUC": 0.9204,
+          "F1": 0.8994
+        },
+        "members": [
+          "GAT_feata",
+          "GAT_feata_s13",
+          "GAT_feata_s21",
+          "GAT_feata_s7"
+        ]
+      },
+      "GAT_featb": {
+        "val": {
+          "Accuracy": 0.8571,
+          "AUC": 0.9038,
+          "F1": 0.9124
+        },
+        "test": {
+          "Accuracy": 0.8439,
+          "AUC": 0.9215,
+          "F1": 0.8994
+        },
+        "members": [
+          "GAT_featb",
+          "GAT_featb_s13",
+          "GAT_featb_s21",
+          "GAT_featb_s7"
+        ]
+      },
+      "GAT_featc": {
+        "val": {
+          "Accuracy": 0.8867,
+          "AUC": 0.9376,
+          "F1": 0.9256
+        },
+        "test": {
+          "Accuracy": 0.878,
+          "AUC": 0.919,
+          "F1": 0.9147
+        },
+        "members": [
+          "GAT_featc",
+          "GAT_featc_s13",
+          "GAT_featc_s21",
+          "GAT_featc_s7"
+        ]
+      },
+      "GCN_feata": {
+        "val": {
+          "Accuracy": 0.8621,
+          "AUC": 0.8915,
+          "F1": 0.9141
+        },
+        "test": {
+          "Accuracy": 0.8585,
+          "AUC": 0.9054,
+          "F1": 0.9068
+        },
+        "members": [
+          "GCN_feata",
+          "GCN_feata_s13",
+          "GCN_feata_s21",
+          "GCN_feata_s7"
+        ]
+      },
+      "GCN_featb": {
+        "val": {
+          "Accuracy": 0.8768,
+          "AUC": 0.8948,
+          "F1": 0.9231
+        },
+        "test": {
+          "Accuracy": 0.878,
+          "AUC": 0.9132,
+          "F1": 0.9196
+        },
+        "members": [
+          "GCN_featb",
+          "GCN_featb_s13",
+          "GCN_featb_s21",
+          "GCN_featb_s7"
+        ]
+      },
+      "GCN_featc": {
+        "val": {
+          "Accuracy": 0.8966,
+          "AUC": 0.9377,
+          "F1": 0.9325
+        },
+        "test": {
+          "Accuracy": 0.8732,
+          "AUC": 0.9177,
+          "F1": 0.911
+        },
+        "members": [
+          "GCN_featc",
+          "GCN_featc_s13",
+          "GCN_featc_s21",
+          "GCN_featc_s7"
+        ]
+      },
+      "GraphSAGE_feata": {
+        "val": {
+          "Accuracy": 0.8621,
+          "AUC": 0.8939,
+          "F1": 0.9125
+        },
+        "test": {
+          "Accuracy": 0.878,
+          "AUC": 0.9271,
+          "F1": 0.9191
+        },
+        "members": [
+          "GraphSAGE_feata",
+          "GraphSAGE_feata_s13",
+          "GraphSAGE_feata_s21",
+          "GraphSAGE_feata_s7"
+        ]
+      },
+      "GraphSAGE_featb": {
+        "val": {
+          "Accuracy": 0.8719,
+          "AUC": 0.9169,
+          "F1": 0.9202
+        },
+        "test": {
+          "Accuracy": 0.8683,
+          "AUC": 0.9305,
+          "F1": 0.9132
+        },
+        "members": [
+          "GraphSAGE_featb",
+          "GraphSAGE_featb_s13",
+          "GraphSAGE_featb_s21",
+          "GraphSAGE_featb_s7"
+        ]
+      },
+      "GraphSAGE_featc": {
+        "val": {
+          "Accuracy": 0.8966,
+          "AUC": 0.9364,
+          "F1": 0.9311
+        },
+        "test": {
+          "Accuracy": 0.8537,
+          "AUC": 0.9163,
+          "F1": 0.8966
+        },
+        "members": [
+          "GraphSAGE_featc",
+          "GraphSAGE_featc_s13",
+          "GraphSAGE_featc_s21",
+          "GraphSAGE_featc_s7"
+        ]
+      }
+    },
+    "fusion_preview": {
+      "best_single(val选)": {
+        "test": {
+          "Accuracy": 0.8585,
+          "AUC": 0.9082,
+          "F1": 0.903
+        }
+      },
+      "best_homo_ensemble(val选)": {
+        "test": {
+          "Accuracy": 0.8732,
+          "AUC": 0.9177,
+          "F1": 0.911
+        }
+      },
+      "hetero_equal(val选3专家)": {
+        "test": {
+          "Accuracy": 0.8732,
+          "AUC": 0.9183,
+          "F1": 0.9103
+        }
+      },
+      "hetero_equal_all9": {
+        "test": {
+          "Accuracy": 0.8829,
+          "AUC": 0.9292,
+          "F1": 0.9221
+        }
+      },
+      "hetero_equal_featc": {
+        "test": {
+          "Accuracy": 0.8732,
+          "AUC": 0.9183,
+          "F1": 0.9103
+        }
+      },
+      "hetero_nnls(val拟合)": {
+        "test": {
+          "Accuracy": 0.8732,
+          "AUC": 0.9178,
+          "F1": 0.9103
+        }
+      }
+    },
+    "fusion_detail": {
+      "best_single": "GAT_featc_s13",
+      "best_homo_ensemble": "GCN_featc",
+      "experts_by_val": [
+        "GCN_featc",
+        "GAT_featc",
+        "GraphSAGE_featc"
+      ],
+      "nnls_weights": {
+        "GCN_featc": 0.8131,
+        "GAT_featc": 0.0,
+        "GraphSAGE_featc": 0.1869
+      }
+    },
+    "model_metrics": {
+      "GAT_feata": {
+        "val": {
+          "Accuracy": 0.8571,
+          "AUC": 0.9176,
+          "F1": 0.9124
+        },
+        "test": {
+          "Accuracy": 0.839,
+          "AUC": 0.9238,
+          "F1": 0.8959
+        }
+      },
+      "GAT_feata_s13": {
+        "val": {
+          "Accuracy": 0.8374,
+          "AUC": 0.9031,
+          "F1": 0.9009
+        },
+        "test": {
+          "Accuracy": 0.8439,
+          "AUC": 0.8941,
+          "F1": 0.9
+        }
+      },
+      "GAT_feata_s21": {
+        "val": {
+          "Accuracy": 0.8473,
+          "AUC": 0.9135,
+          "F1": 0.9058
+        },
+        "test": {
+          "Accuracy": 0.8439,
+          "AUC": 0.9284,
+          "F1": 0.8987
+        }
+      },
+      "GAT_feata_s7": {
+        "val": {
+          "Accuracy": 0.8424,
+          "AUC": 0.8965,
+          "F1": 0.903
+        },
+        "test": {
+          "Accuracy": 0.8488,
+          "AUC": 0.9006,
+          "F1": 0.9022
+        }
+      },
+      "GAT_featb": {
+        "val": {
+          "Accuracy": 0.8473,
+          "AUC": 0.9045,
+          "F1": 0.9069
+        },
+        "test": {
+          "Accuracy": 0.839,
+          "AUC": 0.8985,
+          "F1": 0.8966
+        }
+      },
+      "GAT_featb_s13": {
+        "val": {
+          "Accuracy": 0.867,
+          "AUC": 0.9112,
+          "F1": 0.9174
+        },
+        "test": {
+          "Accuracy": 0.839,
+          "AUC": 0.925,
+          "F1": 0.8946
+        }
+      },
+      "GAT_featb_s21": {
+        "val": {
+          "Accuracy": 0.8325,
+          "AUC": 0.9031,
+          "F1": 0.8982
+        },
+        "test": {
+          "Accuracy": 0.8439,
+          "AUC": 0.9147,
+          "F1": 0.8994
+        }
+      },
+      "GAT_featb_s7": {
+        "val": {
+          "Accuracy": 0.8522,
+          "AUC": 0.892,
+          "F1": 0.9085
+        },
+        "test": {
+          "Accuracy": 0.8585,
+          "AUC": 0.9178,
+          "F1": 0.9068
+        }
+      },
+      "GAT_featc": {
+        "val": {
+          "Accuracy": 0.8768,
+          "AUC": 0.9319,
+          "F1": 0.918
+        },
+        "test": {
+          "Accuracy": 0.8537,
+          "AUC": 0.9184,
+          "F1": 0.8951
+        }
+      },
+      "GAT_featc_s13": {
+        "val": {
+          "Accuracy": 0.8867,
+          "AUC": 0.9386,
+          "F1": 0.927
+        },
+        "test": {
+          "Accuracy": 0.8585,
+          "AUC": 0.9082,
+          "F1": 0.903
+        }
+      },
+      "GAT_featc_s21": {
+        "val": {
+          "Accuracy": 0.8818,
+          "AUC": 0.9272,
+          "F1": 0.9221
+        },
+        "test": {
+          "Accuracy": 0.8683,
+          "AUC": 0.915,
+          "F1": 0.9078
+        }
+      },
+      "GAT_featc_s7": {
+        "val": {
+          "Accuracy": 0.8621,
+          "AUC": 0.9314,
+          "F1": 0.9097
+        },
+        "test": {
+          "Accuracy": 0.8537,
+          "AUC": 0.919,
+          "F1": 0.8958
+        }
+      },
+      "GCN_feata": {
+        "val": {
+          "Accuracy": 0.8719,
+          "AUC": 0.8717,
+          "F1": 0.9182
+        },
+        "test": {
+          "Accuracy": 0.8537,
+          "AUC": 0.8833,
+          "F1": 0.902
+        }
+      },
+      "GCN_feata_s13": {
+        "val": {
+          "Accuracy": 0.8719,
+          "AUC": 0.899,
+          "F1": 0.9202
+        },
+        "test": {
+          "Accuracy": 0.8585,
+          "AUC": 0.9077,
+          "F1": 0.9073
+        }
+      },
+      "GCN_feata_s21": {
+        "val": {
+          "Accuracy": 0.8571,
+          "AUC": 0.8908,
+          "F1": 0.9113
+        },
+        "test": {
+          "Accuracy": 0.8488,
+          "AUC": 0.9068,
+          "F1": 0.901
+        }
+      },
+      "GCN_feata_s7": {
+        "val": {
+          "Accuracy": 0.8719,
+          "AUC": 0.8986,
+          "F1": 0.9198
+        },
+        "test": {
+          "Accuracy": 0.8537,
+          "AUC": 0.9115,
+          "F1": 0.9045
+        }
+      },
+      "GCN_featb": {
+        "val": {
+          "Accuracy": 0.8867,
+          "AUC": 0.8795,
+          "F1": 0.9283
+        },
+        "test": {
+          "Accuracy": 0.8732,
+          "AUC": 0.9034,
+          "F1": 0.915
+        }
+      },
+      "GCN_featb_s13": {
+        "val": {
+          "Accuracy": 0.8621,
+          "AUC": 0.901,
+          "F1": 0.9136
+        },
+        "test": {
+          "Accuracy": 0.8585,
+          "AUC": 0.9262,
+          "F1": 0.9073
+        }
+      },
+      "GCN_featb_s21": {
+        "val": {
+          "Accuracy": 0.8621,
+          "AUC": 0.8986,
+          "F1": 0.9136
+        },
+        "test": {
+          "Accuracy": 0.8732,
+          "AUC": 0.9173,
+          "F1": 0.9156
+        }
+      },
+      "GCN_featb_s7": {
+        "val": {
+          "Accuracy": 0.8621,
+          "AUC": 0.8929,
+          "F1": 0.9141
+        },
+        "test": {
+          "Accuracy": 0.8585,
+          "AUC": 0.8982,
+          "F1": 0.9068
+        }
+      },
+      "GCN_featc": {
+        "val": {
+          "Accuracy": 0.8916,
+          "AUC": 0.9185,
+          "F1": 0.929
+        },
+        "test": {
+          "Accuracy": 0.8439,
+          "AUC": 0.9075,
+          "F1": 0.8897
+        }
+      },
+      "GCN_featc_s13": {
+        "val": {
+          "Accuracy": 0.9064,
+          "AUC": 0.9303,
+          "F1": 0.9385
+        },
+        "test": {
+          "Accuracy": 0.8585,
+          "AUC": 0.9187,
+          "F1": 0.901
+        }
+      },
+      "GCN_featc_s21": {
+        "val": {
+          "Accuracy": 0.8867,
+          "AUC": 0.9364,
+          "F1": 0.9256
+        },
+        "test": {
+          "Accuracy": 0.8585,
+          "AUC": 0.9154,
+          "F1": 0.9003
+        }
+      },
+      "GCN_featc_s7": {
+        "val": {
+          "Accuracy": 0.9064,
+          "AUC": 0.9332,
+          "F1": 0.9385
+        },
+        "test": {
+          "Accuracy": 0.8439,
+          "AUC": 0.9143,
+          "F1": 0.8881
+        }
+      },
+      "GraphSAGE_feata": {
+        "val": {
+          "Accuracy": 0.8719,
+          "AUC": 0.8941,
+          "F1": 0.9177
+        },
+        "test": {
+          "Accuracy": 0.8683,
+          "AUC": 0.9281,
+          "F1": 0.9115
+        }
+      },
+      "GraphSAGE_feata_s13": {
+        "val": {
+          "Accuracy": 0.8719,
+          "AUC": 0.8986,
+          "F1": 0.9198
+        },
+        "test": {
+          "Accuracy": 0.8683,
+          "AUC": 0.9242,
+          "F1": 0.9132
+        }
+      },
+      "GraphSAGE_feata_s21": {
+        "val": {
+          "Accuracy": 0.8522,
+          "AUC": 0.8848,
+          "F1": 0.9068
+        },
+        "test": {
+          "Accuracy": 0.8683,
+          "AUC": 0.915,
+          "F1": 0.9126
+        }
+      },
+      "GraphSAGE_feata_s7": {
+        "val": {
+          "Accuracy": 0.867,
+          "AUC": 0.8899,
+          "F1": 0.9137
+        },
+        "test": {
+          "Accuracy": 0.8488,
+          "AUC": 0.9266,
+          "F1": 0.8956
+        }
+      },
+      "GraphSAGE_featb": {
+        "val": {
+          "Accuracy": 0.867,
+          "AUC": 0.9006,
+          "F1": 0.9164
+        },
+        "test": {
+          "Accuracy": 0.8585,
+          "AUC": 0.9177,
+          "F1": 0.9061
+        }
+      },
+      "GraphSAGE_featb_s13": {
+        "val": {
+          "Accuracy": 0.867,
+          "AUC": 0.9111,
+          "F1": 0.9174
+        },
+        "test": {
+          "Accuracy": 0.878,
+          "AUC": 0.912,
+          "F1": 0.9196
+        }
+      },
+      "GraphSAGE_featb_s21": {
+        "val": {
+          "Accuracy": 0.8621,
+          "AUC": 0.9129,
+          "F1": 0.9136
+        },
+        "test": {
+          "Accuracy": 0.878,
+          "AUC": 0.9189,
+          "F1": 0.9196
+        }
+      },
+      "GraphSAGE_featb_s7": {
+        "val": {
+          "Accuracy": 0.867,
+          "AUC": 0.8976,
+          "F1": 0.9164
+        },
+        "test": {
+          "Accuracy": 0.8683,
+          "AUC": 0.9292,
+          "F1": 0.9121
+        }
+      },
+      "GraphSAGE_featc": {
+        "val": {
+          "Accuracy": 0.8768,
+          "AUC": 0.919,
+          "F1": 0.9175
+        },
+        "test": {
+          "Accuracy": 0.8488,
+          "AUC": 0.9097,
+          "F1": 0.892
+        }
+      },
+      "GraphSAGE_featc_s13": {
+        "val": {
+          "Accuracy": 0.8719,
+          "AUC": 0.9349,
+          "F1": 0.9133
+        },
+        "test": {
+          "Accuracy": 0.8439,
+          "AUC": 0.9098,
+          "F1": 0.8881
+        }
+      },
+      "GraphSAGE_featc_s21": {
+        "val": {
+          "Accuracy": 0.8966,
+          "AUC": 0.9262,
+          "F1": 0.9329
+        },
+        "test": {
+          "Accuracy": 0.8829,
+          "AUC": 0.9153,
+          "F1": 0.9184
+        }
+      },
+      "GraphSAGE_featc_s7": {
+        "val": {
+          "Accuracy": 0.8966,
+          "AUC": 0.9327,
+          "F1": 0.9316
+        },
+        "test": {
+          "Accuracy": 0.8683,
+          "AUC": 0.9148,
+          "F1": 0.9072
+        }
+      }
+    }
+  },
+  "Clintox": {
+    "task": "classification",
+    "diversity": {
+      "n_members": 36,
+      "mean_corr_same_config_cross_seed": 0.8288,
+      "mean_corr_cross_architecture": 0.7518,
+      "mean_corr_same_arch_cross_level": 0.7401,
+      "mean_corr_config_level": 0.8547
+    },
+    "config_metrics": {
+      "GAT_feata": {
+        "val": {
+          "Accuracy": 0.8851,
+          "AUC": 0.9616,
+          "F1": 0.5143
+        },
+        "test": {
+          "Accuracy": 0.9122,
+          "AUC": 0.9088,
+          "F1": 0.5806
+        },
+        "members": [
+          "GAT_feata",
+          "GAT_feata_s13",
+          "GAT_feata_s21",
+          "GAT_feata_s7"
+        ]
+      },
+      "GAT_featb": {
+        "val": {
+          "Accuracy": 0.9054,
+          "AUC": 0.963,
+          "F1": 0.5625
+        },
+        "test": {
+          "Accuracy": 0.9054,
+          "AUC": 0.9067,
+          "F1": 0.4615
+        },
+        "members": [
+          "GAT_featb",
+          "GAT_featb_s13",
+          "GAT_featb_s21",
+          "GAT_featb_s7"
+        ]
+      },
+      "GAT_featc": {
+        "val": {
+          "Accuracy": 0.9054,
+          "AUC": 0.937,
+          "F1": 0.5
+        },
+        "test": {
+          "Accuracy": 0.8851,
+          "AUC": 0.8699,
+          "F1": 0.4848
+        },
+        "members": [
+          "GAT_featc",
+          "GAT_featc_s13",
+          "GAT_featc_s21",
+          "GAT_featc_s7"
+        ]
+      },
+      "GCN_feata": {
+        "val": {
+          "Accuracy": 0.9257,
+          "AUC": 0.9659,
+          "F1": 0.5217
+        },
+        "test": {
+          "Accuracy": 0.9189,
+          "AUC": 0.9046,
+          "F1": 0.5385
+        },
+        "members": [
+          "GCN_feata",
+          "GCN_feata_s13",
+          "GCN_feata_s21",
+          "GCN_feata_s7"
+        ]
+      },
+      "GCN_featb": {
+        "val": {
+          "Accuracy": 0.9257,
+          "AUC": 0.9674,
+          "F1": 0.5926
+        },
+        "test": {
+          "Accuracy": 0.8986,
+          "AUC": 0.9027,
+          "F1": 0.4828
+        },
+        "members": [
+          "GCN_featb",
+          "GCN_featb_s13",
+          "GCN_featb_s21",
+          "GCN_featb_s7"
+        ]
+      },
+      "GCN_featc": {
+        "val": {
+          "Accuracy": 0.8986,
+          "AUC": 0.9406,
+          "F1": 0.5161
+        },
+        "test": {
+          "Accuracy": 0.8851,
+          "AUC": 0.879,
+          "F1": 0.4516
+        },
+        "members": [
+          "GCN_featc",
+          "GCN_featc_s13",
+          "GCN_featc_s21",
+          "GCN_featc_s7"
+        ]
+      },
+      "GraphSAGE_feata": {
+        "val": {
+          "Accuracy": 0.9324,
+          "AUC": 0.9449,
+          "F1": 0.5455
+        },
+        "test": {
+          "Accuracy": 0.9122,
+          "AUC": 0.9057,
+          "F1": 0.48
+        },
+        "members": [
+          "GraphSAGE_feata",
+          "GraphSAGE_feata_s13",
+          "GraphSAGE_feata_s21",
+          "GraphSAGE_feata_s7"
+        ]
+      },
+      "GraphSAGE_featb": {
+        "val": {
+          "Accuracy": 0.7838,
+          "AUC": 0.937,
+          "F1": 0.3846
+        },
+        "test": {
+          "Accuracy": 0.7568,
+          "AUC": 0.8619,
+          "F1": 0.3793
+        },
+        "members": [
+          "GraphSAGE_featb",
+          "GraphSAGE_featb_s13",
+          "GraphSAGE_featb_s21",
+          "GraphSAGE_featb_s7"
+        ]
+      },
+      "GraphSAGE_featc": {
+        "val": {
+          "Accuracy": 0.8851,
+          "AUC": 0.9333,
+          "F1": 0.4848
+        },
+        "test": {
+          "Accuracy": 0.8311,
+          "AUC": 0.8867,
+          "F1": 0.3902
+        },
+        "members": [
+          "GraphSAGE_featc",
+          "GraphSAGE_featc_s13",
+          "GraphSAGE_featc_s21",
+          "GraphSAGE_featc_s7"
+        ]
+      }
+    },
+    "fusion_preview": {
+      "best_single(val选)": {
+        "test": {
+          "Accuracy": 0.8986,
+          "AUC": 0.912,
+          "F1": 0.4828
+        }
+      },
+      "best_homo_ensemble(val选)": {
+        "test": {
+          "Accuracy": 0.8986,
+          "AUC": 0.9027,
+          "F1": 0.4828
+        }
+      },
+      "hetero_equal(val选3专家)": {
+        "test": {
+          "Accuracy": 0.9054,
+          "AUC": 0.9083,
+          "F1": 0.4615
+        }
+      },
+      "hetero_equal_all9": {
+        "test": {
+          "Accuracy": 0.9054,
+          "AUC": 0.9163,
+          "F1": 0.5333
+        }
+      },
+      "hetero_equal_featc": {
+        "test": {
+          "Accuracy": 0.8851,
+          "AUC": 0.8849,
+          "F1": 0.4848
+        }
+      },
+      "hetero_nnls(val拟合)": {
+        "test": {
+          "Accuracy": 0.8986,
+          "AUC": 0.9027,
+          "F1": 0.4828
+        }
+      }
+    },
+    "fusion_detail": {
+      "best_single": "GCN_feata_s21",
+      "best_homo_ensemble": "GCN_featb",
+      "experts_by_val": [
+        "GCN_featb",
+        "GAT_featb",
+        "GraphSAGE_feata"
+      ],
+      "nnls_weights": {
+        "GCN_featb": 1.0,
+        "GAT_featb": 0.0,
+        "GraphSAGE_feata": 0.0
+      }
+    },
+    "model_metrics": {
+      "GAT_feata": {
+        "val": {
+          "Accuracy": 0.9527,
+          "AUC": 0.9391,
+          "F1": 0.6316
+        },
+        "test": {
+          "Accuracy": 0.9257,
+          "AUC": 0.8982,
+          "F1": 0.4211
+        }
+      },
+      "GAT_feata_s13": {
+        "val": {
+          "Accuracy": 0.8581,
+          "AUC": 0.9638,
+          "F1": 0.4878
+        },
+        "test": {
+          "Accuracy": 0.8716,
+          "AUC": 0.9091,
+          "F1": 0.4865
+        }
+      },
+      "GAT_feata_s21": {
+        "val": {
+          "Accuracy": 0.8919,
+          "AUC": 0.9609,
+          "F1": 0.5294
+        },
+        "test": {
+          "Accuracy": 0.9054,
+          "AUC": 0.9203,
+          "F1": 0.5625
+        }
+      },
+      "GAT_feata_s7": {
+        "val": {
+          "Accuracy": 0.8243,
+          "AUC": 0.9609,
+          "F1": 0.4348
+        },
+        "test": {
+          "Accuracy": 0.8378,
+          "AUC": 0.8958,
+          "F1": 0.4286
+        }
+      },
+      "GAT_featb": {
+        "val": {
+          "Accuracy": 0.9324,
+          "AUC": 0.9442,
+          "F1": 0.5833
+        },
+        "test": {
+          "Accuracy": 0.9122,
+          "AUC": 0.8763,
+          "F1": 0.48
+        }
+      },
+      "GAT_featb_s13": {
+        "val": {
+          "Accuracy": 0.8851,
+          "AUC": 0.9638,
+          "F1": 0.5143
+        },
+        "test": {
+          "Accuracy": 0.9054,
+          "AUC": 0.9091,
+          "F1": 0.5625
+        }
+      },
+      "GAT_featb_s21": {
+        "val": {
+          "Accuracy": 0.8784,
+          "AUC": 0.9659,
+          "F1": 0.5263
+        },
+        "test": {
+          "Accuracy": 0.8649,
+          "AUC": 0.903,
+          "F1": 0.4444
+        }
+      },
+      "GAT_featb_s7": {
+        "val": {
+          "Accuracy": 0.9054,
+          "AUC": 0.958,
+          "F1": 0.5333
+        },
+        "test": {
+          "Accuracy": 0.8919,
+          "AUC": 0.8993,
+          "F1": 0.4667
+        }
+      },
+      "GAT_featc": {
+        "val": {
+          "Accuracy": 0.9122,
+          "AUC": 0.908,
+          "F1": 0.5517
+        },
+        "test": {
+          "Accuracy": 0.9122,
+          "AUC": 0.8308,
+          "F1": 0.4348
+        }
+      },
+      "GAT_featc_s13": {
+        "val": {
+          "Accuracy": 0.8851,
+          "AUC": 0.937,
+          "F1": 0.4848
+        },
+        "test": {
+          "Accuracy": 0.8108,
+          "AUC": 0.8521,
+          "F1": 0.3636
+        }
+      },
+      "GAT_featc_s21": {
+        "val": {
+          "Accuracy": 0.8986,
+          "AUC": 0.9326,
+          "F1": 0.4444
+        },
+        "test": {
+          "Accuracy": 0.8716,
+          "AUC": 0.8587,
+          "F1": 0.3871
+        }
+      },
+      "GAT_featc_s7": {
+        "val": {
+          "Accuracy": 0.8581,
+          "AUC": 0.9326,
+          "F1": 0.4615
+        },
+        "test": {
+          "Accuracy": 0.7703,
+          "AUC": 0.8585,
+          "F1": 0.3704
+        }
+      },
+      "GCN_feata": {
+        "val": {
+          "Accuracy": 0.9527,
+          "AUC": 0.9319,
+          "F1": 0.6316
+        },
+        "test": {
+          "Accuracy": 0.9392,
+          "AUC": 0.8758,
+          "F1": 0.5263
+        }
+      },
+      "GCN_feata_s13": {
+        "val": {
+          "Accuracy": 0.9054,
+          "AUC": 0.9543,
+          "F1": 0.5333
+        },
+        "test": {
+          "Accuracy": 0.8716,
+          "AUC": 0.907,
+          "F1": 0.4571
+        }
+      },
+      "GCN_feata_s21": {
+        "val": {
+          "Accuracy": 0.9459,
+          "AUC": 0.9688,
+          "F1": 0.6923
+        },
+        "test": {
+          "Accuracy": 0.8986,
+          "AUC": 0.912,
+          "F1": 0.4828
+        }
+      },
+      "GCN_feata_s7": {
+        "val": {
+          "Accuracy": 0.9189,
+          "AUC": 0.9609,
+          "F1": 0.6
+        },
+        "test": {
+          "Accuracy": 0.8716,
+          "AUC": 0.9003,
+          "F1": 0.3871
+        }
+      },
+      "GCN_featb": {
+        "val": {
+          "Accuracy": 0.9595,
+          "AUC": 0.9514,
+          "F1": 0.6667
+        },
+        "test": {
+          "Accuracy": 0.9257,
+          "AUC": 0.8929,
+          "F1": 0.3529
+        }
+      },
+      "GCN_featb_s13": {
+        "val": {
+          "Accuracy": 0.8716,
+          "AUC": 0.9572,
+          "F1": 0.5128
+        },
+        "test": {
+          "Accuracy": 0.8649,
+          "AUC": 0.8995,
+          "F1": 0.4737
+        }
+      },
+      "GCN_featb_s21": {
+        "val": {
+          "Accuracy": 0.8378,
+          "AUC": 0.9558,
+          "F1": 0.4545
+        },
+        "test": {
+          "Accuracy": 0.8581,
+          "AUC": 0.9009,
+          "F1": 0.4878
+        }
+      },
+      "GCN_featb_s7": {
+        "val": {
+          "Accuracy": 0.9122,
+          "AUC": 0.9652,
+          "F1": 0.5517
+        },
+        "test": {
+          "Accuracy": 0.8784,
+          "AUC": 0.9025,
+          "F1": 0.4375
+        }
+      },
+      "GCN_featc": {
+        "val": {
+          "Accuracy": 0.9122,
+          "AUC": 0.9,
+          "F1": 0.5517
+        },
+        "test": {
+          "Accuracy": 0.8986,
+          "AUC": 0.8526,
+          "F1": 0.4828
+        }
+      },
+      "GCN_featc_s13": {
+        "val": {
+          "Accuracy": 0.8919,
+          "AUC": 0.9457,
+          "F1": 0.5
+        },
+        "test": {
+          "Accuracy": 0.8784,
+          "AUC": 0.8811,
+          "F1": 0.4706
+        }
+      },
+      "GCN_featc_s21": {
+        "val": {
+          "Accuracy": 0.9122,
+          "AUC": 0.9348,
+          "F1": 0.5517
+        },
+        "test": {
+          "Accuracy": 0.8986,
+          "AUC": 0.8561,
+          "F1": 0.4828
+        }
+      },
+      "GCN_featc_s7": {
+        "val": {
+          "Accuracy": 0.8649,
+          "AUC": 0.9297,
+          "F1": 0.4118
+        },
+        "test": {
+          "Accuracy": 0.8176,
+          "AUC": 0.8745,
+          "F1": 0.4255
+        }
+      },
+      "GraphSAGE_feata": {
+        "val": {
+          "Accuracy": 0.9392,
+          "AUC": 0.929,
+          "F1": 0.4706
+        },
+        "test": {
+          "Accuracy": 0.9189,
+          "AUC": 0.8777,
+          "F1": 0.25
+        }
+      },
+      "GraphSAGE_feata_s13": {
+        "val": {
+          "Accuracy": 0.9054,
+          "AUC": 0.9536,
+          "F1": 0.4167
+        },
+        "test": {
+          "Accuracy": 0.9122,
+          "AUC": 0.9096,
+          "F1": 0.48
+        }
+      },
+      "GraphSAGE_feata_s21": {
+        "val": {
+          "Accuracy": 0.8986,
+          "AUC": 0.9543,
+          "F1": 0.5455
+        },
+        "test": {
+          "Accuracy": 0.8986,
+          "AUC": 0.9033,
+          "F1": 0.5161
+        }
+      },
+      "GraphSAGE_feata_s7": {
+        "val": {
+          "Accuracy": 0.8919,
+          "AUC": 0.9442,
+          "F1": 0.4667
+        },
+        "test": {
+          "Accuracy": 0.8851,
+          "AUC": 0.8982,
+          "F1": 0.4848
+        }
+      },
+      "GraphSAGE_featb": {
+        "val": {
+          "Accuracy": 0.9392,
+          "AUC": 0.9341,
+          "F1": 0.5263
+        },
+        "test": {
+          "Accuracy": 0.9189,
+          "AUC": 0.883,
+          "F1": 0.3333
+        }
+      },
+      "GraphSAGE_featb_s13": {
+        "val": {
+          "Accuracy": 0.7432,
+          "AUC": 0.9362,
+          "F1": 0.3214
+        },
+        "test": {
+          "Accuracy": 0.7162,
+          "AUC": 0.8273,
+          "F1": 0.3438
+        }
+      },
+      "GraphSAGE_featb_s21": {
+        "val": {
+          "Accuracy": 0.6892,
+          "AUC": 0.9478,
+          "F1": 0.303
+        },
+        "test": {
+          "Accuracy": 0.6554,
+          "AUC": 0.859,
+          "F1": 0.3544
+        }
+      },
+      "GraphSAGE_featb_s7": {
+        "val": {
+          "Accuracy": 0.7095,
+          "AUC": 0.9572,
+          "F1": 0.2951
+        },
+        "test": {
+          "Accuracy": 0.6824,
+          "AUC": 0.8254,
+          "F1": 0.338
+        }
+      },
+      "GraphSAGE_featc": {
+        "val": {
+          "Accuracy": 0.9122,
+          "AUC": 0.908,
+          "F1": 0.5517
+        },
+        "test": {
+          "Accuracy": 0.9122,
+          "AUC": 0.8569,
+          "F1": 0.4348
+        }
+      },
+      "GraphSAGE_featc_s13": {
+        "val": {
+          "Accuracy": 0.7973,
+          "AUC": 0.937,
+          "F1": 0.4
+        },
+        "test": {
+          "Accuracy": 0.7365,
+          "AUC": 0.8771,
+          "F1": 0.381
+        }
+      },
+      "GraphSAGE_featc_s21": {
+        "val": {
+          "Accuracy": 0.8716,
+          "AUC": 0.9181,
+          "F1": 0.4571
+        },
+        "test": {
+          "Accuracy": 0.8243,
+          "AUC": 0.8675,
+          "F1": 0.4583
+        }
+      },
+      "GraphSAGE_featc_s7": {
+        "val": {
+          "Accuracy": 0.8243,
+          "AUC": 0.9246,
+          "F1": 0.381
+        },
+        "test": {
+          "Accuracy": 0.7568,
+          "AUC": 0.8638,
+          "F1": 0.3793
+        }
+      }
+    }
+  }
+}

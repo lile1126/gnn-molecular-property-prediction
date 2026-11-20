@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Web 冒烟测试 v2（临时）：Clintox + 特征工程 + 逐头注意力 + 集成"""
+"""Web 冒烟测试 v3：Clintox + 特征工程 + 逐头注意力 + 同构/异质集成"""
 import json
 import sys
 import urllib.request
@@ -43,6 +43,10 @@ cases = [
      {"smiles": "CCCO", "conv": "GAT", "dataset": "ESOL", "method": "ensemble", "feat": "a", "explain": False}),
     ("Clintox ensemble(基线)", "/api/predict",
      {"smiles": "c1ccccc1", "conv": "GCN", "dataset": "Clintox", "method": "ensemble", "explain": False}),
+    ("ESOL 异质集成", "/api/predict",
+     {"smiles": "CCCO", "conv": "GCN", "dataset": "ESOL", "method": "hetero", "feat": "base", "explain": True}),
+    ("BBBP 异质集成", "/api/predict",
+     {"smiles": "CCCO", "conv": "GCN", "dataset": "BBBP", "method": "hetero", "feat": "base", "explain": False}),
     ("Attention per-head Clintox", "/api/attention",
      {"smiles": "CCCO", "dataset": "Clintox", "per_head": True}),
     ("Meta 组合可用性", "/api/meta", {}),
@@ -69,7 +73,8 @@ for desc, path, payload in cases:
         else:
             ok_feat = any(x.endswith("|c") for x in r.get("trained", []))
             ok_ens = any(x.startswith("GCN|") for x in r.get("ensemble_ok", []))
-            print(f"[OK] {desc}: trained={len(r.get('trained') or [])} ensemble_ok={len(r.get('ensemble_ok') or [])} feat_c={'Y' if ok_feat else 'N'} ens_GCN={'Y' if ok_ens else 'N'}")
+            print(f"[OK] {desc}: trained={len(r.get('trained') or [])} ensemble_ok={len(r.get('ensemble_ok') or [])} "
+                  f"feat_c={'Y' if ok_feat else 'N'} ens_GCN={'Y' if ok_ens else 'N'} hetero={r.get('hetero_ok')}")
         continue
     if path == "/api/validate":
         r = post(path, payload)
@@ -90,4 +95,6 @@ for desc, path, payload in cases:
             extra = f" heads={r.get('heads')} per_head={len(r.get('per_head_images') or [])} combo={'Y' if r.get('combo_image') else 'N'}"
         else:
             extra = f" feat={r.get('feat')} pred={r.get('prediction')} unit={r.get('unit')} method={r.get('method')}"
+            if payload.get("explain") and r.get("node_mask"):
+                extra += f" 归因图={len(r.get('image') or '')}B ({r.get('attribution')})"
         print(f"[OK] {desc}: {extra}")

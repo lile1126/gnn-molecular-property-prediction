@@ -95,6 +95,13 @@
               <span><strong>单模型</strong><small>快速预测</small></span>
             </label>
             <label class="method-option">
+              <input type="radio" name="method" value="hetero">
+              <span class="method-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="4.5"></circle><rect x="11" y="11" width="9" height="9" rx="1.5"></rect><path d="M11 8h9M8 11v9"></path></svg>
+              </span>
+              <span><strong>异质集成</strong><small>9 配置 × 4 种子</small></span>
+            </label>
+            <label class="method-option">
               <input type="radio" name="method" value="mc">
               <span class="method-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24"><path d="M5 18V9M12 18V5M19 18v-6"></path><path d="M3 21h18"></path></svg>
@@ -106,7 +113,7 @@
               <span class="method-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"></rect><rect x="13" y="4" width="7" height="7" rx="1"></rect><rect x="4" y="13" width="7" height="7" rx="1"></rect><rect x="13" y="13" width="7" height="7" rx="1"></rect></svg>
               </span>
-              <span><strong>深度集成</strong><small>成员平均</small></span>
+              <span><strong>同构集成</strong><small>4 种子平均</small></span>
             </label>
             <label class="method-option">
               <input type="radio" name="method" value="attention">
@@ -140,10 +147,6 @@
             <span class="button-label">运行分析</span>
             <span class="shortcut">Enter</span>
           </button>
-          <select id="llmProvider" class="provider-select" aria-label="LLM 生成方式" title="选择 LLM 化学解释的生成方式">
-            <option value="local">本地 Qwen 2.5 · 3B</option>
-            <option value="deepseek">DeepSeek API</option>
-          </select>
           <button type="button" class="button button-secondary" id="llmBtn">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3z"></path><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16z"></path></svg>
             <span>LLM 化学解释</span>
@@ -230,6 +233,7 @@
               <div class="heat-legend">
                 <span>低</span><i class="heat-gradient"></i><span>高</span>
               </div>
+              <p class="viz-note" id="structureNote" hidden></p>
             </div>
             <div class="viz-card" id="attentionCard" hidden>
               <div class="card-heading compact">
@@ -256,9 +260,10 @@
             <div class="llm-heading">
               <span class="llm-mark" aria-hidden="true">AI</span>
               <div><span class="card-kicker">CHEMICAL NARRATIVE</span><h3>LLM 化学解释</h3></div>
-              <span class="viz-tag" id="llmTag">Qwen 2.5 · 3B</span>
+              <span class="viz-tag" id="llmTag">DeepSeek · API</span>
             </div>
-            <div class="llm-loading" id="llmLoading" hidden><span></span><span></span><span></span><small id="llmLoadingText">正在生成化学解释，首次加载可能较慢</small></div>
+            <div class="llm-model-note" id="llmModelNote"></div>
+            <div class="llm-loading" id="llmLoading" hidden><span></span><span></span><span></span><small id="llmLoadingText">正在调用 DeepSeek API 生成化学解释</small></div>
             <div id="llmContent">
               <p class="llm-text" id="llmText"></p>
               <div class="group-chips" id="functionalGroups"></div>

@@ -247,6 +247,8 @@ select:disabled { background-color: #f2f5f9; color: #99a3b2; cursor: not-allowed
 .figure-frame img { display: block; max-width: 100%; height: auto; border-radius: 7px; }
 .heat-legend { display: flex; align-items: center; justify-content: flex-end; gap: 6px; margin-top: 8px; color: var(--muted); font-size: 8px; }
 .heat-gradient { display: block; width: 74px; height: 5px; border-radius: 8px; background: linear-gradient(90deg, #4575b4, #ffffbf, #d73027); }
+.viz-note { margin: 6px 0 0; color: var(--muted); font-size: 9px; line-height: 1.6; }
+.viz-note:empty { display: none; }
 .attention-gradient { background: linear-gradient(90deg, #3767c9, #f0d765, #cf313b); }
 .head-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
 .head-card { padding: 8px; border: 1px solid var(--line); border-radius: 11px; background: #fff; }
@@ -262,6 +264,8 @@ select:disabled { background-color: #f2f5f9; color: #99a3b2; cursor: not-allowed
 .llm-heading h3 { margin: 4px 0 0; font-size: 13px; }
 .llm-mark { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; background: #6d4cc7; color: #fff; font: 700 10px/1 var(--mono); }
 .llm-text { margin: 14px 0 0; color: #433c56; font-size: 12px; line-height: 1.85; white-space: pre-wrap; }
+.llm-model-note { margin: 9px 0 0; color: #7a7290; font-size: 9px; line-height: 1.6; }
+.llm-model-note:empty { display: none; }
 .group-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 .group-chip { padding: 5px 8px; border-radius: 999px; background: #ece5fb; color: #6344af; font-size: 9px; }
 .consistency-warning { margin: 11px 0 0; padding: 8px 10px; border-radius: 8px; background: #fff6e6; color: #93661c; font-size: 9px; line-height: 1.55; }

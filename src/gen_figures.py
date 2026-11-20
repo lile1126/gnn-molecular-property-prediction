@@ -96,3 +96,57 @@ plt.close(fig)
 print("图表已生成:")
 for f in sorted(os.listdir(FIG_DIR)):
     print(" ", os.path.join(FIG_DIR, f))
+
+
+# ---------------- 图4：融合策略 × 数据划分 对比 ----------------
+def plot_fusion_compare():
+    """随机划分 vs Murcko 骨架划分，单模型 / 3专家 / all9 三方对比。"""
+    with open(os.path.join(ROOT, "reports", "diversity", "fusion_preview.json"),
+              encoding="utf-8") as f:
+        preview = json.load(f)
+    with open(os.path.join(ROOT, "reports", "fusion_scaffold.json"), encoding="utf-8") as f:
+        scaffold = json.load(f)
+
+    cases = [("ESOL", "R2", "R² ↑"), ("FreeSolv", "R2", "R² ↑"), ("BBBP", "AUC", "AUC ↑")]
+    labels = ["最强单模型", "3 专家等权", "all9 等权"]
+    colors = ["#8c8c8c", "#4a9fe8", "#e8563c"]
+
+    fig, axes = plt.subplots(1, 3, figsize=(13.5, 4.6))
+    for ax, (name, metric, ylab) in zip(axes, cases):
+        rand = preview[name]["strategies"]
+        scaf = scaffold[name]["strategies"]
+        rand_vals = [rand["best_single(val选)"]["test"][metric],
+                     rand["hetero_equal(val选3专家)"]["test"][metric],
+                     rand["hetero_equal_all9"]["test"][metric]]
+        scaf_vals = [scaf["best_single(val选)"][metric],
+                     scaf["hetero_equal_3experts"][metric],
+                     scaf["hetero_equal_all9"][metric]]
+
+        x = np.arange(2)
+        width = 0.24
+        for i, (lab, col) in enumerate(zip(labels, colors)):
+            vals = [rand_vals[i], scaf_vals[i]]
+            bars = ax.bar(x + (i - 1) * width, vals, width, label=lab, color=col)
+            for b, v in zip(bars, vals):
+                ax.text(b.get_x() + b.get_width() / 2, v + 0.01,
+                        f"{v:.3f}", ha="center", fontsize=8.5)
+        ax.set_xticks(x)
+        ax.set_xticklabels(["随机划分", "骨架划分"])
+        ax.set_ylabel(ylab)
+        ax.set_title(name, fontsize=11)
+        ax.grid(axis="y", alpha=0.3)
+        lo = min(rand_vals + scaf_vals)
+        ax.set_ylim(max(0, lo - 0.12), 1.02)
+    handles, labs = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labs, loc="lower center", ncol=3, fontsize=10,
+               frameon=False, bbox_to_anchor=(0.5, 0.0))
+    fig.suptitle("融合策略在两种数据划分下的对比（test 集，模型选择全部基于 val）",
+                 fontsize=12.5)
+    fig.tight_layout(rect=[0, 0.05, 1, 0.94])
+    path = os.path.join(FIG_DIR, "fusion_split_compare.png")
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    print(" 融合对比 ->", path)
+
+
+plot_fusion_compare()

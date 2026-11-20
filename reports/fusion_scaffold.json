@@ -1,0 +1,422 @@
+{
+  "ESOL": {
+    "task": "regression",
+    "n_train": 902,
+    "n_val": 112,
+    "n_test": 114,
+    "mean_corr_cross_architecture": 0.7254,
+    "best_single": "GraphSAGE_featb",
+    "experts": [
+      "GCN_featc",
+      "GAT_featc",
+      "GraphSAGE_featb"
+    ],
+    "model_metrics": {
+      "GAT_feata": {
+        "val": {
+          "RMSE": 1.0121,
+          "MAE": 0.7949,
+          "R2": 0.733
+        },
+        "test": {
+          "RMSE": 1.1702,
+          "MAE": 0.9232,
+          "R2": 0.7077
+        }
+      },
+      "GAT_featb": {
+        "val": {
+          "RMSE": 1.0151,
+          "MAE": 0.7826,
+          "R2": 0.7314
+        },
+        "test": {
+          "RMSE": 1.0794,
+          "MAE": 0.8476,
+          "R2": 0.7513
+        }
+      },
+      "GAT_featc": {
+        "val": {
+          "RMSE": 0.993,
+          "MAE": 0.7749,
+          "R2": 0.743
+        },
+        "test": {
+          "RMSE": 1.4024,
+          "MAE": 1.0623,
+          "R2": 0.5802
+        }
+      },
+      "GCN_feata": {
+        "val": {
+          "RMSE": 1.0241,
+          "MAE": 0.7905,
+          "R2": 0.7266
+        },
+        "test": {
+          "RMSE": 1.2254,
+          "MAE": 0.9674,
+          "R2": 0.6795
+        }
+      },
+      "GCN_featb": {
+        "val": {
+          "RMSE": 0.9996,
+          "MAE": 0.787,
+          "R2": 0.7395
+        },
+        "test": {
+          "RMSE": 1.1879,
+          "MAE": 0.9343,
+          "R2": 0.6988
+        }
+      },
+      "GCN_featc": {
+        "val": {
+          "RMSE": 1.0376,
+          "MAE": 0.8425,
+          "R2": 0.7193
+        },
+        "test": {
+          "RMSE": 1.1751,
+          "MAE": 0.9141,
+          "R2": 0.7053
+        }
+      },
+      "GraphSAGE_feata": {
+        "val": {
+          "RMSE": 0.9773,
+          "MAE": 0.7656,
+          "R2": 0.751
+        },
+        "test": {
+          "RMSE": 1.1681,
+          "MAE": 0.9515,
+          "R2": 0.7087
+        }
+      },
+      "GraphSAGE_featb": {
+        "val": {
+          "RMSE": 0.9677,
+          "MAE": 0.7423,
+          "R2": 0.7559
+        },
+        "test": {
+          "RMSE": 1.0646,
+          "MAE": 0.8568,
+          "R2": 0.7581
+        }
+      },
+      "GraphSAGE_featc": {
+        "val": {
+          "RMSE": 1.0546,
+          "MAE": 0.8425,
+          "R2": 0.7101
+        },
+        "test": {
+          "RMSE": 1.3128,
+          "MAE": 1.0222,
+          "R2": 0.6321
+        }
+      }
+    },
+    "strategies": {
+      "best_single(val选)": {
+        "RMSE": 1.0646,
+        "MAE": 0.8568,
+        "R2": 0.7581
+      },
+      "hetero_equal_3experts": {
+        "RMSE": 1.0957,
+        "MAE": 0.856,
+        "R2": 0.7437
+      },
+      "hetero_equal_all9": {
+        "RMSE": 1.0186,
+        "MAE": 0.8121,
+        "R2": 0.7785
+      }
+    }
+  },
+  "FreeSolv": {
+    "task": "regression",
+    "n_train": 513,
+    "n_val": 64,
+    "n_test": 65,
+    "mean_corr_cross_architecture": 0.6501,
+    "best_single": "GraphSAGE_feata",
+    "experts": [
+      "GCN_featc",
+      "GAT_featc",
+      "GraphSAGE_featc"
+    ],
+    "model_metrics": {
+      "GAT_feata": {
+        "val": {
+          "RMSE": 2.7707,
+          "MAE": 1.9176,
+          "R2": 0.7925
+        },
+        "test": {
+          "RMSE": 2.0527,
+          "MAE": 1.4774,
+          "R2": 0.6677
+        }
+      },
+      "GAT_featb": {
+        "val": {
+          "RMSE": 2.6991,
+          "MAE": 1.8505,
+          "R2": 0.8031
+        },
+        "test": {
+          "RMSE": 2.0648,
+          "MAE": 1.4752,
+          "R2": 0.6637
+        }
+      },
+      "GAT_featc": {
+        "val": {
+          "RMSE": 2.6613,
+          "MAE": 1.9533,
+          "R2": 0.8086
+        },
+        "test": {
+          "RMSE": 2.0218,
+          "MAE": 1.5322,
+          "R2": 0.6776
+        }
+      },
+      "GCN_feata": {
+        "val": {
+          "RMSE": 2.2071,
+          "MAE": 1.6116,
+          "R2": 0.8684
+        },
+        "test": {
+          "RMSE": 2.0637,
+          "MAE": 1.5262,
+          "R2": 0.6641
+        }
+      },
+      "GCN_featb": {
+        "val": {
+          "RMSE": 2.2025,
+          "MAE": 1.7284,
+          "R2": 0.8689
+        },
+        "test": {
+          "RMSE": 2.0714,
+          "MAE": 1.5518,
+          "R2": 0.6616
+        }
+      },
+      "GCN_featc": {
+        "val": {
+          "RMSE": 2.616,
+          "MAE": 1.8426,
+          "R2": 0.8151
+        },
+        "test": {
+          "RMSE": 1.8969,
+          "MAE": 1.4391,
+          "R2": 0.7162
+        }
+      },
+      "GraphSAGE_feata": {
+        "val": {
+          "RMSE": 2.0354,
+          "MAE": 1.5501,
+          "R2": 0.888
+        },
+        "test": {
+          "RMSE": 2.3571,
+          "MAE": 1.7325,
+          "R2": 0.5618
+        }
+      },
+      "GraphSAGE_featb": {
+        "val": {
+          "RMSE": 2.2072,
+          "MAE": 1.6364,
+          "R2": 0.8684
+        },
+        "test": {
+          "RMSE": 2.1181,
+          "MAE": 1.5758,
+          "R2": 0.6462
+        }
+      },
+      "GraphSAGE_featc": {
+        "val": {
+          "RMSE": 2.5193,
+          "MAE": 1.7638,
+          "R2": 0.8285
+        },
+        "test": {
+          "RMSE": 1.8473,
+          "MAE": 1.4029,
+          "R2": 0.7309
+        }
+      }
+    },
+    "strategies": {
+      "best_single(val选)": {
+        "RMSE": 2.3571,
+        "MAE": 1.7325,
+        "R2": 0.5618
+      },
+      "hetero_equal_3experts": {
+        "RMSE": 1.8811,
+        "MAE": 1.432,
+        "R2": 0.7209
+      },
+      "hetero_equal_all9": {
+        "RMSE": 1.6638,
+        "MAE": 1.1871,
+        "R2": 0.7817
+      }
+    }
+  },
+  "BBBP": {
+    "task": "classification",
+    "n_train": 1631,
+    "n_val": 203,
+    "n_test": 205,
+    "mean_corr_cross_architecture": 0.9151,
+    "best_single": "GraphSAGE_featc",
+    "experts": [
+      "GCN_featc",
+      "GAT_featc",
+      "GraphSAGE_featc"
+    ],
+    "model_metrics": {
+      "GAT_feata": {
+        "val": {
+          "Accuracy": 0.8079,
+          "AUC": 0.8206,
+          "F1": 0.877
+        },
+        "test": {
+          "Accuracy": 0.8829,
+          "AUC": 0.7016,
+          "F1": 0.9375
+        }
+      },
+      "GAT_featb": {
+        "val": {
+          "Accuracy": 0.7882,
+          "AUC": 0.8101,
+          "F1": 0.8599
+        },
+        "test": {
+          "Accuracy": 0.8976,
+          "AUC": 0.6894,
+          "F1": 0.9449
+        }
+      },
+      "GAT_featc": {
+        "val": {
+          "Accuracy": 0.8177,
+          "AUC": 0.8663,
+          "F1": 0.8795
+        },
+        "test": {
+          "Accuracy": 0.8634,
+          "AUC": 0.7435,
+          "F1": 0.9259
+        }
+      },
+      "GCN_feata": {
+        "val": {
+          "Accuracy": 0.8128,
+          "AUC": 0.827,
+          "F1": 0.8758
+        },
+        "test": {
+          "Accuracy": 0.8927,
+          "AUC": 0.8404,
+          "F1": 0.9424
+        }
+      },
+      "GCN_featb": {
+        "val": {
+          "Accuracy": 0.7931,
+          "AUC": 0.8408,
+          "F1": 0.8591
+        },
+        "test": {
+          "Accuracy": 0.8927,
+          "AUC": 0.8307,
+          "F1": 0.9424
+        }
+      },
+      "GCN_featc": {
+        "val": {
+          "Accuracy": 0.7537,
+          "AUC": 0.8543,
+          "F1": 0.8201
+        },
+        "test": {
+          "Accuracy": 0.8634,
+          "AUC": 0.787,
+          "F1": 0.9243
+        }
+      },
+      "GraphSAGE_feata": {
+        "val": {
+          "Accuracy": 0.7783,
+          "AUC": 0.8385,
+          "F1": 0.8443
+        },
+        "test": {
+          "Accuracy": 0.9024,
+          "AUC": 0.8456,
+          "F1": 0.9471
+        }
+      },
+      "GraphSAGE_featb": {
+        "val": {
+          "Accuracy": 0.8325,
+          "AUC": 0.8643,
+          "F1": 0.8859
+        },
+        "test": {
+          "Accuracy": 0.8927,
+          "AUC": 0.79,
+          "F1": 0.9421
+        }
+      },
+      "GraphSAGE_featc": {
+        "val": {
+          "Accuracy": 0.8079,
+          "AUC": 0.877,
+          "F1": 0.8713
+        },
+        "test": {
+          "Accuracy": 0.8732,
+          "AUC": 0.7411,
+          "F1": 0.9316
+        }
+      }
+    },
+    "strategies": {
+      "best_single(val选)": {
+        "Accuracy": 0.8732,
+        "AUC": 0.7411,
+        "F1": 0.9316
+      },
+      "hetero_equal_3experts": {
+        "Accuracy": 0.8683,
+        "AUC": 0.7736,
+        "F1": 0.9284
+      },
+      "hetero_equal_all9": {
+        "Accuracy": 0.8878,
+        "AUC": 0.8248,
+        "F1": 0.9396
+      }
+    }
+  }
+}

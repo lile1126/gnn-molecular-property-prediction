@@ -40,12 +40,15 @@
     },
     trained: [],
     ensemble_ok: [],
+    hetero_ok: [],
+    hetero_n: 36,
     mc_t: 30,
     ensemble_n: 4,
   };
 
   const METHOD_HINTS = {
     single: "单模型直接推理，速度快，适合快速筛选。",
+    hetero: "9 配置（3 架构 × 3 特征档）× 4 种子等权，跨架构互补，泛化最稳（课题最终方案）。",
     mc: "多次开启 Dropout 采样，估计预测离散程度与近似区间。",
     ensemble: "聚合同架构多随机种子模型，用成员分歧估计不确定性。",
     attention: "提取 GAT 多头注意力系数，观察模型关注的化学键。",
@@ -56,16 +59,16 @@
       "systemState", "systemStateText", "smiles", "smilesWrap", "smilesStatus",
       "validationMark", "charCount", "dataset", "conv", "feat", "featNote",
       "methodHint", "explainRow", "withExplain", "availability", "availabilityText",
-      "runBtn", "llmBtn", "llmProvider", "llmTag", "llmLoadingText",
+      "runBtn", "llmBtn", "llmTag", "llmLoadingText",
       "errorMessage", "resultEmpty", "resultLoading",
       "loadingTitle", "loadingText", "resultContent", "resultHeadline", "methodBadge",
       "predictionValue", "predictionUnit", "predictionContext", "resultTask",
       "resultConv", "resultRuntime", "uncertaintyCard", "confidencePill",
       "uncertaintyRange", "uncertaintyMetricLabel", "uncertaintyMetric",
       "intervalTrack", "intervalFill", "intervalPoint", "uncertaintyNote",
-      "structureCard", "structureImage", "attentionCard", "attentionImage",
+      "structureCard", "structureImage", "structureNote", "attentionCard", "attentionImage",
       "attentionTag", "headGrid", "comboCard", "comboImage", "edgeCard", "edgeList",
-      "llmCard", "llmLoading", "llmContent", "llmText", "functionalGroups",
+      "llmCard", "llmLoading", "llmContent", "llmText", "functionalGroups", "llmModelNote",
       "consistencyWarning", "historyBody", "historyEmpty", "clearHistoryBtn"
     ].forEach((id) => { els[id] = $(id); });
   }
@@ -152,6 +155,7 @@
     const dataset = els.dataset.value;
     const featureSelect = els.feat;
     const isAttention = method === "attention";
+    const isHetero = method === "hetero";
 
     document.querySelectorAll(".method-option").forEach((option) => {
       const radio = option.querySelector('input[type="radio"]');
@@ -165,6 +169,13 @@
       featureSelect.disabled = true;
       els.explainRow.hidden = true;
       els.withExplain.checked = false;
+    } else if (isHetero) {
+      els.conv.disabled = true;
+      featureSelect.disabled = true;
+      featureSelect.value = "base";
+      // 异质集成同样提供结构归因图（9 配置 seed42 主成员掩码平均），开关保留
+      els.explainRow.hidden = false;
+      els.withExplain.checked = true;
     } else {
       els.conv.disabled = false;
       featureSelect.disabled = false;
@@ -174,13 +185,13 @@
 
     const meta = state.meta || DEFAULT_META;
     Array.from(featureSelect.options).forEach((option) => {
-      const enabled = isAttention
+      const enabled = (isAttention || isHetero)
         ? option.value === "base"
         : !state.meta || isTrained(els.conv.value, dataset, option.value);
       option.disabled = !enabled;
     });
 
-    if (isAttention) {
+    if (isAttention || isHetero) {
       featureSelect.value = "base";
     } else if (featureSelect.selectedOptions[0]?.disabled) {
       const fallback = Array.from(featureSelect.options).find((option) => !option.disabled);
@@ -193,6 +204,17 @@
 
     if (!state.meta) {
       setAvailability("", "正在检查当前模型组合...");
+      return;
+    }
+
+    if (isHetero) {
+      const ok = (state.meta.hetero_ok || []).includes(dataset);
+      setAvailability(
+        ok ? "ok" : "warn",
+        ok
+          ? `${dataset} · 9 配置 × 4 种子 = 36 成员异质集成可用`
+          : `${dataset} 的异质集成成员不全，请先训练全部 9 配置与 3 个额外种子`
+      );
       return;
     }
 
@@ -323,14 +345,19 @@
     const value = Number(data.prediction);
 
     els.resultHeadline.textContent = `${dataset} 预测`;
-    els.methodBadge.textContent = data.method || (method === "mc" ? "MC-Dropout" : method === "ensemble" ? "深度集成" : "单模型");
+    els.methodBadge.textContent = data.method || (
+      method === "mc" ? "MC-Dropout"
+        : method === "hetero" ? "异质集成"
+          : method === "ensemble" ? "同构集成" : "单模型");
     els.predictionValue.textContent = formatNumber(value);
     els.predictionUnit.textContent = isClassification ? "probability" : (data.unit || metaLabel("unit_labels", dataset, ""));
     els.predictionContext.textContent = isClassification
       ? `${formatNumber(value * 100, 1)}% 阳性概率 · 阈值 0.50`
       : `${data.task_label || metaLabel("task_labels", dataset, dataset)} · ${data.unit || metaLabel("unit_labels", dataset, "")}`;
     els.resultTask.textContent = data.task_label || metaLabel("task_labels", dataset, dataset);
-    els.resultConv.textContent = `${els.conv.value} · ${metaLabel("feat_labels", feat, feat)}`;
+    els.resultConv.textContent = data.feat === "hetero"
+      ? "3 架构 × 3 特征档（9 配置）"
+      : `${els.conv.value} · ${metaLabel("feat_labels", feat, feat)}`;
     els.resultRuntime.textContent = `${(elapsedMs / 1000).toFixed(1)} s`;
 
     renderUncertainty(data, isClassification);
@@ -370,7 +397,7 @@
         els.confidencePill.textContent = "经验估计";
         els.uncertaintyRange.textContent = formatNumber(data.std, 4);
         els.uncertaintyMetricLabel.textContent = "方法";
-        els.uncertaintyMetric.textContent = data.method || "深度集成";
+        els.uncertaintyMetric.textContent = data.method || "同构集成";
         els.uncertaintyNote.textContent = "数值为模型成员或采样之间的预测离散度。";
         els.intervalTrack.hidden = true;
       }
@@ -382,6 +409,10 @@
   function renderStructure(data) {
     const hasImage = setImage(els.structureImage, data.image);
     els.structureCard.hidden = !hasImage;
+    if (els.structureNote) {
+      els.structureNote.textContent = data.attribution || "";
+      els.structureNote.hidden = !data.attribution;
+    }
   }
 
   function hideAttentionResult() {
@@ -415,6 +446,7 @@
     els.llmCard.hidden = true;
     const hasImage = setImage(els.attentionImage, data.image);
     els.attentionCard.hidden = !hasImage;
+    if (!hasImage && data.warning) showError(data.warning);
     els.attentionTag.textContent = `${data.heads || 1} heads`;
     els.attentionImage.alt = `${dataset} GAT 注意力分子图`;
 
@@ -466,7 +498,7 @@
     const dataset = els.dataset.value;
     const method = selectedMethod();
     const conv = method === "attention" ? "GAT" : els.conv.value;
-    const feat = method === "attention" ? "base" : currentFeat();
+    const feat = (method === "attention" || method === "hetero") ? "base" : currentFeat();
 
     showError();
     if (!smiles) {
@@ -485,7 +517,9 @@
       method === "attention" ? "正在提取注意力" : "正在分析分子",
       method === "attention"
         ? "将生成整体注意力图与逐头对比，大分子可能需要更久。"
-        : "正在完成图神经网络推理、结构解释与结果整理。"
+        : method === "hetero"
+          ? "正在加载 36 个成员模型并推理，首次调用会慢一些。"
+          : "正在完成图神经网络推理、结构解释与结果整理。"
     );
 
     try {
@@ -558,23 +592,14 @@
     els.llmContent.hidden = true;
   }
 
-  function applyLlmProvider(provider) {
-    if (provider === "deepseek") {
-      els.llmTag.textContent = "DeepSeek · API";
-      els.llmLoadingText.textContent = "正在调用 DeepSeek API 生成化学解释";
-    } else {
-      els.llmTag.textContent = "Qwen 2.5 · 3B";
-      els.llmLoadingText.textContent = "正在生成化学解释，首次加载可能较慢";
-    }
-  }
-
   async function runLlmExplanation() {
     const smiles = els.smiles.value.trim();
     if (!smiles || state.busy) return;
     const dataset = els.dataset.value;
-    const conv = selectedMethod() === "attention" ? "GAT" : els.conv.value;
-    const provider = els.llmProvider.value;
-    applyLlmProvider(provider);
+    const method = selectedMethod();
+    const conv = method === "attention" ? "GAT" : els.conv.value;
+    const feat = (method === "attention" || method === "hetero") ? "base" : currentFeat();
+    const shownPrediction = state.lastPrediction?.prediction;
     showError();
     prepareLlmPanel();
     state.busy = true;
@@ -588,13 +613,21 @@
       const data = await fetchJSON("/api/explain", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ smiles, dataset, conv, provider }),
+        body: JSON.stringify({
+          smiles, dataset, conv, feat, method,
+          prediction: typeof shownPrediction === "number" ? shownPrediction : undefined,
+        }),
       }, 340000);
 
       if (!state.lastPrediction && data.prediction !== undefined) {
         els.predictionValue.textContent = formatNumber(data.prediction);
         els.predictionUnit.textContent = taskType(dataset) === "classification" ? "probability" : metaLabel("unit_labels", dataset, "");
         els.predictionContext.textContent = "预测值来自当前选择模型";
+      }
+      if (els.llmModelNote) {
+        els.llmModelNote.textContent = data.model_note
+          ? `归因依据：${data.model_note} · 预测 ${formatNumber(data.prediction)}${taskType(dataset) === "classification" ? "" : ` ${metaLabel("unit_labels", dataset, "")}`}`
+          : "";
       }
       els.llmText.textContent = data.explanation || "未返回解释文本。";
       els.functionalGroups.replaceChildren();
@@ -617,6 +650,7 @@
       els.llmText.textContent = "解释生成失败。";
       els.functionalGroups.replaceChildren();
       els.consistencyWarning.hidden = true;
+      if (els.llmModelNote) els.llmModelNote.textContent = "";
       showError(error.name === "AbortError" ? "LLM 解释等待超时，请稍后重试。" : error.message);
     } finally {
       state.busy = false;
@@ -652,7 +686,8 @@
 
   function methodShortName(method) {
     if (!method) return "—";
-    if (method.includes("集成")) return "集成";
+    if (method.includes("异质")) return "异质";
+    if (method.includes("集成")) return "同构";
     if (method.includes("MC")) return "MC";
     if (method.includes("注意")) return "注意力";
     if (method.includes("LLM")) return "LLM";
@@ -704,14 +739,16 @@
     els.smiles.value = entry.smiles;
     els.dataset.value = entry.dataset;
     els.conv.value = entry.conv;
-    if (!Array.from(els.feat.options).some((option) => option.value === entry.feat)) return;
     const method = entry.method?.includes("注意") ? "attention"
-      : entry.method?.includes("集成") ? "ensemble"
-        : entry.method?.includes("MC") ? "mc" : "single";
+      : entry.method?.includes("异质") ? "hetero"
+        : entry.method?.includes("集成") ? "ensemble"
+          : entry.method?.includes("MC") ? "mc" : "single";
+    if (method !== "hetero"
+        && !Array.from(els.feat.options).some((option) => option.value === entry.feat)) return;
     const radio = document.querySelector(`input[name="method"][value="${method}"]`);
     if (radio) radio.checked = true;
     refreshUI();
-    if (!els.feat.disabled) els.feat.value = entry.feat;
+    if (!els.feat.disabled && method !== "hetero") els.feat.value = entry.feat;
     updateCharacterCount();
     validateSmiles();
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -747,7 +784,6 @@
     });
     els.runBtn.addEventListener("click", runAnalysis);
     els.llmBtn.addEventListener("click", runLlmExplanation);
-    els.llmProvider.addEventListener("change", () => applyLlmProvider(els.llmProvider.value));
     els.clearHistoryBtn.addEventListener("click", () => {
       state.history = [];
       storeHistory();

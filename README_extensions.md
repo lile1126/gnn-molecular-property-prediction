@@ -98,28 +98,36 @@ ESOL / FreeSolv / BBBP 标注样本仅数百～两千，深度 GNN 在小样本�
 **结论**：
 1. **集成提升点预测**：GraphSAGE×BBBP 集成 AUC 0.899 > 全部单成员（0.880~0.895）与 seed42 基线（0.876）——"集成均值优于成员"的标准效应
 2. **校准权衡**：3 成员集成区间过窄（低估不确定性，FreeSolv coverage 仅 0.42）；MC-Dropout 区间更宽更保守、ECE 更低。成员多样性不足时集成会低估不确定性——对实践有指导意义（需增大成员数/seed 差异）
+3. **后续修正（2026-11）**：上面第 1 条的"集成提升点预测"只在同构成员恰好互补时成立。系统诊断显示同构种子平均的 test 残差相关高达 0.92，四数据集中有两个集成结果不如最强单成员（Clintox GCN 集成 AUC 0.7087 < 单成员 0.714）。稳定有效的是**跨架构异质集成**，见下方「方向 ⑩」。
 
 ### Web 演示升级
 `src/app.py` 支持三种预测方法：单模型 / MC-Dropout（返回 90% 置信区间或熵）/ 深度集成。
 
 ---
 
-## 方向 ③ 本地 LLM 化学解释增强
+## 方向 ③ LLM 化学解释增强（DeepSeek API）
 
 ### 动机
 GNNExplainer 输出的是原子/键重要性掩码，普通用户难以直接理解。
-用本地大模型把掩码转成**自然语言化学解释**，并做一致性校验防止幻觉。
+用大模型把掩码转成**自然语言化学解释**，并做一致性校验防止幻觉。
 
 ### 方法
-- **模型**：Qwen2.5-3B-Instruct（ModelScope 下载，本地 4bit 量化运行于 1660 Ti 6GB）
+- **模型**：DeepSeek API（`deepseek-chat`，OpenAI 兼容接口，标准库 urllib 调用，无额外依赖）
+  - 早期版本曾用本地 Qwen2.5-3B-Instruct（4bit 量化），但该路径依赖 CUDA GPU，
+    项目运行环境为纯 CPU，已移除；本地权重与下载脚本一并删除
 - **流程**：GNNExplainer 掩码 → top-k 重要原子/键 → RDKit 官能团匹配（18 种 SMARTS）→
   结构化提示词 → LLM 生成 2~3 句化学解释 → 官能团一致性校验（LLM 提及项必须在 RDKit 检出集内）
-- **Web 集成**：app.py 新增「LLM 化学解释」按钮
+- **归因与推理模式一一对应**：单模型 / MC → 当前 conv×feat 的 seed42 模型；
+  同构集成 → 该配置 seed42 主成员；异质集成 → 9 配置 seed42 主成员掩码平均（epochs=60）；
+  注意力 → GAT×feat_base。解释文本引用的预测值与界面显示的推理结果一致
+- **Web 集成**：app.py 新增「LLM 化学解释」按钮，卡片标注「归因依据：<模型与模式>」；
+  异质集成的「结构重要性」图同样由 9 配置 seed42 主成员掩码平均生成（与 LLM 解释同批掩码，
+  卡片下方标注「9 个配置 seed42 主成员掩码平均」），单次预测约 7 秒（模型已缓存后）
 
 ### 验证案例
 - **阿司匹林（GCN×ESOL）**：关键原子为羧基/酯基 O、芳香 C；检出羟基、羧基、羰基、酯基、苯环、醚键——与 logS 预测高度相关
 - **正丙醇（GCN×ESOL）**：关键原子 O（羟基氧），LLM 生成解释提及"羟基增强亲水性"；**一致性校验拦截幻觉**：LLM 曾提及"羰基"（RDKit 未检出，被标记 `mentioned_undetected`）
-- **发现**：3B 模型在无先验约束时出现化学逻辑错误（"羟基增加亲水性从而降低溶解度"——方向说反），注入任务化学先验（极性基团增溶/疏水基团减溶）后逻辑明显改善。说明 **LLM 化学解释必须以 RDKit 证据 + 先验约束为护栏**，一致性校验是必要组件
+- **发现**：早期 3B 本地模型在无先验约束时出现化学逻辑错误（"羟基增加亲水性从而降低溶解度"——方向说反），注入任务化学先验（极性基团增溶/疏水基团减溶）后逻辑明显改善。说明 **LLM 化学解释必须以 RDKit 证据 + 先验约束为护栏**，一致性校验是必要组件
 
 ---
 
@@ -172,7 +180,7 @@ edge_attr 键型特征也未进入模型）。本方向补齐该空白并做系�
 ### 关键文件
 - `src/featurize.py`（三档特征 + 幂等缓存）、`src/train_feat.py`（实验矩阵）、
   `src/reeval_feat.py`（统一口径重评估）、`src/models.py`（SAGEConvEdge / GAT edge_dim / GCN 边加权）
-- 缓存：`data/featurized/*_feat{a,b,c}.pt`；模型：`models/feat/*.pt`（20 个）
+- 缓存：`data/featurized/*_feat{a,b,c}.pt`；模型：`models/feat/*.pt`（36 个）
 - 结果：`reports/feat_results.json`
 
 ---
@@ -266,15 +274,15 @@ FreeSolv 结论一致）；ECE 0.53-0.59 偏高（概率集中于 0.5 附近，�
 ### Web 新功能（特征工程模型接入）
 - 新增「特征工程等级」下拉：基线（9 维）/ feat_a（27 维）/ feat_b（+键 7 维）/
   feat_c（+MACCS 166 位）
-- 对应懒加载 `models/feat/*.pt`（20 个特征模型），输入 SMILES 由
+- 对应懒加载 `models/feat/*.pt`（36 个特征模型），输入 SMILES 由
   `featurize.featurize_smiles` 实时构建特征图（与训练口径一致）
-- 交互约束：特征模型支持单模型 / MC-Dropout；深度集成与解释图仅基线（集成成员与
-  GNNExplainer 未扩展到特征模型）
+- 交互约束：特征模型支持单模型 / MC-Dropout / 同构集成；解释图按当前特征档计算
+  （feat_a/b/c 均支持）；异质集成固定走「3 架构 × 3 特征档」9 配置，不随 conv/feat 选择变化
 - 回归任务显示单位（logS / kcal/mol），分类显示概率语义（渗透 / 毒性）
 
 ### 回归测试
 `src/smoke_web.py`：覆盖 Clintox 单模型/MC/集成、ESOL/BBBP feat_a/b/c、逐头注意力、
-feat 集成拒绝逻辑等 9 项端点用例（重启服务后可随时复跑）。
+feat 集成拒绝逻辑等 17 项端点用例（重启服务后可随时复跑）。
 
 ### 关键文件
 - `src/app.py`（Web 全功能）、`src/featurize.py`（`featurize_smiles`）、
@@ -332,7 +340,7 @@ feat 集成拒绝逻辑等 9 项端点用例（重启服务后可随时复跑）
   提示改为"特征模型支持单模型 / MC-Dropout / 深度集成（解释图基于基线）"
 
 ### 回归测试
-`src/smoke_web.py`：15 项全绿，覆盖 GCN/GAT × feat_a/b/c 的单模型/深度集成、
+`src/smoke_web.py`：17 项全绿，覆盖 GCN/GAT × feat_a/b/c 的单模型/深度集成、
 MC-Dropout、注意力逐头、meta 组合可用性（trained=48, ensemble_ok=48）与 SMILES 校验。
 
 ### 修复记录：feat_a Web 推理 edge_index 缺失
@@ -354,12 +362,70 @@ MC-Dropout、注意力逐头、meta 组合可用性（trained=48, ensemble_ok=48
   ② `explain_one` 增加 edge_attr/fp 可选参数并转发给模型 forward（PyG Explainer
   的 kwargs 原样透传），数据层自动从 data 提取
 - 验证：feat_a/b/c × 单模型 / MC / 深度集成 × 解释图全部正常出图，
-  `smoke_web.py` 15 项冒烟全绿
+  `smoke_web.py` 17 项冒烟全绿
 
 ### 关键文件
 - `src/train_feat_ensemble.py`（训练 + 集成评估）、`src/app.py`（feat 集成加载/meta）、
   `src/smoke_web.py`（feat 集成用例）
 - 产物：`models/feat_ensemble/`（60 成员）、`reports/feat_ensemble_results.json`
+
+---
+
+## 方向 ⑩ 模型融合：从"伪融合"到融合边界条件（方法创新点）
+
+### 动机
+导师反馈"项目缺少创新点，可考虑模型融合做出效果更好的模型"。原有"集成"是同架构多种子平均
+（方向②/⑨），需先回答一个前置问题：**它到底有没有增益？**
+
+### 诊断（零训练成本，`src/analyze_error_diversity.py`）
+对 144 个 checkpoint（9 配置 × 4 种子 × 4 数据集）计算 test 残差相关：
+
+| 数据集 | 同配置跨种子 | 跨架构 | 同架构跨特征档 |
+|---|---|---|---|
+| ESOL | 0.918 | **0.606** | 0.570 |
+| FreeSolv | 0.914 | 0.750 | 0.712 |
+| BBBP | 0.952 | 0.871 | 0.844 |
+| Clintox | 0.829 | 0.752 | 0.740 |
+
+相关性排序与融合收益排序完全一致——**多样性来自独立训练轨迹与不同归纳偏置**，同构成员平均
+不产生增益（Clintox GCN 集成 0.7087 < 单成员 0.714）。
+
+### 三种"更高级"的融合，全部证伪
+
+| 方案 | 设计 | 结果 |
+|---|---|---|
+| HybridAgg（架构级） | 层内 GCN/GAT/SAGE 三路并联 + softmax 可学习权重 + 多尺度读出 | ESOL RMSE 0.7811（对照 0.5776）；BBBP AUC 0.9209（对照 0.9292）；三层权重全部退化到 0.33/0.33/0.33 |
+| 静态加权 NNLS | val 上拟合非负权重 | 仅 ESOL 有效；FreeSolv / Clintox 坍缩为单专家（1.0/0/0） |
+| 知识蒸馏 | 12 模型教师 → 单模型学生（λ=0.5, T=2） | ESOL 学生 R² 0.8915 < 基线 0.9044；BBBP AUC 0.9125 ≈ 基线 0.9140 |
+
+**机理**：同一计算图内的分支共享输入与梯度 → 表示趋同；并联加权压缩分支信号幅度；
+单模型容量（57k）无法表达 12×57k 集成的决策边界；回归软标签抹平样本特异细节。
+v2 变体（残差 + LayerNorm + 温度，80.9k 参数）ESOL R² 崩至 0.4057，已回滚。
+
+### 有效方案：模型级异质等权集成（all9）
+
+| 数据集 | 划分 | 最强单模型 | 同构集成 | **异质等权 all9** |
+|---|---|---|---|---|
+| ESOL | 随机 | R² 0.9142 | 0.9108 | **0.9205** |
+| FreeSolv | 随机 | R² 0.9157 | 0.9191 | **0.9241** |
+| BBBP | 随机 | AUC 0.9082 | 0.9177 | **0.9292** |
+| Clintox | 随机 | AUC 0.9120 | 0.9027 | **0.9163**（F1 0.4828→0.5333） |
+| ESOL | 骨架 | R² 0.7581 | — | **0.7785**（+2.0） |
+| FreeSolv | 骨架 | R² 0.5618 | — | **0.7817**（+22.0） |
+| BBBP | 骨架 | AUC 0.7411 | — | **0.8248**（+8.4） |
+
+![融合策略 × 数据划分](reports/figures/fusion_split_compare.png)
+
+### 结论
+1. **融合的有效层级是"模型级"**，不是架构级或蒸馏压缩；
+2. **增益随分布外难度递增**：骨架划分增益（+2.0～+22.0）远大于随机划分（+0.6～+2.1）；
+3. **成员数量是难划分下的硬约束**：3 专家在 ESOL 上反而低于单模型；
+4. **FreeSolv 的 +22 点来自模型选择鲁棒性**：val 仅 64 条时 val 排序会选错模型，集成摊平风险。
+
+### 关键文件
+- 脚本：`analyze_error_diversity.py` / `scaffold_split.py` / `train_hybrid.py` / `distill_ensemble.py` / `fusion_scaffold.py` / `gen_figures.py`
+- 产物：`reports/diversity/`、`reports/fusion_scaffold.json`、`reports/hybrid_results.json`、`reports/distill_results.json`、`models/hybrid/`、`models/distill/`、`models/feat_scaffold/`
+- 汇总：`reports/fusion_summary.md`（完整表格、复现命令、数据溯源）
 
 ---
 
@@ -369,5 +435,5 @@ MC-Dropout、注意力逐头、meta 组合可用性（trained=48, ensemble_ok=48
 
 ## 文件索引
 - 脚本：`src/` 下 `contrastive_pretrain.py` / `finetune_pretrained.py` / `ablation_pretrain.py` / `uncertainty.py` / `train_ensemble.py` / `llm_explain.py` / `fix_auc.py` / `featurize.py` / `train_feat.py` / `reeval_feat.py` / `train_clintox_baseline.py` / `attention_viz.py` / `eval_clintox_ensemble.py` / `smoke_web.py`
-- 产物：`models/pretrained/`、`models/ensemble/`（含 Clintox 9 成员）、`models/feat/`（20 模型）、`models/Qwen2.5-3B-Instruct/`、`data/pretrain_pool/`
+- 产物：`models/pretrained/`、`models/ensemble/`（含 Clintox 9 成员）、`models/feat/`（36 模型）、`data/pretrain_pool/`
 - 报告：`reports/pretrain_run.json` / `pretrain_finetune_results.json` / `ablation_results.json` / `uncertainty_report.json` / `feat_results.json` / `clintox_baseline.json` / `clintox_ensemble.json` / `pretrain_full.txt` / `finetune_*.txt`

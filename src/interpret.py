@@ -127,6 +127,8 @@ def draw_molecule(smiles, node_mask, edge_mask, edge_index, out_path, title=""):
 
     def norm(v):
         v = np.asarray(v, dtype=np.float64)
+        if v.size == 0:  # 单原子分子没有边，掩码为空
+            return v
         r = v.max() - v.min()
         return (v - v.min()) / r if r > 1e-9 else np.zeros_like(v)
 

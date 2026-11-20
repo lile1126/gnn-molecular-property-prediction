@@ -101,7 +101,8 @@ def _load_feat_model(conv, name, level):
     path = os.path.join(ROOT, "models", "feat", f"{conv}_{name}_feat{level}.pt")
     if not os.path.exists(path):
         raise FileNotFoundError(
-            f"该组合未训练（实验矩阵：GCN×{{a,b,c}}、GAT/GraphSAGE×c，{conv}×{name}×feat{level} 不在其中）")
+            f"{conv} × {name} × feat_{level} 的权重缺失"
+            f"（完整矩阵为 3 架构 × 4 数据集 × 3 特征档 = 36 个，请检查 models/feat/ 是否齐全）")
     ckpt = torch.load(path, map_location=DEVICE, weights_only=False)
     m = build_model(conv, ckpt["in_dim"], ckpt["hidden"], ckpt["out_dim"], ckpt["layers"],
                     heads=ckpt.get("heads", 4), edge_dim=ckpt.get("edge_dim", 0),
@@ -113,15 +114,101 @@ def _load_feat_model(conv, name, level):
 
 
 def _build_data(smiles, level):
-    """按特征等级构建图数据：base 用 PyG from_smiles（9 维），feat_a/b/c 用 RDKit 特征。"""
+    """按特征等级构建图数据：base 用 PyG from_smiles（9 维），feat_a/b/c 用 RDKit 特征。
+
+    注意：from_smiles 对非法 SMILES 不返回 None，而是返回 0 原子的空 Data，
+    直接送入模型/GNNExplainer 会触发除零等内部错误，这里统一拦成 ValueError（端点转 400）。
+    """
     if level == "base":
-        return from_smiles(smiles)
+        data = from_smiles(smiles)
+        if data is None or getattr(data, "x", None) is None or data.x.shape[0] == 0:
+            raise ValueError(f"SMILES 无法解析为有效分子: {smiles}")
+        return data
     from featurize import featurize_smiles
-    return featurize_smiles(smiles, level)
+    data = featurize_smiles(smiles, level)
+    if data is None or getattr(data, "x", None) is None or data.x.shape[0] == 0:
+        raise ValueError(f"SMILES 无法解析为有效分子: {smiles}")
+    return data
 
 
 def _feat_info(level):
     return {"feat": level, "feat_label": FEAT_LABEL[level]}
+
+
+# ---------------------------------------------------------------------------
+# 异质集成（最终方案）：9 配置 × 4 种子等权
+# 依据 reports/fusion_summary.md —— 同构种子平均无增益，跨架构+跨特征档才有效
+# ---------------------------------------------------------------------------
+HETERO_LEVELS = ["a", "b", "c"]
+# 异质集成结构归因的 GNNExplainer 迭代数：9 个模型串行，300 会让单次预测到 30 秒级
+HETERO_MASK_EPOCHS = 60
+
+
+_HETERO_READY = {}
+
+
+def _feat_seed_count(name="ESOL"):
+    """单配置的成员数：seed42 主模型 + feat_ensemble 里的 s 种子。"""
+    fe_dir = os.path.join(ROOT, "models", "feat_ensemble")
+    if not os.path.isdir(fe_dir):
+        return 1
+    conv, lv = CONVS[0], HETERO_LEVELS[0]
+    return 1 + sum(1 for p in os.listdir(fe_dir)
+                   if p.startswith(f"{conv}_{name}_feat{lv}_s") and p.endswith(".pt"))
+
+
+def _hetero_ready(name, refresh=False):
+    """目录级判断（不加载权重），/api/meta 与 /api/predict 共用；结果缓存避免重复 listdir。"""
+    if not refresh and name in _HETERO_READY:
+        return _HETERO_READY[name]
+    fe_dir = os.path.join(ROOT, "models", "feat_ensemble")
+    ok = os.path.isdir(fe_dir)
+    if ok:
+        for lv in HETERO_LEVELS:
+            for conv in CONVS:
+                if not os.path.exists(os.path.join(ROOT, "models", "feat", f"{conv}_{name}_feat{lv}.pt")):
+                    ok = False
+                    break
+                n = sum(1 for p in os.listdir(fe_dir)
+                        if p.startswith(f"{conv}_{name}_feat{lv}_s") and p.endswith(".pt"))
+                if n < 3:
+                    ok = False
+                    break
+            if not ok:
+                break
+    _HETERO_READY[name] = ok
+    return ok
+
+
+@torch.no_grad()
+def hetero_predict(name, smiles, task_type):
+    """异质等权集成：每个配置先做 4 种子平均，再对 9 个配置等权平均。
+
+    与同构集成（`ensemble`）的区别：成员来自不同架构与不同特征档，
+    test 残差相关从 0.92 降到 0.61~0.87，是唯一在全部数据集上稳定提升的方案。
+    """
+    per_cfg = []
+    for lv in HETERO_LEVELS:
+        try:
+            data = _build_data(smiles, lv)
+        except ValueError as e:  # 非法 SMILES 不能被当成"成员缺失"静默跳过
+            raise ValueError(str(e)) from e
+        except Exception:
+            continue
+        for conv in CONVS:
+            members = _load_ensemble_members(conv, name, lv)
+            if not members:
+                continue
+            mean, _ = ensemble_predict_single(members, data, task_type)
+            per_cfg.append(mean)
+    if not per_cfg:
+        raise ValueError("异质集成成员缺失，请先运行 train_feat.py 与 train_feat_ensemble.py")
+    arr = np.array(per_cfg)
+    if task_type == "classification":
+        p = float(arr.mean())
+        ent = float(-(p * np.log(max(p, 1e-12)) + (1 - p) * np.log(max(1 - p, 1e-12))))
+        return p, ent, len(per_cfg)
+    return float(arr.mean()), float(arr.std()), len(per_cfg)
 
 
 # ---------------------------------------------------------------------------
@@ -173,11 +260,15 @@ def api_meta():
     """返回模型可用性矩阵，前端据此联动禁用/灰化不可用选项，避免 400。"""
     trained = sorted(f"{c}|{d}|{lv}" for c, d, lv in TRAINED)
     ens = sorted(f"{c}|{d}|{lv}" for c, d, lv in ENSEMBLE_OK)
+    hetero = [n for n in DATASETS if _hetero_ready(n)]
+    n_seed = _feat_seed_count()
     return jsonify({
         "convs": CONVS, "datasets": DATASETS, "feat_levels": FEAT_LEVELS,
         "feat_labels": FEAT_LABEL, "task_labels": TASK_LABEL, "unit_labels": UNIT_LABEL,
         "trained": trained, "ensemble_ok": ens,
+        "hetero_ok": hetero, "hetero_n": len(HETERO_LEVELS) * len(CONVS) * n_seed,
         "mc_t": MC_T, "ensemble_n": 4,
+        "llm_provider": "deepseek",
     })
 
 
@@ -269,15 +360,77 @@ def predict():
         return jsonify({"error": "无效的模型参数"}), 400
     if level not in FEAT_LEVELS:
         return jsonify({"error": "无效的特征等级参数"}), 400
-    if method not in ("single", "mc", "ensemble"):
+    if method not in ("single", "mc", "ensemble", "hetero"):
         return jsonify({"error": "无效的方法参数"}), 400
     if not smiles:
         return jsonify({"error": "SMILES 为空"}), 400
+    task_type = TASK_TYPE[name]
+
+    # 异质集成：9 配置 × 4 种子等权，与 conv / feat 选择无关（模型级融合的最终方案）
+    if method == "hetero":
+        if not _hetero_ready(name):
+            return jsonify({"error": f"{name} 的异质集成成员不齐（需 9 配置 × 4 种子）"}), 400
+        try:
+            mean, unc, n_cfg = hetero_predict(name, smiles, task_type)
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 400
+        except Exception as e:
+            return jsonify({"error": f"异质集成推理失败: {e}"}), 400
+        # 结构归因图：与 LLM 解释同源（9 配置 seed42 主成员掩码平均）
+        node_mask = edge_mask = first_data = None
+        n_attr = 0
+        if bool(body.get("explain", True)):
+            try:
+                from llm_explain import _mean_masks
+                models, datas = [], []
+                for lv in HETERO_LEVELS:
+                    d = _build_data(smiles, lv)
+                    for c in CONVS:
+                        mem = _load_ensemble_members(c, name, lv)
+                        if mem:
+                            models.append(mem[0])
+                            datas.append(d)
+                if models:
+                    node_mask, edge_mask, _ = _mean_masks(models, datas, task_type,
+                                                           epochs=HETERO_MASK_EPOCHS)
+                    first_data, n_attr = datas[0], len(models)
+            except Exception as e:
+                print("异质集成归因失败:", e)
+                node_mask = edge_mask = None
+        resp = {
+            "task_type": task_type,
+            "task_label": TASK_LABEL[name],
+            "smiles": smiles,
+            "unit": UNIT_LABEL[name],
+            "feat": "hetero",
+            "feat_label": "跨特征档（a/b/c 全组合）",
+            "method": f"异质集成（{n_cfg} 配置 × 4 种子等权）",
+            "n_members": n_cfg * 4,
+            "n_configs": n_cfg,
+        }
+        if task_type == "regression":
+            resp["prediction"] = round(float(mean), 4)
+            resp["std"] = round(float(unc), 4)
+            resp["ci90"] = [round(float(mean - 1.645 * unc), 4),
+                            round(float(mean + 1.645 * unc), 4)]
+        else:
+            resp["prediction"] = round(float(mean), 4)
+            resp["entropy"] = round(float(unc), 4)
+        if node_mask is not None:
+            resp["node_mask"] = [round(float(v), 4) for v in node_mask]
+            resp["edge_mask"] = [round(float(v), 4) for v in edge_mask]
+            img = _render_image(smiles, "Hetero", name, first_data, node_mask, edge_mask)
+            if img:
+                resp["image"] = img
+            resp["attribution"] = f"{n_attr} 个配置 seed42 主成员掩码平均"
+        return jsonify(resp)
+
     try:
         data = _build_data(smiles, level)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
-        return jsonify({"error": f"SMILES 解析失败: {e}"}), 400
-    task_type = TASK_TYPE[name]
+        return jsonify({"error": f"分子预处理失败: {e}"}), 400
     explain = bool(body.get("explain", True))
     if level != "base":
         try:
@@ -285,7 +438,11 @@ def predict():
         except FileNotFoundError as e:
             return jsonify({"error": str(e)}), 400
     else:
-        model = MODELS[(conv, name)]
+        model = MODELS.get((conv, name))
+        if model is None:  # 兼容 flask run / gunicorn 等非 __main__ 启动方式（懒加载）
+            from interpret import load_trained
+            model, _ = load_trained(conv, name)
+            MODELS[(conv, name)] = model
     node_mask = edge_mask = pred = None
     if explain:
         try:
@@ -311,7 +468,7 @@ def predict():
         if len(members) < 2:
             return jsonify({"error": "深度集成成员不足（需要至少 2 个 seed 模型，请先运行 train_ensemble.py / train_feat_ensemble.py）"}), 400
         mean, unc = ensemble_predict_single(members, data, task_type)
-        resp["method"] = f"深度集成（{len(members)} 成员）"
+        resp["method"] = f"同构集成（{len(members)} 成员）"
         resp["n_members"] = len(members)
     else:
         resp["method"] = "单模型"
@@ -361,9 +518,16 @@ def attention_viz():
     if not smiles:
         return jsonify({"error": "SMILES 为空"}), 400
     if ("GAT", name) not in MODELS:
-        return jsonify({"error": "GAT 模型未加载，请稍候重试"}), 500
+        from interpret import load_trained
+        try:
+            model, _ = load_trained("GAT", name)
+        except Exception as e:
+            return jsonify({"error": f"GAT 模型加载失败: {e}"}), 500
+        MODELS[("GAT", name)] = model
     try:
         data = from_smiles(smiles)
+        if data is None or getattr(data, "x", None) is None or data.x.shape[0] == 0:
+            raise ValueError("SMILES 无法解析为有效分子")
     except Exception as e:
         return jsonify({"error": f"SMILES 解析失败: {e}"}), 400
     model = MODELS[("GAT", name)]
@@ -373,7 +537,8 @@ def attention_viz():
         alpha = alphas[layer]
         ei = edge_indices[layer]
         png = draw_attention_molecule(smiles, ei, alpha, title="", as_buffer=True)
-        b64 = base64.b64encode(png).decode("ascii")
+        # 单原子分子（如 "[Na+]"）没有化学键，draw_attention_molecule 返回 False
+        b64 = base64.b64encode(png).decode("ascii") if png else None
         heads_imgs = []
         combo_b64 = None
         if per_head and alpha.ndim > 1:
@@ -405,6 +570,7 @@ def attention_viz():
             "image": b64, "prediction": pred, "task_label": TASK_LABEL[name],
             "layer": layer, "heads": int(alpha.shape[1]) if alpha.ndim > 1 else 1,
             "n_edges": int(ei.shape[1]), "top8_edges": top,
+            "warning": None if b64 else "该分子没有化学键，无法生成注意力着色图（预测值仍然有效）",
             "per_head_images": heads_imgs, "combo_image": combo_b64,
             "method": f"GAT 注意力可视化（layer {layer}，多头平均" + (" + 逐头对比" if per_head else "") + "）",
         })
@@ -414,31 +580,80 @@ def attention_viz():
 
 @app.route("/api/explain", methods=["POST"])
 def explain_llm():
-    """LLM 化学解释：GNNExplainer 掩码 → 结构证据 → LLM 生成解释
+    """LLM 化学解释：GNNExplainer 掩码 → 结构证据 → DeepSeek API 生成解释
 
-    provider: local=本地 Qwen2.5-3B-Instruct（4bit），deepseek=DeepSeek API
+    归因模型与推理模式一一对应：
+      single/mc   → 当前 conv × feat 的 seed42 模型
+      ensemble    → 该配置同构集成的 seed42 主成员
+      hetero      → 9 配置 seed42 主成员，掩码平均
+      attention   → GAT × feat_base
+    body.prediction 若传入（界面已显示的推理结果），解释文本引用它，避免数值口径错位。
     """
     body = request.get_json(force=True) or {}
     smiles = (body.get("smiles") or "").strip()
     conv = body.get("conv", "GCN")
     name = body.get("dataset", "ESOL")
-    provider = body.get("provider", "local")
+    level = body.get("feat", "base")
+    method = (body.get("method") or "single").strip()
+    raw_pred = body.get("prediction")
     if conv not in CONVS or name not in DATASETS:
         return jsonify({"error": "无效的模型参数"}), 400
-    if provider not in ("local", "deepseek"):
-        return jsonify({"error": "无效的 LLM 通道（可选 local / deepseek）"}), 400
+    if level not in FEAT_LEVELS:
+        return jsonify({"error": "无效的特征等级参数"}), 400
+    if method not in ("single", "mc", "ensemble", "hetero", "attention"):
+        return jsonify({"error": "无效的推理模式参数"}), 400
     if not smiles:
         return jsonify({"error": "SMILES 为空"}), 400
+    pred = None
+    try:
+        if raw_pred is not None:
+            pred = float(raw_pred)
+    except (TypeError, ValueError):
+        pred = None
+
     try:
         from llm_explain import generate_explanation
-        # 复用 Web 已加载的基线模型与特征数据（避免重复加载模型导致显存超限）
-        model = MODELS.get((conv, name))
-        if model is None:
-            from interpret import load_trained
-            model, _ = load_trained(conv, name)
-        data = _build_data(smiles, "base")
-        result = generate_explanation(smiles, dataset=name, conv=conv, model=model, data=data,
-                                      provider=provider)
+        if method == "hetero":
+            models, datas = [], []
+            for lv in HETERO_LEVELS:
+                d = _build_data(smiles, lv)
+                for c in CONVS:
+                    members = _load_ensemble_members(c, name, lv)
+                    if members:
+                        models.append(members[0])
+                        datas.append(d)
+            if not models:
+                return jsonify({"error": f"{name} 的异质集成成员缺失"}), 400
+            note = f"异质集成 9 配置 seed42 主成员（{len(models)} 个模型掩码平均）"
+        elif method == "ensemble":
+            data = _build_data(smiles, level)
+            members = _load_ensemble_members(conv, name, level)
+            if not members:
+                return jsonify({"error": "同构集成成员缺失"}), 400
+            models, datas = [members[0]], [data]
+            note = f"{conv} · feat_{level} 同构集成主成员（共 {len(members)} 成员）"
+        elif method == "attention":
+            models, datas = [MODELS[("GAT", name)]], [from_smiles(smiles)]
+            note = "GAT · feat_base 注意力模型"
+        else:
+            data = _build_data(smiles, level)
+            if level == "base":
+                model = MODELS.get((conv, name))
+                if model is None:
+                    from interpret import load_trained
+                    model, _ = load_trained(conv, name)
+                    MODELS[(conv, name)] = model
+            else:
+                model = _load_feat_model(conv, name, level)
+            models, datas = [model], [data]
+            note = f"{conv} · feat_{level} {'MC-Dropout' if method == 'mc' else '单模型'}"
+        result = generate_explanation(smiles, dataset=name, conv=conv,
+                                      models=models, datas=datas, method=method,
+                                      model_note=note, prediction=pred, data=datas[0])
+    except FileNotFoundError as e:
+        return jsonify({"error": str(e)}), 400
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": f"LLM 解释失败: {e}"}), 500
     if "error" in result:
@@ -449,9 +664,11 @@ def explain_llm():
         "functional_groups": result["structure"]["functional_groups"],
         "key_atoms": result["structure"]["key_atoms"],
         "consistency": result["consistency"],
-        "provider": result.get("provider", provider),
-        "method": "DeepSeek API (deepseek-chat)" if provider == "deepseek"
-                  else "本地 Qwen2.5-3B-Instruct (4bit)",
+        "feat": level,
+        "method": method,
+        "model_note": result.get("model_note"),
+        "provider": "deepseek",
+        "llm_method": "DeepSeek API (deepseek-chat)",
     })
 
 

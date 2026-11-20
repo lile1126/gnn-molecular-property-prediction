@@ -42,6 +42,7 @@ from train_eval import (BATCH_SIZE, DEVICE, HIDDEN_DIM, HEADS, LR, NUM_LAYERS,
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FEAT_MODEL_DIR = os.path.join(ROOT, "models", "feat")
+SCAF_MODEL_DIR = os.path.join(ROOT, "models", "feat_scaffold")
 REPORT_DIR = os.path.join(ROOT, "reports")
 
 
@@ -49,19 +50,22 @@ def collate(data_list, idx, batch_size=BATCH_SIZE):
     return DataLoader([data_list[int(i)] for i in idx], batch_size=batch_size, shuffle=True)
 
 
-def get_split(name):
-    split_path = os.path.join(SPLIT_ROOT, f"{name}_split.json")
+def get_split(name, kind="random"):
+    suffix = "_scaffold_split.json" if kind == "scaffold" else "_split.json"
+    split_path = os.path.join(SPLIT_ROOT, f"{name}{suffix}")
     if os.path.exists(split_path):
         with open(split_path, encoding="utf-8") as f:
             return json.load(f)
+    if kind == "scaffold":
+        raise FileNotFoundError(f"缺少骨架划分 {split_path}，请先运行 src/scaffold_split.py")
     # Clintox 等未划分数据集，用同一随机种子生成
     _, split = load_raw(name, verbose=False)
     return split
 
 
-def run_feat_one(conv_type, name, level, epochs=300, verbose=True):
+def run_feat_one(conv_type, name, level, epochs=300, verbose=True, split_kind="random"):
     data_list, meta = load_featurized(name, level=level, verbose=verbose)
-    split = get_split(name)
+    split = get_split(name, split_kind)
     task_type = meta["task"]
     out_dim = 2 if task_type == "classification" else 1
     model = build_model(conv_type, meta["atom_dim"], HIDDEN_DIM, out_dim, NUM_LAYERS,
@@ -82,13 +86,14 @@ def run_feat_one(conv_type, name, level, epochs=300, verbose=True):
     test_metrics = evaluate(model, test_loader, task_type, y_col=0)
     if verbose:
         print(f"  {conv_type} × {name} × feat_{level} 测试集: {test_metrics}")
-    os.makedirs(FEAT_MODEL_DIR, exist_ok=True)
-    path = os.path.join(FEAT_MODEL_DIR, f"{conv_type}_{name}_feat{level}.pt")
+    os.makedirs(FEAT_MODEL_DIR if split_kind == "random" else SCAF_MODEL_DIR, exist_ok=True)
+    model_dir = FEAT_MODEL_DIR if split_kind == "random" else SCAF_MODEL_DIR
+    path = os.path.join(model_dir, f"{conv_type}_{name}_feat{level}.pt")
     torch.save({"state_dict": model.state_dict(), "metrics": test_metrics,
                 "task_type": task_type, "in_dim": meta["atom_dim"],
                 "edge_dim": meta["bond_dim"], "fp_dim": meta["fp_dim"],
                 "hidden": HIDDEN_DIM, "out_dim": out_dim, "layers": NUM_LAYERS,
-                "heads": HEADS}, path)
+                "heads": HEADS, "split": split_kind}, path)
     return conv_type, name, level, test_metrics
 
 
@@ -98,6 +103,8 @@ def main():
     ap.add_argument("--names", nargs="+", default=["ESOL", "FreeSolv", "BBBP", "Clintox"])
     ap.add_argument("--levels", nargs="+", default=["a", "b", "c"])
     ap.add_argument("--epochs", type=int, default=300)
+    ap.add_argument("--split", choices=["random", "scaffold"], default="random",
+                    help="scaffold 使用 Murcko 骨架划分，模型保存到 models/feat_scaffold")
     args = ap.parse_args()
 
     set_seed(SEED)
@@ -115,17 +122,19 @@ def main():
     results = {"baseline_ref": "reports/comparison_results.json（默认 9 维特征，无键特征/指纹）",
                "config": {"hidden": HIDDEN_DIM, "layers": NUM_LAYERS, "heads": HEADS,
                           "epochs": args.epochs, "batch_size": BATCH_SIZE, "seed": SEED,
-                          "device": str(DEVICE)}}
+                          "device": str(DEVICE), "split": args.split}}
     t0 = time.time()
     skipped = 0
+    model_dir = FEAT_MODEL_DIR if args.split == "random" else SCAF_MODEL_DIR
     for conv, name, level in matrix:
-        ckpt = os.path.join(FEAT_MODEL_DIR, f"{conv}_{name}_feat{level}.pt")
+        ckpt = os.path.join(model_dir, f"{conv}_{name}_feat{level}.pt")
         if os.path.exists(ckpt):
             skipped += 1
             print(f"  跳过（已存在）: {conv} × {name} × feat{level}")
             continue
         try:
-            _, _, _, metrics = run_feat_one(conv, name, level, epochs=args.epochs)
+            _, _, _, metrics = run_feat_one(conv, name, level, epochs=args.epochs,
+                                            split_kind=args.split)
             results.setdefault(name, {})[f"{conv}_feat{level}"] = metrics
             print(f"  累计用时 {time.time() - t0:.0f}s")
         except Exception as e:
@@ -133,7 +142,8 @@ def main():
             results.setdefault(name, {})[f"{conv}_feat{level}"] = {"error": str(e)}
     print(f"（跳过已存在 {skipped} 个）")
     os.makedirs(REPORT_DIR, exist_ok=True)
-    path = os.path.join(REPORT_DIR, "feat_results.json")
+    fname = "feat_results.json" if args.split == "random" else "feat_scaffold_results.json"
+    path = os.path.join(REPORT_DIR, fname)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
     print(f"\n特征工程对比结果已保存: {path}")

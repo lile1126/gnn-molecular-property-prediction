@@ -18,7 +18,8 @@ import torch.nn.functional as F
 
 import compat_patch  # noqa: F401  应用 PyG/torch 兼容补丁
 
-from torch_geometric.nn import GCNConv, GATConv, SAGEConv, global_mean_pool
+from torch_geometric.nn import (GCNConv, GATConv, SAGEConv, AttentionalAggregation,
+                                global_max_pool, global_mean_pool)
 
 
 class SAGEConvEdge(SAGEConv):
@@ -177,10 +178,127 @@ class GATNet(BaseGNN):
         return convs
 
 
+class HybridAggConv(nn.Module):
+    """混合聚合层：GCN / GAT / GraphSAGE 三路并行，softmax 可学习权重加权。
+
+    ⚠️ 保留说明：这是本课题的**探索性负结果**实现（对应 reports/hybrid_results.json
+    的 v1 口径）。实测在 ESOL/BBBP 上均未超过模型级异质集成，混合权重在训练后
+    退化为近似均匀（约 0.33/0.33/0.33），机理见 reports/fusion_summary.md 第 5 节。
+    代码保留用于复现与对照，不作为最终方案。
+
+    v2 变体（残差连接 + LayerNorm + 温度系数）已验证会崩溃（ESOL R² 0.4057），
+    已回滚且未保留，不要在此基础上继续调参。
+
+    每层仅 3 个混合参数（mix_logits），训练结束后可直接读出
+    (α, β, γ) 作为"该层偏好哪种聚合机制"的可解释证据。
+    三个分支输出维度一致（out_channels），GAT 用多头拼接保持表达力。
+    """
+
+    def __init__(self, in_channels, out_channels, heads=4, edge_dim=0, dropout=0.3):
+        super().__init__()
+        assert out_channels % heads == 0, "out_channels 必须能被 heads 整除"
+        self.edge_dim = edge_dim
+        self.gcn = GCNConv(in_channels, out_channels)
+        self.gat = GATConv(in_channels, out_channels // heads, heads=heads,
+                           concat=True, dropout=dropout,
+                           edge_dim=edge_dim if edge_dim > 0 else None)
+        self.sage = SAGEConvEdge(in_channels, out_channels, edge_dim=edge_dim)
+        self.gcn_edge_lin = nn.Linear(edge_dim, 1) if edge_dim > 0 else None
+        self.mix_logits = nn.Parameter(torch.zeros(3))
+
+    def forward(self, x, edge_index, edge_attr=None):
+        if self.edge_dim > 0 and edge_attr is not None:
+            ew = torch.sigmoid(self.gcn_edge_lin(edge_attr)).squeeze(-1)
+            g = self.gcn(x, edge_index, edge_weight=ew)
+            a = self.gat(x, edge_index, edge_attr=edge_attr)
+            s = self.sage(x, edge_index, edge_attr=edge_attr)
+        else:
+            g = self.gcn(x, edge_index)
+            a = self.gat(x, edge_index)
+            s = self.sage(x, edge_index)
+        w = torch.softmax(self.mix_logits, dim=0)
+        return w[0] * g + w[1] * a + w[2] * s
+
+    def mix_weights(self):
+        return torch.softmax(self.mix_logits, dim=0).detach().cpu().tolist()
+
+
+class HybridAggNet(nn.Module):
+    """架构级融合模型（本课题方法创新点）。
+
+    与 BaseGNN 系列的区别：
+      1. 每层用 HybridAggConv 自适应混合三种聚合机制（权重在训练集上端到端学习，
+         不依赖小验证集，避免静态 stacking 的过拟合问题）；
+      2. 多尺度读出：mean + max + attention 三种池化拼接，缓解单一均值池化
+         对局部官能团信号的稀释；
+      3. 保留键特征与 MACCS 指纹分支，接口与 BaseGNN 完全一致
+         （forward / forward_data），训练、评估、解释链路可直接复用。
+    """
+
+    def __init__(self, in_dim, hidden_dim, out_dim, num_layers=3, dropout=0.3,
+                 heads=4, edge_dim=0, fp_dim=0):
+        super().__init__()
+        assert num_layers >= 1
+        self.in_dim = in_dim
+        self.hidden_dim = hidden_dim
+        self.out_dim = out_dim
+        self.num_layers = num_layers
+        self.dropout = dropout
+        self.edge_dim = edge_dim
+        self.fp_dim = fp_dim
+        self.convs = nn.ModuleList()
+        for i in range(num_layers):
+            in_ch = in_dim if i == 0 else hidden_dim
+            self.convs.append(HybridAggConv(in_ch, hidden_dim, heads=heads,
+                                            edge_dim=edge_dim, dropout=dropout))
+        self.attn_pool = AttentionalAggregation(gate_nn=nn.Linear(hidden_dim, 1))
+        if fp_dim > 0:
+            self.fp_lin = nn.Sequential(nn.Linear(fp_dim, hidden_dim), nn.ReLU())
+        head_in = 3 * hidden_dim + (hidden_dim if fp_dim > 0 else 0)
+        self.head = nn.Sequential(
+            nn.Linear(head_in, hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.Linear(hidden_dim, out_dim),
+        )
+
+    def forward(self, x, edge_index, batch=None, edge_attr=None, fp=None):
+        if x.dtype != torch.float:
+            x = x.float()
+        for i, conv in enumerate(self.convs):
+            x = conv(x, edge_index, edge_attr=edge_attr)
+            if i < len(self.convs) - 1:
+                x = F.relu(x)
+                x = F.dropout(x, p=self.dropout, training=self.training)
+        if batch is None:
+            gate = torch.softmax(self.attn_pool.gate_nn(x), dim=0)
+            pooled = torch.cat([x.mean(dim=0, keepdim=True),
+                                x.max(dim=0, keepdim=True).values,
+                                (gate * x).sum(dim=0, keepdim=True)], dim=-1)
+        else:
+            pooled = torch.cat([global_mean_pool(x, batch),
+                                global_max_pool(x, batch),
+                                self.attn_pool(x, batch)], dim=-1)
+        if fp is not None and self.fp_dim > 0:
+            pooled = torch.cat([pooled, self.fp_lin(fp)], dim=-1)
+        return self.head(pooled)
+
+    def forward_data(self, data):
+        return self.forward(
+            data.x, data.edge_index, data.batch,
+            getattr(data, "edge_attr", None), getattr(data, "fp", None),
+        )
+
+    def mix_weights(self):
+        """每层 (GCN, GAT, SAGE) 混合权重，用于可解释性分析。"""
+        return [conv.mix_weights() for conv in self.convs]
+
+
 MODEL_REGISTRY = {
     "GCN": GCNNet,
     "GAT": GATNet,
     "GraphSAGE": SAGENet,
+    "HybridAgg": HybridAggNet,
 }
 
 
@@ -189,7 +307,7 @@ def build_model(conv_type, in_dim, hidden_dim, out_dim, num_layers=3, dropout=0.
     if conv_type not in MODEL_REGISTRY:
         raise ValueError(f"未知模型类型 {conv_type}，可选: {list(MODEL_REGISTRY)}")
     cls = MODEL_REGISTRY[conv_type]
-    if conv_type == "GAT":
+    if conv_type in ("GAT", "HybridAgg"):
         return cls(in_dim, hidden_dim, out_dim, num_layers=num_layers, dropout=dropout,
                    heads=heads, edge_dim=edge_dim, fp_dim=fp_dim)
     return cls(in_dim, hidden_dim, out_dim, num_layers=num_layers, dropout=dropout,

@@ -1,0 +1,122 @@
+{
+  "ESOL": {
+    "task": "regression",
+    "teacher_experts": [
+      "GCN_featc",
+      "GAT_featc",
+      "GraphSAGE_featb"
+    ],
+    "student_config": "GraphSAGE_featb",
+    "distill": {
+      "lam": 0.5,
+      "T": 2.0
+    },
+    "members": [
+      {
+        "seed": 42,
+        "test": {
+          "RMSE": 0.6931,
+          "MAE": 0.5432,
+          "R2": 0.8856
+        }
+      },
+      {
+        "seed": 7,
+        "test": {
+          "RMSE": 0.6553,
+          "MAE": 0.5212,
+          "R2": 0.8977
+        }
+      },
+      {
+        "seed": 13,
+        "test": {
+          "RMSE": 0.6833,
+          "MAE": 0.5249,
+          "R2": 0.8888
+        }
+      },
+      {
+        "seed": 21,
+        "test": {
+          "RMSE": 0.668,
+          "MAE": 0.5209,
+          "R2": 0.8937
+        }
+      }
+    ],
+    "student_mean_test": {
+      "RMSE": 0.6749,
+      "R2": 0.8915
+    },
+    "single_baseline_mean_test": {
+      "RMSE": 0.6329,
+      "R2": 0.9044
+    },
+    "teacher_reference": {
+      "RMSE": 0.5911,
+      "MAE": 0.4674,
+      "R2": 0.9168
+    }
+  },
+  "BBBP": {
+    "task": "classification",
+    "teacher_experts": [
+      "GCN_featc",
+      "GAT_featc",
+      "GraphSAGE_featc"
+    ],
+    "student_config": "GCN_featc",
+    "distill": {
+      "lam": 0.5,
+      "T": 2.0
+    },
+    "members": [
+      {
+        "seed": 42,
+        "test": {
+          "Accuracy": 0.8683,
+          "AUC": 0.9199,
+          "F1": 0.9097
+        }
+      },
+      {
+        "seed": 7,
+        "test": {
+          "Accuracy": 0.8585,
+          "AUC": 0.9126,
+          "F1": 0.903
+        }
+      },
+      {
+        "seed": 13,
+        "test": {
+          "Accuracy": 0.8634,
+          "AUC": 0.9115,
+          "F1": 0.906
+        }
+      },
+      {
+        "seed": 21,
+        "test": {
+          "Accuracy": 0.8585,
+          "AUC": 0.9059,
+          "F1": 0.9037
+        }
+      }
+    ],
+    "student_mean_test": {
+      "AUC": 0.9125,
+      "F1": 0.9056
+    },
+    "single_baseline_mean_test": {
+      "AUC": 0.914,
+      "F1": 0.8948
+    },
+    "teacher_reference": {
+      "Accuracy": 0.8732,
+      "AUC": 0.9183,
+      "F1": 0.9103
+    }
+  }
+}

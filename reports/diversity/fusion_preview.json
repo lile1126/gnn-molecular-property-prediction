@@ -1,0 +1,242 @@
+{
+  "ESOL": {
+    "detail": {
+      "best_single": "GraphSAGE_featb_s21",
+      "best_homo_ensemble": "GraphSAGE_featb",
+      "experts_by_val": [
+        "GCN_featc",
+        "GAT_featc",
+        "GraphSAGE_featb"
+      ],
+      "nnls_weights": {
+        "GCN_featc": 0.2867,
+        "GAT_featc": 0.1534,
+        "GraphSAGE_featb": 0.5598
+      }
+    },
+    "strategies": {
+      "best_single(val选)": {
+        "test": {
+          "RMSE": 0.6002,
+          "MAE": 0.4766,
+          "R2": 0.9142
+        }
+      },
+      "best_homo_ensemble(val选)": {
+        "test": {
+          "RMSE": 0.6118,
+          "MAE": 0.4816,
+          "R2": 0.9108
+        }
+      },
+      "hetero_equal(val选3专家)": {
+        "test": {
+          "RMSE": 0.5911,
+          "MAE": 0.4674,
+          "R2": 0.9168
+        }
+      },
+      "hetero_equal_all9": {
+        "test": {
+          "RMSE": 0.5776,
+          "MAE": 0.4385,
+          "R2": 0.9205
+        }
+      },
+      "hetero_equal_featc": {
+        "test": {
+          "RMSE": 0.6913,
+          "MAE": 0.5175,
+          "R2": 0.8861
+        }
+      },
+      "hetero_nnls(val拟合)": {
+        "test": {
+          "RMSE": 0.5678,
+          "MAE": 0.4516,
+          "R2": 0.9232
+        }
+      }
+    }
+  },
+  "FreeSolv": {
+    "detail": {
+      "best_single": "GCN_featc_s13",
+      "best_homo_ensemble": "GAT_featc",
+      "experts_by_val": [
+        "GCN_featc",
+        "GAT_featc",
+        "GraphSAGE_featc"
+      ],
+      "nnls_weights": {
+        "GCN_featc": 0.0,
+        "GAT_featc": 1.0,
+        "GraphSAGE_featc": 0.0
+      }
+    },
+    "strategies": {
+      "best_single(val选)": {
+        "test": {
+          "RMSE": 1.1461,
+          "MAE": 0.5766,
+          "R2": 0.9157
+        }
+      },
+      "best_homo_ensemble(val选)": {
+        "test": {
+          "RMSE": 1.1225,
+          "MAE": 0.6119,
+          "R2": 0.9191
+        }
+      },
+      "hetero_equal(val选3专家)": {
+        "test": {
+          "RMSE": 1.0817,
+          "MAE": 0.5934,
+          "R2": 0.9249
+        }
+      },
+      "hetero_equal_all9": {
+        "test": {
+          "RMSE": 1.0873,
+          "MAE": 0.7034,
+          "R2": 0.9241
+        }
+      },
+      "hetero_equal_featc": {
+        "test": {
+          "RMSE": 1.0817,
+          "MAE": 0.5934,
+          "R2": 0.9249
+        }
+      },
+      "hetero_nnls(val拟合)": {
+        "test": {
+          "RMSE": 1.1225,
+          "MAE": 0.6119,
+          "R2": 0.9191
+        }
+      }
+    }
+  },
+  "BBBP": {
+    "detail": {
+      "best_single": "GAT_featc_s13",
+      "best_homo_ensemble": "GCN_featc",
+      "experts_by_val": [
+        "GCN_featc",
+        "GAT_featc",
+        "GraphSAGE_featc"
+      ],
+      "nnls_weights": {
+        "GCN_featc": 0.8131,
+        "GAT_featc": 0.0,
+        "GraphSAGE_featc": 0.1869
+      }
+    },
+    "strategies": {
+      "best_single(val选)": {
+        "test": {
+          "Accuracy": 0.8585,
+          "AUC": 0.9082,
+          "F1": 0.903
+        }
+      },
+      "best_homo_ensemble(val选)": {
+        "test": {
+          "Accuracy": 0.8732,
+          "AUC": 0.9177,
+          "F1": 0.911
+        }
+      },
+      "hetero_equal(val选3专家)": {
+        "test": {
+          "Accuracy": 0.8732,
+          "AUC": 0.9183,
+          "F1": 0.9103
+        }
+      },
+      "hetero_equal_all9": {
+        "test": {
+          "Accuracy": 0.8829,
+          "AUC": 0.9292,
+          "F1": 0.9221
+        }
+      },
+      "hetero_equal_featc": {
+        "test": {
+          "Accuracy": 0.8732,
+          "AUC": 0.9183,
+          "F1": 0.9103
+        }
+      },
+      "hetero_nnls(val拟合)": {
+        "test": {
+          "Accuracy": 0.8732,
+          "AUC": 0.9178,
+          "F1": 0.9103
+        }
+      }
+    }
+  },
+  "Clintox": {
+    "detail": {
+      "best_single": "GCN_feata_s21",
+      "best_homo_ensemble": "GCN_featb",
+      "experts_by_val": [
+        "GCN_featb",
+        "GAT_featb",
+        "GraphSAGE_feata"
+      ],
+      "nnls_weights": {
+        "GCN_featb": 1.0,
+        "GAT_featb": 0.0,
+        "GraphSAGE_feata": 0.0
+      }
+    },
+    "strategies": {
+      "best_single(val选)": {
+        "test": {
+          "Accuracy": 0.8986,
+          "AUC": 0.912,
+          "F1": 0.4828
+        }
+      },
+      "best_homo_ensemble(val选)": {
+        "test": {
+          "Accuracy": 0.8986,
+          "AUC": 0.9027,
+          "F1": 0.4828
+        }
+      },
+      "hetero_equal(val选3专家)": {
+        "test": {
+          "Accuracy": 0.9054,
+          "AUC": 0.9083,
+          "F1": 0.4615
+        }
+      },
+      "hetero_equal_all9": {
+        "test": {
+          "Accuracy": 0.9054,
+          "AUC": 0.9163,
+          "F1": 0.5333
+        }
+      },
+      "hetero_equal_featc": {
+        "test": {
+          "Accuracy": 0.8851,
+          "AUC": 0.8849,
+          "F1": 0.4848
+        }
+      },
+      "hetero_nnls(val拟合)": {
+        "test": {
+          "Accuracy": 0.8986,
+          "AUC": 0.9027,
+          "F1": 0.4828
+        }
+      }
+    }
+  }
+}
